@@ -7,8 +7,10 @@ import {
   Settings, 
   HelpCircle,
   ChevronRight,
-  ArrowLeft
+  ArrowLeft,
+  ChevronDown
 } from "lucide-react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -56,12 +58,18 @@ interface SidebarProps {
 }
 
 export const Sidebar = ({ onNavigate, showBackButton, onBack }: SidebarProps) => {
+  const [isToolsExpanded, setIsToolsExpanded] = useState(true);
+
   return (
     <div className="w-60 h-screen bg-sidebar-bg border-r border-sidebar-border flex flex-col">
       {/* Header */}
       <div className="p-4 border-b border-sidebar-border">
         <div className="flex items-center gap-2">
-          <div className="text-lg font-bold">deluxe</div>
+          <img 
+            src="https://www.deluxe.com/etc.clientlibs/deluxe/clientlibs/clientlib-commons/resources/images/sprites/view/svg/sprite.view.svg#deluxe_logo_2020" 
+            alt="Deluxe"
+            className="h-6"
+          />
           <div className="text-sm text-muted-foreground">SDLC Orchestration</div>
         </div>
       </div>
@@ -79,32 +87,41 @@ export const Sidebar = ({ onNavigate, showBackButton, onBack }: SidebarProps) =>
           </Button>
         )}
         {!showBackButton && (
-          <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3">
-            TOOLS
-          </div>
+          <Button
+            variant="ghost"
+            onClick={() => setIsToolsExpanded(!isToolsExpanded)}
+            className="w-full justify-between p-0 h-auto mb-3 text-muted-foreground hover:text-foreground"
+          >
+            <div className="text-xs font-medium uppercase tracking-wide">
+              TOOLS
+            </div>
+            <ChevronDown className={`w-4 h-4 transition-transform ${isToolsExpanded ? 'rotate-0' : '-rotate-90'}`} />
+          </Button>
         )}
-        <div className="space-y-1">
-          {navigationItems.map((item) => (
-            <Button
-              key={item.label}
-              variant="ghost"
-              onClick={() => onNavigate?.(item.id)}
-              className={`w-full justify-start h-auto p-3 text-left hover:bg-accent ${
-                item.active ? 'bg-accent' : ''
-              }`}
-            >
-              <div className="flex items-start gap-3 w-full">
-                <item.icon className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium">{item.label}</div>
-                  <div className="text-xs text-muted-foreground">
-                    {item.description}
+        {isToolsExpanded && (
+          <div className="space-y-1">
+            {navigationItems.map((item) => (
+              <Button
+                key={item.label}
+                variant="ghost"
+                onClick={() => onNavigate?.(item.id)}
+                className={`w-full justify-start h-auto p-3 text-left hover:bg-accent ${
+                  item.active ? 'bg-accent' : ''
+                }`}
+              >
+                <div className="flex items-start gap-3 w-full">
+                  <item.icon className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-medium">{item.label}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {item.description}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Button>
-          ))}
-        </div>
+              </Button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Bottom Navigation */}
