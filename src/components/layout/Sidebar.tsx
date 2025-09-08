@@ -10,7 +10,6 @@ import {
   ArrowLeft,
   ChevronDown
 } from "lucide-react";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -55,22 +54,33 @@ interface SidebarProps {
   onNavigate?: (view: string) => void;
   showBackButton?: boolean;
   onBack?: () => void;
+  collapsed?: boolean;
+  onToggleCollapse?: () => void;
 }
 
-export const Sidebar = ({ onNavigate, showBackButton, onBack }: SidebarProps) => {
-  const [isToolsExpanded, setIsToolsExpanded] = useState(true);
-
+export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggleCollapse }: SidebarProps) => {
   return (
-    <div className="w-60 h-screen bg-sidebar-bg border-r border-sidebar-border flex flex-col">
+    <div className={`${collapsed ? 'w-16' : 'w-60'} h-screen bg-sidebar-bg border-r border-sidebar-border flex flex-col transition-all duration-300`}>
       {/* Header */}
       <div className="p-4 border-b border-sidebar-border">
         <div className="flex items-center gap-2">
-          <img 
-            src="https://www.deluxe.com/etc.clientlibs/deluxe/clientlibs/clientlib-commons/resources/images/sprites/view/svg/sprite.view.svg#deluxe_logo_2020" 
-            alt="Deluxe"
-            className="h-6"
-          />
-          <div className="text-sm text-muted-foreground">SDLC Orchestration</div>
+          {!collapsed && (
+            <>
+              <img 
+                src="https://www.deluxe.com/etc.clientlibs/deluxe/clientlibs/clientlib-commons/resources/images/sprites/view/svg/sprite.view.svg#deluxe_logo_2020" 
+                alt="Deluxe"
+                className="h-6"
+              />
+              <div className="text-sm text-muted-foreground">SDLC Orchestration</div>
+            </>
+          )}
+          {collapsed && (
+            <div className="w-full flex justify-center">
+              <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
+                <span className="text-white text-sm font-bold">D</span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -83,22 +93,24 @@ export const Sidebar = ({ onNavigate, showBackButton, onBack }: SidebarProps) =>
             className="w-full justify-start mb-3 text-muted-foreground"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            TOOLS
+            {!collapsed && "TOOLS"}
           </Button>
         )}
         {!showBackButton && (
           <Button
             variant="ghost"
-            onClick={() => setIsToolsExpanded(!isToolsExpanded)}
-            className="w-full justify-between p-0 h-auto mb-3 text-muted-foreground hover:text-foreground"
+            onClick={onToggleCollapse}
+            className={`w-full ${collapsed ? 'justify-center' : 'justify-between'} p-0 h-auto mb-3 text-muted-foreground hover:text-foreground`}
           >
-            <div className="text-xs font-medium uppercase tracking-wide">
-              TOOLS
-            </div>
-            <ChevronDown className={`w-4 h-4 transition-transform ${isToolsExpanded ? 'rotate-0' : '-rotate-90'}`} />
+            {!collapsed && (
+              <div className="text-xs font-medium uppercase tracking-wide">
+                TOOLS
+              </div>
+            )}
+            <ChevronDown className={`w-4 h-4 transition-transform ${collapsed ? 'rotate-90' : 'rotate-0'}`} />
           </Button>
         )}
-        {isToolsExpanded && (
+        {!collapsed && (
           <div className="space-y-1">
             {navigationItems.map((item) => (
               <Button
@@ -122,6 +134,23 @@ export const Sidebar = ({ onNavigate, showBackButton, onBack }: SidebarProps) =>
             ))}
           </div>
         )}
+        {collapsed && (
+          <div className="space-y-2 mt-3">
+            {navigationItems.map((item) => (
+              <Button
+                key={item.label}
+                variant="ghost"
+                onClick={() => onNavigate?.(item.id)}
+                className={`w-full h-10 p-0 justify-center hover:bg-accent ${
+                  item.active ? 'bg-accent' : ''
+                }`}
+                title={item.label}
+              >
+                <item.icon className="w-4 h-4" />
+              </Button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Bottom Navigation */}
@@ -130,10 +159,11 @@ export const Sidebar = ({ onNavigate, showBackButton, onBack }: SidebarProps) =>
           <Button
             key={item.label}
             variant="ghost"
-            className="w-full justify-start h-9 text-muted-foreground hover:bg-accent"
+            className={`w-full ${collapsed ? 'justify-center p-0 h-10' : 'justify-start h-9'} text-muted-foreground hover:bg-accent`}
+            title={collapsed ? item.label : undefined}
           >
-            <item.icon className="w-4 h-4 mr-3" />
-            {item.label}
+            <item.icon className={`w-4 h-4 ${collapsed ? '' : 'mr-3'}`} />
+            {!collapsed && item.label}
           </Button>
         ))}
       </div>
@@ -142,18 +172,27 @@ export const Sidebar = ({ onNavigate, showBackButton, onBack }: SidebarProps) =>
       <div className="p-4 border-t border-sidebar-border">
         <Button
           variant="ghost"
-          className="w-full justify-between h-auto p-3 hover:bg-accent"
+          className={`w-full ${collapsed ? 'justify-center p-3' : 'justify-between'} h-auto hover:bg-accent`}
         >
-          <div className="flex items-center gap-3">
+          {collapsed ? (
             <Avatar className="w-8 h-8">
               <AvatarImage src="/placeholder.svg" />
               <AvatarFallback>JD</AvatarFallback>
             </Avatar>
-            <div className="text-left">
-              <div className="text-sm font-medium">Jane Doe</div>
-            </div>
-          </div>
-          <ChevronRight className="w-4 h-4" />
+          ) : (
+            <>
+              <div className="flex items-center gap-3">
+                <Avatar className="w-8 h-8">
+                  <AvatarImage src="/placeholder.svg" />
+                  <AvatarFallback>JD</AvatarFallback>
+                </Avatar>
+                <div className="text-left">
+                  <div className="text-sm font-medium">Jane Doe</div>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4" />
+            </>
+          )}
         </Button>
       </div>
     </div>
