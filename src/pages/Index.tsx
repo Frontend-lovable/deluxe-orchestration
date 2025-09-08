@@ -1,12 +1,34 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import { MainLayout } from "@/components/layout/MainLayout";
+import { TopHeader } from "@/components/header/TopHeader";
+import { ProjectOverview } from "@/components/dashboard/ProjectOverview";
+import { BRDDashboard } from "@/components/dashboard/BRDDashboard";
 
 const Index = () => {
+  const [currentView, setCurrentView] = useState<"overview" | "brd">("overview");
+
+  const handleNavigate = (view: string) => {
+    if (view === "brd") {
+      setCurrentView("brd");
+    } else {
+      setCurrentView("overview");
+    }
+  };
+
+  const handleBack = () => {
+    setCurrentView("overview");
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-background">
+      <TopHeader />
+      <MainLayout
+        onNavigate={handleNavigate}
+        showBackButton={currentView === "brd"}
+        onBack={handleBack}
+      >
+        {currentView === "overview" ? <ProjectOverview /> : <BRDDashboard />}
+      </MainLayout>
     </div>
   );
 };
