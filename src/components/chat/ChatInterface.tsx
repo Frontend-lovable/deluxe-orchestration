@@ -17,13 +17,15 @@ interface ChatInterfaceProps {
   subtitle: string;
   initialMessage?: string;
   placeholder?: string;
+  onReviewed?: () => void;
 }
 
 export const ChatInterface = ({ 
   title, 
   subtitle, 
   initialMessage,
-  placeholder = "Type your message about business requirements..."
+  placeholder = "Type your message about business requirements...",
+  onReviewed
 }: ChatInterfaceProps) => {
   const [messages, setMessages] = useState<ChatMessage[]>([
     ...(initialMessage ? [{
@@ -46,6 +48,12 @@ export const ChatInterface = ({
     };
     
     setMessages([...messages, newMessage]);
+    
+    // Check if the message is "reviewed" and trigger the callback
+    if (inputValue.trim().toLowerCase() === "reviewed" && onReviewed) {
+      onReviewed();
+    }
+    
     setInputValue("");
   };
 

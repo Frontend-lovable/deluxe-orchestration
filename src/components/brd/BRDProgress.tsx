@@ -4,7 +4,7 @@ const brdSections = [{
   icon: CheckCircle,
   title: "Executive Summary",
   description: "High level overview of the project",
-  status: "done"
+  status: "pending"
 }, {
   icon: Users,
   title: "Stakeholders",
@@ -34,10 +34,11 @@ const brdSections = [{
 interface BRDProgressProps {
   selectedSection: string;
   onSectionChange: (section: string) => void;
+  completedSections: string[];
 }
 
-export const BRDProgress = ({ selectedSection, onSectionChange }: BRDProgressProps) => {
-  const completedSections = brdSections.filter(s => s.status === "done").length;
+export const BRDProgress = ({ selectedSection, onSectionChange, completedSections }: BRDProgressProps) => {
+  const completedCount = completedSections.length;
   return <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
@@ -46,7 +47,7 @@ export const BRDProgress = ({ selectedSection, onSectionChange }: BRDProgressPro
             <div className="w-8 h-1 bg-primary rounded"></div>
           </CardTitle>
           <div className="text-sm text-muted-foreground">
-            {completedSections}/{brdSections.length} sections
+            {completedCount}/{brdSections.length} sections
           </div>
         </div>
       </CardHeader>
@@ -60,7 +61,11 @@ export const BRDProgress = ({ selectedSection, onSectionChange }: BRDProgressPro
               }`}
             >
               <div className="flex-shrink-0">
-                {section.status === "done" ? <CheckCircle className="w-5 h-5 text-green-600" /> : <Circle className="w-5 h-5 text-muted-foreground" />}
+                {completedSections.includes(section.title) ? (
+                  <CheckCircle className="w-5 h-5 text-green-600" />
+                ) : (
+                  <Circle className="w-5 h-5 text-muted-foreground" />
+                )}
               </div>
               <div className="flex-1">
                 <div className="font-medium text-sm">{section.title}</div>

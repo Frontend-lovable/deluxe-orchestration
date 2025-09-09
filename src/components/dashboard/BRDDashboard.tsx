@@ -44,6 +44,30 @@ const sectionContent = {
 
 export const BRDDashboard = () => {
   const [selectedSection, setSelectedSection] = useState<string>("Executive Summary");
+  const [completedSections, setCompletedSections] = useState<string[]>([]);
+  
+  const sectionOrder = [
+    "Executive Summary",
+    "Stakeholders", 
+    "Business Objectives",
+    "Functional Requirements",
+    "Data Requirements",
+    "Security Requirements"
+  ];
+  
+  const handleSectionReviewed = () => {
+    // Mark current section as completed
+    if (!completedSections.includes(selectedSection)) {
+      setCompletedSections([...completedSections, selectedSection]);
+    }
+    
+    // Move to next section
+    const currentIndex = sectionOrder.indexOf(selectedSection);
+    if (currentIndex < sectionOrder.length - 1) {
+      const nextSection = sectionOrder[currentIndex + 1];
+      setSelectedSection(nextSection);
+    }
+  };
   return (
     <div className="p-8 bg-white">
       <div className="mb-8">
@@ -55,6 +79,7 @@ export const BRDDashboard = () => {
           <BRDProgress 
             selectedSection={selectedSection}
             onSectionChange={setSelectedSection}
+            completedSections={completedSections}
           />
         </div>
         
@@ -65,6 +90,7 @@ export const BRDDashboard = () => {
               subtitle={sectionContent[selectedSection as keyof typeof sectionContent]?.subtitle || "Discuss your business requirements"}
               initialMessage={sectionContent[selectedSection as keyof typeof sectionContent]?.initialMessage || "Hello! 👋 I'm your BRD Assistant."}
               placeholder={sectionContent[selectedSection as keyof typeof sectionContent]?.placeholder || "Type your message..."}
+              onReviewed={handleSectionReviewed}
             />
           </div>
         </div>
