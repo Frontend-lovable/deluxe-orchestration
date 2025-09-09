@@ -38,6 +38,7 @@ const Index = () => {
         onNavigate={handleNavigate}
         showBackButton={currentView !== "overview"}
         onBack={handleBack}
+        currentView={currentView}
       >
         {renderContent()}
       </MainLayout>

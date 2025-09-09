@@ -7,9 +7,10 @@ interface MainLayoutProps {
   onNavigate?: (view: string) => void;
   showBackButton?: boolean;
   onBack?: () => void;
+  currentView?: string;
 }
 
-export const MainLayout = ({ children, onNavigate, showBackButton, onBack }: MainLayoutProps) => {
+export const MainLayout = ({ children, onNavigate, showBackButton, onBack, currentView }: MainLayoutProps) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
@@ -21,6 +22,7 @@ export const MainLayout = ({ children, onNavigate, showBackButton, onBack }: Mai
           onBack={onBack}
           collapsed={sidebarCollapsed}
           onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+          currentView={currentView}
         />
       </div>
       <div className={`flex-1 overflow-auto ${sidebarCollapsed ? 'ml-16' : 'ml-60'} transition-all duration-300`}>

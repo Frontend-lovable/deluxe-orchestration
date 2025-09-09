@@ -18,28 +18,24 @@ const navigationItems = [
     icon: FileText,
     label: "BRD Assistant",
     description: "Create & manage BRDs",
-    active: true,
     id: "brd",
   },
   {
     icon: BookOpen,
     label: "Confluence",
     description: "Browse & integrate docs",
-    active: false,
     id: "confluence",
   },
   {
     icon: Ticket,
     label: "Jira",
     description: "Project tracking & issues",
-    active: false,
     id: "jira",
   },
   {
     icon: Palette,
     label: "Design Assistant",
     description: "Technical architecture planning",
-    active: false,
     id: "design",
   },
 ];
@@ -56,9 +52,10 @@ interface SidebarProps {
   onBack?: () => void;
   collapsed?: boolean;
   onToggleCollapse?: () => void;
+  currentView?: string;
 }
 
-export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggleCollapse }: SidebarProps) => {
+export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggleCollapse, currentView }: SidebarProps) => {
   return (
     <div className={`${collapsed ? 'w-16' : 'w-60'} h-full bg-sidebar-bg border-r border-sidebar-border flex flex-col transition-all duration-300 overflow-hidden`}>
       {/* Header */}
@@ -107,43 +104,47 @@ export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggl
           )}
           {!collapsed && (
             <div className="space-y-1">
-              {navigationItems.map((item) => (
-                <Button
-                  key={item.label}
-                  variant="ghost"
-                  onClick={() => onNavigate?.(item.id)}
-                  className={`w-full justify-start h-auto p-3 text-left hover:bg-accent ${
-                    item.active ? 'bg-accent' : ''
-                  }`}
-                >
-                  <div className="flex items-start gap-3 w-full">
-                    <item.icon className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium">{item.label}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {item.description}
+              {navigationItems.map((item) => {
+                const isActive = currentView === item.id;
+                return (
+                  <Button
+                    key={item.label}
+                    variant="ghost"
+                    onClick={() => onNavigate?.(item.id)}
+                    className={`w-full justify-start h-auto p-3 text-left hover:bg-accent`}
+                    style={isActive ? { backgroundColor: 'rgba(184, 218, 222, 0.34)' } : {}}
+                  >
+                    <div className="flex items-start gap-3 w-full">
+                      <item.icon className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium">{item.label}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {item.description}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Button>
-              ))}
+                  </Button>
+                );
+              })}
             </div>
           )}
           {collapsed && (
             <div className="space-y-2 mt-3">
-              {navigationItems.map((item) => (
-                <Button
-                  key={item.label}
-                  variant="ghost"
-                  onClick={() => onNavigate?.(item.id)}
-                  className={`w-full h-10 p-0 justify-center hover:bg-accent ${
-                    item.active ? 'bg-accent' : ''
-                  }`}
-                  title={item.label}
-                >
-                  <item.icon className="w-4 h-4" />
-                </Button>
-              ))}
+              {navigationItems.map((item) => {
+                const isActive = currentView === item.id;
+                return (
+                  <Button
+                    key={item.label}
+                    variant="ghost"
+                    onClick={() => onNavigate?.(item.id)}
+                    className={`w-full h-10 p-0 justify-center hover:bg-accent`}
+                    style={isActive ? { backgroundColor: 'rgba(184, 218, 222, 0.34)' } : {}}
+                    title={item.label}
+                  >
+                    <item.icon className="w-4 h-4" />
+                  </Button>
+                );
+              })}
             </div>
           )}
         </div>
