@@ -66,7 +66,7 @@ export const ChatInterface = ({
       </CardHeader>
       
       <CardContent className="flex-1 flex flex-col">
-        <div className="flex-1 space-y-4 mb-4 overflow-y-auto">
+        <div className="flex-1 space-y-4 mb-4 overflow-y-auto scrollbar-hide">
           {messages.map((message) => (
             <div key={message.id} className="space-y-2">
               <div className={`flex ${message.isBot ? 'justify-start' : 'justify-end'}`}>
