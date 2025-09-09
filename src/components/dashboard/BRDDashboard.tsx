@@ -9,12 +9,12 @@ export const BRDDashboard = () => {
         <h1 className="text-2xl font-bold mb-2">Payment Gateway</h1>
       </div>
       
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-1">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="lg:col-span-3">
           <BRDProgress />
         </div>
         
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-6">
           <div className="h-[600px]">
             <ChatInterface
               title="BRD Assistant"
@@ -27,7 +27,7 @@ Please select a template to proceed."
           </div>
         </div>
         
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-3">
           <FileUploadSection />
         </div>
       </div>
