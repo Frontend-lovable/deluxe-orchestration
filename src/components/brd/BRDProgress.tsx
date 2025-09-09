@@ -47,7 +47,7 @@ export const BRDProgress = () => {
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2" style={{ fontSize: '16px' }}>
             BRD Progress
             <div className="w-8 h-1 bg-primary rounded"></div>
           </CardTitle>
