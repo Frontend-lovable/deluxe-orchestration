@@ -4,7 +4,7 @@ import { FileUploadSection } from "../files/FileUploadSection";
 
 export const BRDDashboard = () => {
   return (
-    <div className="p-8">
+    <div className="p-8 bg-white">
       <div className="mb-8">
         <h1 className="text-2xl font-bold mb-2">Payment Gateway</h1>
       </div>
