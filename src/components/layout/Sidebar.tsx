@@ -8,7 +8,8 @@ import {
   HelpCircle,
   ChevronRight,
   ArrowLeft,
-  ChevronDown
+  ChevronDown,
+  X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -53,25 +54,38 @@ interface SidebarProps {
   collapsed?: boolean;
   onToggleCollapse?: () => void;
   currentView?: string;
+  isMobile?: boolean;
+  onMobileClose?: () => void;
 }
 
-export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggleCollapse, currentView }: SidebarProps) => {
+export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggleCollapse, currentView, isMobile, onMobileClose }: SidebarProps) => {
   return (
-    <div className={`${collapsed ? 'w-16' : 'w-60'} h-full bg-sidebar-bg border-r border-sidebar-border flex flex-col transition-all duration-300 overflow-hidden`}>
+    <div className={`${isMobile ? 'w-60' : (collapsed ? 'w-16' : 'w-60')} h-full bg-sidebar-bg border-r border-sidebar-border flex flex-col transition-all duration-300 overflow-hidden`}>
       {/* Header */}
-      <div className="py-0 border-b border-sidebar-border h-16 flex items-center flex-shrink-0" style={{ backgroundColor: 'rgba(230, 12, 35, 0.06)' }}>
+      <div className="py-0 border-b border-sidebar-border h-16 flex items-center justify-between flex-shrink-0" style={{ backgroundColor: 'rgba(230, 12, 35, 0.06)' }}>
         <div className="flex items-center gap-2 px-4">
-          {!collapsed && (
+          {(!collapsed || isMobile) && (
             <>
               <img 
                 src="https://www.deluxe.com/etc.clientlibs/deluxe/clientlibs/clientlib-commons/resources/images/sprites/view/svg/sprite.view.svg#deluxe_logo_2020" 
                 alt="Deluxe"
                 className="w-[65px]"
               />
-              <div className="text-sm text-muted-foreground">SDLC Orchestration</div>
+              <div className="text-sm text-muted-foreground hidden sm:block">SDLC Orchestration</div>
             </>
           )}
         </div>
+        
+        {isMobile && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onMobileClose}
+            className="mr-4"
+          >
+            <X className="w-4 h-4" />
+          </Button>
+        )}
       </div>
 
       {/* Scrollable Content Area */}
@@ -102,7 +116,7 @@ export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggl
               <ChevronDown className={`w-4 h-4 transition-transform ${collapsed ? 'rotate-90' : 'rotate-0'}`} />
             </Button>
           )}
-          {!collapsed && (
+          {(!collapsed || isMobile) && (
             <div className="space-y-1">
               {navigationItems.map((item) => {
                 const isActive = currentView === item.id;
@@ -128,7 +142,7 @@ export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggl
               })}
             </div>
           )}
-          {collapsed && (
+          {collapsed && !isMobile && (
             <div className="space-y-2 mt-3">
               {navigationItems.map((item) => {
                 const isActive = currentView === item.id;
