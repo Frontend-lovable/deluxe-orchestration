@@ -1,35 +1,78 @@
+import { useState, useRef } from "react";
 import { Download, Upload, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const uploadedFiles = [
-  {
-    name: "BRD 1.01",
-    size: "2.42 MB",
-    timestamp: "2 hours ago",
-  },
-  {
-    name: "Meeting Transcript",
-    size: "2.42 MB",
-    timestamp: "2 hours ago",
-  },
-  {
-    name: "Data flow.png",
-    size: "2.42 MB",
-    timestamp: "2 hours ago",
-  },
-];
+interface UploadedFile {
+  name: string;
+  size: string;
+  timestamp: string;
+}
 
 export const FileUploadSection = () => {
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([
+    {
+      name: "BRD 1.01",
+      size: "2.42 MB",
+      timestamp: "2 hours ago",
+    },
+    {
+      name: "Meeting Transcript",
+      size: "2.42 MB",
+      timestamp: "2 hours ago",
+    },
+    {
+      name: "Data flow.png",
+      size: "2.42 MB",
+      timestamp: "2 hours ago",
+    },
+  ]);
+  
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files) {
+      const newFiles: UploadedFile[] = Array.from(files).map((file, index) => ({
+        name: file.name.includes('.') ? file.name.split('.')[0] : file.name,
+        size: formatFileSize(file.size),
+        timestamp: "Just now",
+      }));
+      
+      setUploadedFiles(prev => [...prev, ...newFiles]);
+    }
+  };
+
+  const triggerFileUpload = () => {
+    fileInputRef.current?.click();
+  };
   return (
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-base font-bold text-[hsl(var(--heading-primary))]">Uploaded Files</CardTitle>
-          <Button variant="outline" size="sm">
-            <Upload className="w-4 h-4 mr-2" />
-            Upload
-          </Button>
+          <div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              accept="*/*"
+              onChange={handleFileUpload}
+              className="hidden"
+            />
+            <Button variant="outline" size="sm" onClick={triggerFileUpload}>
+              <Upload className="w-4 h-4 mr-2" />
+              Upload
+            </Button>
+          </div>
         </div>
         <p className="text-sm text-muted-foreground">
           3 files available for BRD creation
