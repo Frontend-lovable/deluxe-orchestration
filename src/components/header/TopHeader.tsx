@@ -10,7 +10,7 @@ import {
 
 export const TopHeader = () => {
   return (
-    <div className="h-16 border-b border-border bg-card px-8 flex items-center justify-between">
+    <div className="h-16 border-b border-border px-8 flex items-center justify-between" style={{ backgroundColor: '#fff' }}>
       <div className="flex items-center gap-4">
         <Select defaultValue="model">
           <SelectTrigger className="w-32">
@@ -26,7 +26,7 @@ export const TopHeader = () => {
       
       <div className="flex items-center gap-4">
         <Select defaultValue="project">
-          <SelectTrigger className="w-48">
+          <SelectTrigger className="w-48" style={{ backgroundColor: '#EDEDED' }}>
             <SelectValue placeholder="Select Project" />
           </SelectTrigger>
           <SelectContent>
