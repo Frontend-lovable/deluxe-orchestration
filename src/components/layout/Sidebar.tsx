@@ -61,28 +61,6 @@ interface SidebarProps {
 export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggleCollapse }: SidebarProps) => {
   return (
     <div className={`${collapsed ? 'w-16' : 'w-60'} h-full bg-sidebar-bg border-r border-sidebar-border flex flex-col transition-all duration-300`}>
-      {/* Header */}
-      <div className="px-8 py-4 border-b border-sidebar-border">
-        <div className="flex items-center gap-2">
-          {!collapsed && (
-            <>
-              <img 
-                src="https://www.deluxe.com/etc.clientlibs/deluxe/clientlibs/clientlib-commons/resources/images/sprites/view/svg/sprite.view.svg#deluxe_logo_2020" 
-                alt="Deluxe"
-                className="h-6"
-              />
-              <div className="text-sm text-muted-foreground">SDLC Orchestration</div>
-            </>
-          )}
-          {collapsed && (
-            <div className="w-full flex justify-center">
-              <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
-                <span className="text-white text-sm font-bold">D</span>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
 
       {/* Tools Section */}
       <div className="p-4 border-b border-sidebar-border">
