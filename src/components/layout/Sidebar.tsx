@@ -69,7 +69,7 @@ export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggl
               <img 
                 src="https://www.deluxe.com/etc.clientlibs/deluxe/clientlibs/clientlib-commons/resources/images/sprites/view/svg/sprite.view.svg#deluxe_logo_2020" 
                 alt="Deluxe"
-                className="h-6"
+                className="w-[65px] px-4"
               />
               <div className="text-sm text-muted-foreground">SDLC Orchestration</div>
             </>
