@@ -79,7 +79,7 @@ export const FileUploadSection = () => {
     fileInputRef.current?.click();
   };
   return (
-    <Card>
+    <Card className="h-[600px] flex flex-col">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-base font-bold text-[hsl(var(--heading-primary))]">Uploaded Files</CardTitle>
@@ -102,14 +102,14 @@ export const FileUploadSection = () => {
           {uploadedFiles.length} files available for BRD creation
         </p>
       </CardHeader>
-      <CardContent>
-        <div className="h-52 overflow-y-auto">
+      <CardContent className="flex-1 overflow-y-auto pr-2">
+        <div className="space-y-4">
           {uploadedFiles.length === 0 ? (
-            <div className="flex items-center justify-center h-full text-muted-foreground">
+            <div className="flex items-center justify-center h-32 text-muted-foreground">
               No file selected.
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-3 mb-4">
               {uploadedFiles.map((file) => (
                 <div key={file.id} className="flex items-center justify-between p-3 border border-border rounded-lg">
                   <div className="flex items-center gap-3">
@@ -142,7 +142,6 @@ export const FileUploadSection = () => {
               ))}
             </div>
           )}
-        </div>
         
         {uploadedFiles.length > 0 && (
           <div className="mt-6 p-3 bg-accent rounded-lg">
@@ -168,6 +167,7 @@ export const FileUploadSection = () => {
             <Download className="w-4 h-4 mr-2" />
             Download BRD
           </Button>
+        </div>
         </div>
       </CardContent>
     </Card>
