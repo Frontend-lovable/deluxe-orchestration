@@ -62,7 +62,7 @@ export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggl
   return (
     <div className={`${collapsed ? 'w-16' : 'w-60'} h-full bg-sidebar-bg border-r border-sidebar-border flex flex-col transition-all duration-300 overflow-hidden`}>
       {/* Header */}
-      <div className="px-8 py-0 border-b border-sidebar-border h-16 flex items-center flex-shrink-0" style={{ backgroundColor: 'rgba(230, 12, 35, 0.06)' }}>
+      <div className="px-4 py-0 border-b border-sidebar-border h-16 flex items-center flex-shrink-0" style={{ backgroundColor: 'rgba(230, 12, 35, 0.06)' }}>
         <div className="flex items-center gap-2 px-4">
           {!collapsed && (
             <>
