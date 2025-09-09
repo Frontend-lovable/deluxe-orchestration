@@ -36,7 +36,7 @@ export const BRDProgress = () => {
   return <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 font-bold">
+          <CardTitle className="flex items-center gap-2 text-base font-bold text-[hsl(var(--heading-primary))]">
             BRD Progress
             <div className="w-8 h-1 bg-primary rounded"></div>
           </CardTitle>

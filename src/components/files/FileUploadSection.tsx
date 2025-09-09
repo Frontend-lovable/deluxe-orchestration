@@ -25,7 +25,7 @@ export const FileUploadSection = () => {
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle>Uploaded Files</CardTitle>
+          <CardTitle className="text-base font-bold text-[hsl(var(--heading-primary))]">Uploaded Files</CardTitle>
           <Button variant="outline" size="sm">
             <Upload className="w-4 h-4 mr-2" />
             Upload
