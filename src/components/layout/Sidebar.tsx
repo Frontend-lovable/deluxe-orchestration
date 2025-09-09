@@ -63,13 +63,13 @@ export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggl
     <div className={`${collapsed ? 'w-16' : 'w-60'} h-full bg-sidebar-bg border-r border-sidebar-border flex flex-col transition-all duration-300 overflow-hidden`}>
       {/* Header */}
       <div className="px-8 py-0 border-b border-sidebar-border h-16 flex items-center flex-shrink-0" style={{ backgroundColor: 'rgba(230, 12, 35, 0.06)' }}>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 px-4">
           {!collapsed && (
             <>
               <img 
                 src="https://www.deluxe.com/etc.clientlibs/deluxe/clientlibs/clientlib-commons/resources/images/sprites/view/svg/sprite.view.svg#deluxe_logo_2020" 
                 alt="Deluxe"
-                className="w-[65px] px-4"
+                className="w-[65px]"
               />
               <div className="text-sm text-muted-foreground">SDLC Orchestration</div>
             </>
