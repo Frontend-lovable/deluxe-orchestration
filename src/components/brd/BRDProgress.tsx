@@ -31,7 +31,12 @@ const brdSections = [{
   description: "Security and compliance needs",
   status: "pending"
 }];
-export const BRDProgress = () => {
+interface BRDProgressProps {
+  selectedSection: string;
+  onSectionChange: (section: string) => void;
+}
+
+export const BRDProgress = ({ selectedSection, onSectionChange }: BRDProgressProps) => {
   const completedSections = brdSections.filter(s => s.status === "done").length;
   return <Card>
       <CardHeader>
@@ -47,7 +52,13 @@ export const BRDProgress = () => {
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
-          {brdSections.map(section => <div key={section.title} className="flex items-start gap-3 p-3 rounded-lg hover:bg-accent transition-colors">
+          {brdSections.map(section => <div 
+              key={section.title} 
+              onClick={() => onSectionChange(section.title)}
+              className={`flex items-start gap-3 p-3 rounded-lg hover:bg-accent transition-colors cursor-pointer ${
+                selectedSection === section.title ? 'bg-accent border-2 border-primary' : ''
+              }`}
+            >
               <div className="flex-shrink-0">
                 {section.status === "done" ? <CheckCircle className="w-5 h-5 text-green-600" /> : <Circle className="w-5 h-5 text-muted-foreground" />}
               </div>
