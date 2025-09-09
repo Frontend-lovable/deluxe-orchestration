@@ -3,7 +3,7 @@ import { ChatInterface } from "../chat/ChatInterface";
 
 export const ProjectOverview = () => {
   return (
-    <div className="p-8">
+    <div className="p-8" style={{ backgroundColor: '#fff' }}>
       <div className="mb-8">
         <h1 className="text-2xl font-bold mb-2">Project Overview</h1>
       </div>
