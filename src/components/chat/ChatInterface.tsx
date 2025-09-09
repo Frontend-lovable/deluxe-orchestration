@@ -59,7 +59,7 @@ export const ChatInterface = ({
             </AvatarFallback>
           </Avatar>
           <div>
-            <h3 className="font-semibold">{title}</h3>
+            <h3 className="text-base font-bold">{title}</h3>
             <p className="text-sm text-muted-foreground">{subtitle}</p>
           </div>
         </div>
