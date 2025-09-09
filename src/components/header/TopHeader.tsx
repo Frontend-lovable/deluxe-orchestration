@@ -12,14 +12,6 @@ export const TopHeader = () => {
   return (
     <div className="h-16 border-b border-border bg-card px-8 flex items-center justify-between">
       <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2">
-          <img 
-            src="https://www.deluxe.com/etc.clientlibs/deluxe/clientlibs/clientlib-commons/resources/images/sprites/view/svg/sprite.view.svg#deluxe_logo_2020" 
-            alt="Deluxe"
-            className="h-6"
-          />
-          <div className="text-sm text-muted-foreground">SDLC Orchestration</div>
-        </div>
         <Select defaultValue="model">
           <SelectTrigger className="w-32">
             <SelectValue placeholder="Model" />
