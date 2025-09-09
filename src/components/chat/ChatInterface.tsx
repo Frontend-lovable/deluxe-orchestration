@@ -58,7 +58,7 @@ export const ChatInterface = ({
   };
 
   return (
-    <Card className="h-full flex flex-col">
+    <Card className="h-full flex flex-col overflow-hidden">
       <CardHeader className="pb-4">
         <div className="flex items-center gap-3">
           <Avatar className="w-8 h-8 bg-primary">
@@ -73,8 +73,8 @@ export const ChatInterface = ({
         </div>
       </CardHeader>
       
-      <CardContent className="flex-1 flex flex-col">
-        <div className="flex-1 space-y-4 mb-4 overflow-y-auto scrollbar-hide">
+      <CardContent className="flex-1 flex flex-col min-h-0">
+        <div className="flex-1 space-y-4 mb-4 overflow-y-auto scrollbar-hide max-h-full">
           {messages.map((message) => (
             <div key={message.id} className="space-y-2">
               <div className={`flex ${message.isBot ? 'justify-start' : 'justify-end'}`}>
