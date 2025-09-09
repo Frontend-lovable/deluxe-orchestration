@@ -69,13 +69,13 @@ export const BRDDashboard = () => {
     }
   };
   return (
-    <div className="p-4 sm:p-6 lg:p-8 bg-white">
-      <div className="mb-6 lg:mb-8">
-        <h1 className="text-xl sm:text-2xl font-bold mb-2">Payment Gateway</h1>
+    <div className="p-8 bg-white">
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold mb-2">Payment Gateway</h1>
       </div>
       
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
-        <div className="lg:col-span-3 order-1 lg:order-1">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+        <div className="lg:col-span-3">
           <BRDProgress 
             selectedSection={selectedSection}
             onSectionChange={setSelectedSection}
@@ -83,8 +83,8 @@ export const BRDDashboard = () => {
           />
         </div>
         
-        <div className="lg:col-span-6 order-2 lg:order-2">
-          <div className="h-[500px] sm:h-[600px]">
+        <div className="lg:col-span-6">
+          <div className="h-[600px]">
             <ChatInterface
               title={sectionContent[selectedSection as keyof typeof sectionContent]?.title || "BRD Assistant"}
               subtitle={sectionContent[selectedSection as keyof typeof sectionContent]?.subtitle || "Discuss your business requirements"}
@@ -95,7 +95,7 @@ export const BRDDashboard = () => {
           </div>
         </div>
         
-        <div className="lg:col-span-3 order-3 lg:order-3">
+        <div className="lg:col-span-3">
           <FileUploadSection />
         </div>
       </div>

@@ -53,22 +53,11 @@ interface SidebarProps {
   collapsed?: boolean;
   onToggleCollapse?: () => void;
   currentView?: string;
-  onMobileClose?: () => void;
 }
 
-export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggleCollapse, currentView, onMobileClose }: SidebarProps) => {
-  const handleNavigate = (view: string) => {
-    onNavigate?.(view);
-    onMobileClose?.(); // Close mobile menu on navigation
-  };
-
+export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggleCollapse, currentView }: SidebarProps) => {
   return (
-    <div className={`
-      ${collapsed ? 'w-16' : 'w-60'} 
-      h-full bg-sidebar-bg border-r border-sidebar-border flex flex-col transition-all duration-300 overflow-hidden
-      lg:${collapsed ? 'w-16' : 'w-60'}
-      w-60
-    `}>
+    <div className={`${collapsed ? 'w-16' : 'w-60'} h-full bg-sidebar-bg border-r border-sidebar-border flex flex-col transition-all duration-300 overflow-hidden`}>
       {/* Header */}
       <div className="py-0 border-b border-sidebar-border h-16 flex items-center flex-shrink-0" style={{ backgroundColor: 'rgba(230, 12, 35, 0.06)' }}>
         <div className="flex items-center gap-2 px-4">
@@ -121,7 +110,7 @@ export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggl
                   <Button
                     key={item.label}
                     variant="ghost"
-                    onClick={() => handleNavigate(item.id)}
+                    onClick={() => onNavigate?.(item.id)}
                     className={`w-full justify-start h-auto p-3 text-left hover:bg-accent`}
                     style={isActive ? { backgroundColor: 'rgba(184, 218, 222, 0.34)' } : {}}
                   >
@@ -147,7 +136,7 @@ export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggl
                   <Button
                     key={item.label}
                     variant="ghost"
-                    onClick={() => handleNavigate(item.id)}
+                    onClick={() => onNavigate?.(item.id)}
                     className={`w-full h-10 p-0 justify-center hover:bg-accent`}
                     style={isActive ? { backgroundColor: 'rgba(184, 218, 222, 0.34)' } : {}}
                     title={item.label}
