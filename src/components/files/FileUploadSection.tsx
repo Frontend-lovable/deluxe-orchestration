@@ -1,34 +1,21 @@
 import { useState, useRef } from "react";
-import { Download, Upload, FileText } from "lucide-react";
+import { Download, Upload, FileText, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
 
 interface UploadedFile {
+  id: string;
   name: string;
   size: string;
   timestamp: string;
+  originalFile?: File;
 }
 
 export const FileUploadSection = () => {
-  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([
-    {
-      name: "BRD 1.01",
-      size: "2.42 MB",
-      timestamp: "2 hours ago",
-    },
-    {
-      name: "Meeting Transcript",
-      size: "2.42 MB",
-      timestamp: "2 hours ago",
-    },
-    {
-      name: "Data flow.png",
-      size: "2.42 MB",
-      timestamp: "2 hours ago",
-    },
-  ]);
-  
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
 
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';
@@ -41,13 +28,50 @@ export const FileUploadSection = () => {
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files) {
-      const newFiles: UploadedFile[] = Array.from(files).map((file, index) => ({
+      const newFiles: UploadedFile[] = Array.from(files).map((file) => ({
+        id: `${Date.now()}-${Math.random()}`,
         name: file.name.includes('.') ? file.name.split('.')[0] : file.name,
         size: formatFileSize(file.size),
         timestamp: "Just now",
+        originalFile: file,
       }));
       
       setUploadedFiles(prev => [...prev, ...newFiles]);
+      toast({
+        title: "Files uploaded successfully",
+        description: `${newFiles.length} file(s) added to your workspace.`,
+      });
+    }
+    // Reset input value to allow uploading the same file again
+    if (event.target) {
+      event.target.value = '';
+    }
+  };
+
+  const handleDeleteFile = (fileId: string) => {
+    setUploadedFiles(prev => prev.filter(file => file.id !== fileId));
+    toast({
+      title: "File deleted",
+      description: "File has been removed from your workspace.",
+    });
+  };
+
+  const handleDownloadFile = (file: UploadedFile) => {
+    if (file.originalFile) {
+      const url = URL.createObjectURL(file.originalFile);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = file.originalFile.name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } else {
+      toast({
+        title: "Download unavailable",
+        description: "This file cannot be downloaded as it's not available locally.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -75,40 +99,64 @@ export const FileUploadSection = () => {
           </div>
         </div>
         <p className="text-sm text-muted-foreground">
-          3 files available for BRD creation
+          {uploadedFiles.length} files available for BRD creation
         </p>
       </CardHeader>
       <CardContent>
-        <div className="space-y-3">
-          {uploadedFiles.map((file, index) => (
-            <div key={index} className="flex items-center justify-between p-3 border border-border rounded-lg">
-              <div className="flex items-center gap-3">
-                <FileText className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <div className="font-medium text-sm">{file.name}</div>
-                  <div className="text-xs text-muted-foreground">
-                    {file.size} • {file.timestamp}
+        <div className="h-52 overflow-y-auto">
+          {uploadedFiles.length === 0 ? (
+            <div className="flex items-center justify-center h-full text-muted-foreground">
+              No file selected.
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {uploadedFiles.map((file) => (
+                <div key={file.id} className="flex items-center justify-between p-3 border border-border rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <FileText className="w-5 h-5 text-muted-foreground" />
+                    <div>
+                      <div className="font-medium text-sm">{file.name}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {file.size} • {file.timestamp}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => handleDownloadFile(file)}
+                    >
+                      <Download className="w-4 h-4" />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => handleDeleteFile(file.id)}
+                      className="text-destructive hover:text-destructive"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
                   </div>
                 </div>
-              </div>
-              <Button variant="ghost" size="sm">
-                <Download className="w-4 h-4" />
-              </Button>
+              ))}
             </div>
-          ))}
+          )}
         </div>
         
-        <div className="mt-6 p-3 bg-accent rounded-lg">
-          <div className="flex items-center gap-2 text-sm">
-            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-            All files processed and draft ready for review
+        {uploadedFiles.length > 0 && (
+          <div className="mt-6 p-3 bg-accent rounded-lg">
+            <div className="flex items-center gap-2 text-sm">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              All files processed and draft ready for review
+            </div>
           </div>
-        </div>
+        )}
         
         <div className="mt-4">
           <h4 className="font-medium mb-3">Actions</h4>
           <div className="space-y-2">
-            <Button variant="outline" className="w-full justify-start">
+            <Button variant="outline" className="w-full justify-start" disabled={uploadedFiles.length === 0}>
               <Upload className="w-4 h-4 mr-2" />
               Upload to Confluence
             </Button>
@@ -116,7 +164,7 @@ export const FileUploadSection = () => {
               Complete all BRD sections before submitting for approval
             </p>
           </div>
-          <Button className="w-full mt-4" variant="default">
+          <Button className="w-full mt-4" variant="default" disabled={uploadedFiles.length === 0}>
             <Download className="w-4 h-4 mr-2" />
             Download BRD
           </Button>
