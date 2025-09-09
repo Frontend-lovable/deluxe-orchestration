@@ -94,6 +94,7 @@ export const ChatInterface = ({
             placeholder={placeholder}
             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
             className="flex-1"
+            style={{ backgroundColor: '#fff' }}
           />
           <Button 
             onClick={handleSend}
