@@ -21,14 +21,18 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <TopHeader />
-      <MainLayout
-        onNavigate={handleNavigate}
-        showBackButton={currentView === "brd"}
-        onBack={handleBack}
-      >
-        {currentView === "overview" ? <ProjectOverview /> : <BRDDashboard />}
-      </MainLayout>
+      <div className="fixed top-0 left-0 right-0 z-50">
+        <TopHeader />
+      </div>
+      <div className="pt-16">
+        <MainLayout
+          onNavigate={handleNavigate}
+          showBackButton={currentView === "brd"}
+          onBack={handleBack}
+        >
+          {currentView === "overview" ? <ProjectOverview /> : <BRDDashboard />}
+        </MainLayout>
+      </div>
     </div>
   );
 };

@@ -60,7 +60,7 @@ interface SidebarProps {
 
 export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggleCollapse }: SidebarProps) => {
   return (
-    <div className={`${collapsed ? 'w-16' : 'w-60'} h-screen bg-sidebar-bg border-r border-sidebar-border flex flex-col transition-all duration-300`}>
+    <div className={`${collapsed ? 'w-16' : 'w-60'} h-full bg-sidebar-bg border-r border-sidebar-border flex flex-col transition-all duration-300`}>
       {/* Header */}
       <div className="px-8 py-4 border-b border-sidebar-border">
         <div className="flex items-center gap-2">
