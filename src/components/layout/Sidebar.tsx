@@ -74,13 +74,6 @@ export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggl
               <div className="text-sm text-muted-foreground">SDLC Orchestration</div>
             </>
           )}
-          {collapsed && (
-            <div className="w-full flex justify-center">
-              <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
-                <span className="text-white text-sm font-bold">D</span>
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
