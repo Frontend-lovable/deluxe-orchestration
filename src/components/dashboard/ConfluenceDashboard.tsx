@@ -268,7 +268,7 @@ export const ConfluenceDashboard = () => {
   return (
     <div className="h-full bg-background">
       {/* Main Content */}
-      <div className="p-6">
+      <div className="p-6" style={{ backgroundColor: '#fff' }}>
         <div className="grid grid-cols-12 gap-6 h-full">
           {/* Left Column - Search and Payment Gateway */}
           <div className="col-span-3">
