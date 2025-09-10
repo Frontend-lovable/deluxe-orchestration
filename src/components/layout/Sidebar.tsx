@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import userAvatar from "@/assets/user-avatar.jpg";
 
 const navigationItems = [
   {
@@ -185,14 +186,14 @@ export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggl
         >
           {collapsed ? (
             <Avatar className="w-8 h-8">
-              <AvatarImage src="/placeholder.svg" />
+              <AvatarImage src={userAvatar} />
               <AvatarFallback>JD</AvatarFallback>
             </Avatar>
           ) : (
             <>
               <div className="flex items-center gap-3">
                 <Avatar className="w-8 h-8">
-                  <AvatarImage src="/placeholder.svg" />
+                  <AvatarImage src={userAvatar} />
                   <AvatarFallback>JD</AvatarFallback>
                 </Avatar>
                 <div className="text-left">
