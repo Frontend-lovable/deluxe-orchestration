@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import { invokeClaude, type BedrockCreds } from "@/lib/bedrock";
 
@@ -45,6 +46,19 @@ export const ChatInterface = ({
   const [isCredsOpen, setIsCredsOpen] = useState(false);
   const [region, setRegion] = useState("us-east-1");
   const [modelId, setModelId] = useState("anthropic.claude-3-haiku-20240307-v1:0");
+
+  const commonModels = [
+    { id: "anthropic.claude-3-haiku-20240307-v1:0", name: "Claude 3 Haiku" },
+    { id: "anthropic.claude-3-sonnet-20240229-v1:0", name: "Claude 3 Sonnet" },
+    { id: "anthropic.claude-3-opus-20240229-v1:0", name: "Claude 3 Opus" },
+    { id: "anthropic.claude-v2", name: "Claude 2" },
+    { id: "anthropic.claude-v2:1", name: "Claude 2.1" },
+    { id: "amazon.titan-text-lite-v1", name: "Titan Text Lite" },
+    { id: "amazon.titan-text-express-v1", name: "Titan Text Express" },
+    { id: "cohere.command-text-v14", name: "Cohere Command" },
+    { id: "ai21.j2-mid-v1", name: "AI21 Jurassic-2 Mid" },
+    { id: "ai21.j2-ultra-v1", name: "AI21 Jurassic-2 Ultra" }
+  ];
   const [accessKeyId, setAccessKeyId] = useState("");
   const [secretAccessKey, setSecretAccessKey] = useState("");
   const [sessionToken, setSessionToken] = useState("");
@@ -202,8 +216,19 @@ export const ChatInterface = ({
                   <Input id="region" value={region} onChange={(e) => setRegion(e.target.value)} placeholder="us-east-1" />
                 </div>
                 <div className="grid gap-1">
-                  <Label htmlFor="model">Model ID</Label>
-                  <Input id="model" value={modelId} onChange={(e) => setModelId(e.target.value)} placeholder="anthropic.claude-3-haiku-20240307-v1:0" />
+                  <Label htmlFor="model">Model</Label>
+                  <Select value={modelId} onValueChange={setModelId}>
+                    <SelectTrigger className="bg-white z-50">
+                      <SelectValue placeholder="Select a model" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border shadow-lg z-[60]">
+                      {commonModels.map((model) => (
+                        <SelectItem key={model.id} value={model.id} className="hover:bg-gray-100">
+                          {model.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="grid gap-1">
                   <Label htmlFor="accessKey">Access Key ID</Label>
