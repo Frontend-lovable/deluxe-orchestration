@@ -332,7 +332,7 @@ export const ConfluenceDashboard = () => {
           </div>
 
           {/* Right Column - Selected Page Content */}
-          <div className="col-span-9 flex items-start justify-start p-4 overflow-y-auto">
+          <div className="col-span-9 flex items-start justify-start p-4 overflow-y-auto" style={{ border: '1px solid #dbdbdb', borderRadius: '10px' }}>
             {renderSelectedPageContent()}
           </div>
         </div>
