@@ -45,29 +45,6 @@ const confluencePages = [
 export const ConfluenceDashboard = () => {
   return (
     <div className="h-full bg-background">
-      {/* Header */}
-      <div className="border-b border-border bg-background px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <Button variant="outline" className="w-32 justify-between">
-                Model
-                <ChevronDown className="h-4 w-4" />
-              </Button>
-            </div>
-            <div className="relative">
-              <Button variant="outline" className="w-48 justify-between">
-                Payment Gateway
-                <ChevronDown className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
-            Create New Project
-          </Button>
-        </div>
-      </div>
-
       {/* Main Content */}
       <div className="p-6">
         {/* Search Bar */}
