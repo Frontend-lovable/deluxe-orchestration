@@ -106,7 +106,7 @@ export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggl
             <Button
               variant="ghost"
               onClick={onToggleCollapse}
-              className={`w-full ${collapsed ? 'justify-center' : 'justify-between'} p-0 h-auto mb-3 text-muted-foreground hover:text-foreground`}
+              className={`w-full ${collapsed ? 'justify-center' : 'justify-between'} p-0 h-auto mb-3 text-muted-foreground hover:text-foreground hover:bg-transparent`}
             >
               {!collapsed && (
                 <div className="text-xs font-medium uppercase tracking-wide">
