@@ -64,15 +64,13 @@ export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggl
       {/* Header */}
       <div className="py-0 border-b border-sidebar-border h-16 flex items-center justify-between flex-shrink-0" style={{ backgroundColor: 'rgba(230, 12, 35, 0.06)' }}>
         <div className="flex items-center gap-2 px-4">
+          <img 
+            src="https://www.deluxe.com/etc.clientlibs/deluxe/clientlibs/clientlib-commons/resources/images/sprites/view/svg/sprite.view.svg#deluxe_logo_2020" 
+            alt="Deluxe"
+            className="w-[65px]"
+          />
           {(!collapsed || isMobile) && (
-            <>
-              <img 
-                src="https://www.deluxe.com/etc.clientlibs/deluxe/clientlibs/clientlib-commons/resources/images/sprites/view/svg/sprite.view.svg#deluxe_logo_2020" 
-                alt="Deluxe"
-                className="w-[65px]"
-              />
-              <div className="text-sm text-muted-foreground hidden sm:block">SDLC Orchestration</div>
-            </>
+            <div className="text-sm text-muted-foreground hidden sm:block">SDLC Orchestration</div>
           )}
         </div>
         
