@@ -29,7 +29,7 @@ export const TopHeader = ({ onMenuClick, isMobile }: TopHeaderProps) => {
         )}
         
         <Select defaultValue="model">
-          <SelectTrigger className="w-24 sm:w-32">
+          <SelectTrigger className="w-24 sm:w-32" style={{ backgroundColor: '#fff' }}>
             <SelectValue placeholder="Model" />
           </SelectTrigger>
           <SelectContent>
