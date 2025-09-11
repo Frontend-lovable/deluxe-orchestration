@@ -212,9 +212,9 @@ export const ConfluenceDashboard = () => {
               </div>
             </div>
 
-            {/* Scrollable Payment Gateway Section */}
-            <ScrollArea className="flex-1">
-              <div className="pr-6">
+            {/* Payment Gateway Section */}
+            <div className="flex-1 overflow-y-auto">
+              <div>
                 <h2 className="text-lg font-semibold mb-4">Payment Gateway</h2>
                 <div className="space-y-2">
                   {filteredPages.map((page) => (
@@ -256,7 +256,7 @@ export const ConfluenceDashboard = () => {
                   )}
                 </div>
               </div>
-            </ScrollArea>
+            </div>
           </div>
 
           {/* Right Content Area */}
