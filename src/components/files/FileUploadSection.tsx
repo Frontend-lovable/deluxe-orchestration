@@ -155,7 +155,7 @@ export const FileUploadSection = () => {
               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
               All files processed and draft ready for review
             </div>
-            <Button variant="outline" className="w-full justify-center gap-2">
+            <Button variant="outline" className="w-full justify-center gap-2 h-12 bg-white border border-[#8C8C8C] hover:bg-gray-50">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
               </svg>
