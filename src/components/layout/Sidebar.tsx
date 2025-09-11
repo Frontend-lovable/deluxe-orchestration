@@ -8,7 +8,7 @@ import {
   HelpCircle,
   ChevronRight,
   ArrowLeft,
-  ChevronDown,
+  ChevronLeft,
   X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -112,7 +112,7 @@ export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggl
                   TOOLS
                 </div>
               )}
-              <ChevronDown className={`w-4 h-4 transition-transform ${collapsed ? 'rotate-90' : 'rotate-0'}`} />
+              <ChevronLeft className={`w-4 h-4 transition-transform ${collapsed ? 'rotate-0' : 'rotate-0'}`} />
             </Button>
           )}
           {(!collapsed || isMobile) && (
