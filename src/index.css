@@ -15,14 +15,14 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 0 84% 55%;
+    --primary: 355 84% 45%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary-foreground: 0 0% 23%;
 
     --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted-foreground: 0 0% 23%;
 
     --accent: 350 100% 97.5%;
     --accent-foreground: 222.2 47.4% 11.2%;
@@ -32,17 +32,17 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 0 84% 55%;
+    --ring: 355 84% 45%;
 
     --radius: 0.5rem;
 
     /* SDLC Specific Colors */
     --sidebar-bg: 0 0% 98%;
     --sidebar-border: 220 13% 91%;
-    --stats-red: 0 84% 55%;
+    --stats-red: 355 84% 45%;
     --chat-bg: 0 0% 100%;
-    --progress-red: 0 84% 55%;
-    --heading-primary: 0 0% 23.1%;
+    --progress-red: 355 84% 45%;
+    --heading-primary: 0 0% 23%;
 
     --sidebar-background: 0 0% 98%;
 
@@ -63,9 +63,9 @@
     /* SDLC Specific Colors */
     --sidebar-bg: 0 0% 98%;
     --sidebar-border: 220 13% 91%;
-    --stats-red: 0 84% 55%;
+    --stats-red: 355 84% 45%;
     --chat-bg: 0 0% 100%;
-    --progress-red: 0 84% 55%;
+    --progress-red: 355 84% 45%;
   }
 
   .dark {
@@ -108,9 +108,9 @@
     /* SDLC Dark Mode Colors */
     --sidebar-bg: 240 5.9% 10%;
     --sidebar-border: 240 3.7% 15.9%;
-    --stats-red: 0 84% 55%;
+    --stats-red: 355 84% 45%;
     --chat-bg: 240 5.9% 10%;
-    --progress-red: 0 84% 55%;
+    --progress-red: 355 84% 45%;
     --heading-primary: 0 0% 76.9%;
   }
 }
@@ -122,6 +122,17 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-weight: bold;
+    color: hsl(var(--heading-primary));
+  }
+
+  p {
+    color: hsl(var(--muted-foreground));
   }
 }
 
