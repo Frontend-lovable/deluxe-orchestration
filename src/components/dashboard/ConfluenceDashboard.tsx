@@ -214,7 +214,7 @@ export const ConfluenceDashboard = () => {
 
             {/* Payment Gateway Section */}
             <div className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-[#E6E6E6] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full">
-              <div>
+              <div className="pr-[20px]">
                 <h2 className="text-lg font-semibold mb-4">Payment Gateway</h2>
                 <div className="space-y-2">
                   {filteredPages.map((page) => (
