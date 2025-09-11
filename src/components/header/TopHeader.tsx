@@ -4,6 +4,8 @@ import {
   Select,
   SelectContent,
   SelectItem,
+  SelectLabel,
+  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -59,12 +61,11 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps
               <SelectValue placeholder="Create / Update" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="create-update-brd">Create / Update BRD</SelectItem>
-              <SelectItem value="existing-brd">Existing BRD</SelectItem>
-              <SelectItem value="payment-gateway">Payment Gateway</SelectItem>
+              <SelectLabel>Existing BRD</SelectLabel>
               <SelectItem value="upi">UPI</SelectItem>
               <SelectItem value="lorem-ipsum">Lorem Ipsum</SelectItem>
-              <SelectItem value="create-new-brd">Create new BRD</SelectItem>
+              <SelectSeparator />
+              <SelectLabel>Create new BRD</SelectLabel>
               <SelectItem value="template-1">Template 1</SelectItem>
               <SelectItem value="template-2">Template 2</SelectItem>
             </SelectContent>
