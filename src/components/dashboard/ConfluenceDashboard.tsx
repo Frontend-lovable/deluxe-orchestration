@@ -197,7 +197,7 @@ export const ConfluenceDashboard = () => {
       <div className="p-6">
         <div className="grid grid-cols-12 gap-6 h-full">
           {/* Left Sidebar - Search and Pages List */}
-          <div className="col-span-4 h-[650px] flex flex-col border border-[#CCCCCC] p-[25px]">
+          <div className="col-span-4 h-[650px] flex flex-col border border-[#CCCCCC] p-[25px] rounded-lg">
             {/* Search Bar */}
             <div className="mb-6">
               <div className="relative">
@@ -214,7 +214,7 @@ export const ConfluenceDashboard = () => {
 
             {/* Scrollable Payment Gateway Section */}
             <ScrollArea className="flex-1">
-              <div className="pr-5">
+              <div className="pr-6">
                 <h2 className="text-lg font-semibold mb-4">Payment Gateway</h2>
                 <div className="space-y-2">
                   {filteredPages.map((page) => (
