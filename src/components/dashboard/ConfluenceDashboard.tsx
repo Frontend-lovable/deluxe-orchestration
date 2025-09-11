@@ -207,21 +207,21 @@ export const ConfluenceDashboard = () => {
                   placeholder="Search pages"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-border rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-ring text-sm"
+                  className="w-full pl-10 pr-4 py-2 border border-[#DEDCDC] rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-ring text-sm"
                 />
               </div>
             </div>
 
             {/* Scrollable Payment Gateway Section */}
             <ScrollArea className="flex-1">
-              <div className="pr-4">
+              <div className="pr-8">
                 <h2 className="text-lg font-semibold mb-4">Payment Gateway</h2>
                 <div className="space-y-2">
                   {filteredPages.map((page) => (
                     <div 
                       key={page.id} 
-                      className={`p-4 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors ${
-                        selectedPage === page.title ? 'border-primary bg-primary/5' : 'border-border'
+                      className={`p-4 border-[#DEDCDC] border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors ${
+                        selectedPage === page.title ? 'border-primary bg-primary/5' : ''
                       }`}
                       onClick={() => setSelectedPage(page.title)}
                     >
