@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useState } from "react";
 
 const confluencePages = [
@@ -171,6 +172,13 @@ CI/CD pipeline with automated test execution on every commit.`,
 
 export const ConfluenceDashboard = () => {
   const [selectedPage, setSelectedPage] = useState("Architecture Overview");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredPages = confluencePages.filter(page =>
+    page.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    page.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    page.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
@@ -189,7 +197,7 @@ export const ConfluenceDashboard = () => {
       <div className="p-6">
         <div className="grid grid-cols-12 gap-6 h-full">
           {/* Left Sidebar - Search and Pages List */}
-          <div className="col-span-4">
+          <div className="col-span-4 h-[600px] flex flex-col">
             {/* Search Bar */}
             <div className="mb-6">
               <div className="relative">
@@ -197,49 +205,58 @@ export const ConfluenceDashboard = () => {
                 <input
                   type="text"
                   placeholder="Search pages"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 border border-border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring text-sm"
                 />
               </div>
             </div>
 
-            {/* Payment Gateway Section */}
-            <div className="mb-6">
-              <h2 className="text-lg font-semibold mb-4">Payment Gateway</h2>
-              <div className="space-y-2">
-                {confluencePages.map((page) => (
-                  <div 
-                    key={page.id} 
-                    className={`p-4 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors ${
-                      selectedPage === page.title ? 'border-primary bg-primary/5' : 'border-border'
-                    }`}
-                    onClick={() => setSelectedPage(page.title)}
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-medium text-sm text-foreground truncate pr-2">
-                        {page.title}
-                      </h3>
-                      <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+            {/* Scrollable Payment Gateway Section */}
+            <ScrollArea className="flex-1">
+              <div className="pr-4">
+                <h2 className="text-lg font-semibold mb-4">Payment Gateway</h2>
+                <div className="space-y-2">
+                  {filteredPages.map((page) => (
+                    <div 
+                      key={page.id} 
+                      className={`p-4 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors ${
+                        selectedPage === page.title ? 'border-primary bg-primary/5' : 'border-border'
+                      }`}
+                      onClick={() => setSelectedPage(page.title)}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="font-medium text-sm text-foreground truncate pr-2">
+                          {page.title}
+                        </h3>
+                        <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                      </div>
+                      
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
+                        <Avatar className="h-4 w-4">
+                          <AvatarFallback className="text-xs">
+                            {page.author.split(' ').map(n => n[0]).join('')}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span>{page.author}</span>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-muted-foreground">{page.timestamp}</span>
+                        <Badge className={`${getStatusBadge(page.status)} text-xs px-2 py-1`}>
+                          {page.status}
+                        </Badge>
+                      </div>
                     </div>
-                    
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
-                      <Avatar className="h-4 w-4">
-                        <AvatarFallback className="text-xs">
-                          {page.author.split(' ').map(n => n[0]).join('')}
-                        </AvatarFallback>
-                      </Avatar>
-                      <span>{page.author}</span>
+                  ))}
+                  {filteredPages.length === 0 && (
+                    <div className="text-center text-muted-foreground text-sm py-8">
+                      No pages found matching your search.
                     </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-muted-foreground">{page.timestamp}</span>
-                      <Badge className={`${getStatusBadge(page.status)} text-xs px-2 py-1`}>
-                        {page.status}
-                      </Badge>
-                    </div>
-                  </div>
-                ))}
+                  )}
+                </div>
               </div>
-            </div>
+            </ScrollArea>
           </div>
 
           {/* Right Content Area */}
