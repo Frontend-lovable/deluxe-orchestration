@@ -39,7 +39,7 @@ interface BRDProgressProps {
 
 export const BRDProgress = ({ selectedSection, onSectionChange, completedSections }: BRDProgressProps) => {
   const completedCount = completedSections.length;
-  return <Card className="h-[600px] flex flex-col">
+  return <Card className="h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] flex flex-col">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-base font-bold text-[hsl(var(--heading-primary))]">
