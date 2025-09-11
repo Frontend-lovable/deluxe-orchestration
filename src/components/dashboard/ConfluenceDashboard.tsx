@@ -1,4 +1,4 @@
-import { Search, ChevronDown, User, FileText, Users, Calendar, Tag } from "lucide-react";
+import { Search, ChevronRight, User, FileText, Users, Calendar, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -170,170 +170,136 @@ CI/CD pipeline with automated test execution on every commit.`,
 ];
 
 export const ConfluenceDashboard = () => {
-  const [selectedPage, setSelectedPage] = useState(null);
+  const [selectedPage, setSelectedPage] = useState("Architecture Overview");
 
-  const handlePageClick = (page) => {
-    setSelectedPage(page);
+  const getStatusBadge = (status: string) => {
+    const statusConfig = {
+      "Approved": "bg-green-100 text-green-700",
+      "Under Review": "bg-yellow-100 text-yellow-700", 
+      "Published": "bg-purple-100 text-purple-700",
+      "In Progress": "bg-blue-100 text-blue-700",
+      "Draft": "bg-gray-100 text-gray-700"
+    };
+    
+    return statusConfig[status] || "bg-gray-100 text-gray-700";
   };
 
-  const renderSelectedPageContent = () => {
-    if (!selectedPage) {
-      return (
-        <div className="text-center max-w-md mx-auto">
-          <div className="mb-6">
-            <div className="w-24 h-24 mx-auto mb-4 bg-muted rounded-lg flex items-center justify-center">
-              <FileText className="w-12 h-12 text-muted-foreground" />
-            </div>
-            <h2 className="text-2xl font-semibold text-foreground mb-3">
-              Select a Confluence Page
-            </h2>
-            <p className="text-muted-foreground text-base leading-relaxed">
-              Choose a page from the Payment Exchange space to view its details and create Jira tasks.
-            </p>
-          </div>
-          
-          <div className="flex items-center justify-center gap-8 text-sm text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <FileText className="w-4 h-4" />
-              <span>6 pages available</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Users className="w-4 h-4" />
-              <span>Team collaboration ready</span>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    return (
-      <div className="h-full">
-        {/* Page Header */}
-        <div className="border-b border-border pb-4 mb-6">
-          <div className="flex items-start justify-between mb-3">
-            <h1 className="text-2xl font-bold text-foreground">{selectedPage.title}</h1>
-            <Badge className={selectedPage.statusColor}>
-              {selectedPage.status}
-            </Badge>
-          </div>
-          
-          <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
-            <div className="flex items-center gap-2">
-              <Avatar className="h-6 w-6">
-                <AvatarFallback className="text-xs">
-                  {selectedPage.author.split(' ').map(n => n[0]).join('')}
-                </AvatarFallback>
-              </Avatar>
-              <span>{selectedPage.author}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Calendar className="w-4 h-4" />
-              <span>Last modified: {selectedPage.lastModified}</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {selectedPage.tags.map((tag, index) => (
-              <Badge key={index} variant="secondary" className="text-xs">
-                {tag}
-              </Badge>
-            ))}
-          </div>
-        </div>
-
-        {/* Page Content */}
-        <div className="prose max-w-none">
-          <div className="whitespace-pre-line text-foreground">
-            {selectedPage.content}
-          </div>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="mt-8 pt-4 border-t border-border">
-          <div className="flex gap-3">
-            <Button className="bg-primary hover:bg-primary/90">
-              Create Jira Task
-            </Button>
-            <Button variant="outline">
-              Edit Page
-            </Button>
-            <Button variant="outline">
-              Share
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  };
   return (
-    <div className="h-full bg-background">
-      {/* Main Content */}
-      <div className="p-6" style={{ backgroundColor: '#fff' }}>
+    <div className="h-full bg-white">
+      <div className="p-6">
         <div className="grid grid-cols-12 gap-6 h-full">
-          {/* Left Column - Search and Payment Gateway */}
-          <div className="col-span-3">
+          {/* Left Sidebar - Search and Pages List */}
+          <div className="col-span-4">
             {/* Search Bar */}
             <div className="mb-6">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <input
                   type="text"
-                  placeholder="Search pages..."
+                  placeholder="Search pages"
                   className="w-full pl-10 pr-4 py-2 border border-border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring text-sm"
                 />
               </div>
             </div>
 
-            {/* Pages in Payment Exchange */}
+            {/* Payment Gateway Section */}
             <div className="mb-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-base font-medium">Pages in Payment Exchange</h2>
-                <span className="text-sm text-muted-foreground">6 pages</span>
-              </div>
-              <div className="space-y-3">
-                {confluencePages.map((page, index) => (
-                  <Card 
-                    key={index} 
-                    className={`p-3 hover:shadow-md transition-shadow cursor-pointer border ${
-                      selectedPage?.id === page.id ? 'border-primary bg-primary/5' : 'border-border'
+              <h2 className="text-lg font-semibold mb-4">Payment Gateway</h2>
+              <div className="space-y-2">
+                {confluencePages.map((page) => (
+                  <div 
+                    key={page.id} 
+                    className={`p-4 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors ${
+                      selectedPage === page.title ? 'border-primary bg-primary/5' : 'border-border'
                     }`}
-                    onClick={() => handlePageClick(page)}
+                    onClick={() => setSelectedPage(page.title)}
                   >
-                    <div className="space-y-2">
-                      <div className="flex items-start justify-between">
-                        <h3 className="font-medium text-foreground text-sm leading-tight">
-                          {page.title}
-                        </h3>
-                        <Badge className={`${page.statusColor} text-xs px-2 py-1`}>
-                          {page.status}
-                        </Badge>
-                      </div>
-                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <Avatar className="h-4 w-4">
-                            <AvatarFallback className="text-xs">
-                              {page.author.split(' ').map(n => n[0]).join('')}
-                            </AvatarFallback>
-                          </Avatar>
-                          <span>{page.author}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <div className="w-3 h-3 rounded-full bg-muted-foreground/20 flex items-center justify-center">
-                            <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/60"></div>
-                          </div>
-                          <span>{page.timestamp}</span>
-                        </div>
-                      </div>
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="font-medium text-sm text-foreground truncate pr-2">
+                        {page.title}
+                      </h3>
+                      <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                     </div>
-                  </Card>
+                    
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
+                      <Avatar className="h-4 w-4">
+                        <AvatarFallback className="text-xs">
+                          {page.author.split(' ').map(n => n[0]).join('')}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span>{page.author}</span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-muted-foreground">{page.timestamp}</span>
+                      <Badge className={`${getStatusBadge(page.status)} text-xs px-2 py-1`}>
+                        {page.status}
+                      </Badge>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* Right Column - Selected Page Content */}
-          <div className="col-span-9 flex items-start justify-start p-4 overflow-y-auto" style={{ border: '1px solid #dbdbdb', borderRadius: '10px' }}>
-            {renderSelectedPageContent()}
+          {/* Right Content Area */}
+          <div className="col-span-8">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-6">
+              <h1 className="text-2xl font-semibold">{selectedPage}</h1>
+              <div className="flex gap-3">
+                <Button variant="outline" className="bg-white border border-[#8C8C8C] hover:bg-gray-50">
+                  View in Confluence
+                </Button>
+                <Button variant="outline" className="bg-white border border-[#8C8C8C] hover:bg-gray-50">
+                  Create Epic & Story
+                </Button>
+                <Button variant="outline" className="bg-white border border-[#8C8C8C] hover:bg-gray-50">
+                  Preview Jira Integration
+                </Button>
+              </div>
+            </div>
+
+            {/* Content Details */}
+            <div className="border border-border rounded-lg p-6 bg-white">
+              <div className="flex items-center gap-3 mb-4">
+                <Avatar className="h-8 w-8">
+                  <AvatarFallback className="text-sm">
+                    SJ
+                  </AvatarFallback>
+                </Avatar>
+                <span className="text-sm font-medium">Sarah Johnson</span>
+              </div>
+              
+              <div className="flex items-center gap-4 mb-6 text-sm text-muted-foreground">
+                <div className="flex items-center gap-1">
+                  <Calendar className="w-4 h-4" />
+                  <span>Jan 15, 4:00 PM</span>
+                </div>
+                <Badge className="bg-green-100 text-green-700">
+                  Approved
+                </Badge>
+              </div>
+
+              <div className="space-y-4">
+                <p className="text-sm text-foreground leading-relaxed">
+                  This document outlines the high-level architecture for the Payment Exchange system, including component interactions, data flows, and integration patterns
+                </p>
+                
+                <p className="text-xs text-muted-foreground">
+                  This is a preview of the page content. The full page contains detailed technical specifications, diagrams, and implementation guidelines relevant to the Payment Exchange project.
+                </p>
+                
+                <div className="mt-6">
+                  <h4 className="text-sm font-medium mb-3">Labels</h4>
+                  <div className="flex gap-2">
+                    <Badge variant="secondary" className="text-xs">Architecture</Badge>
+                    <Badge variant="secondary" className="text-xs">Payment</Badge>
+                    <Badge variant="secondary" className="text-xs">Overview</Badge>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
