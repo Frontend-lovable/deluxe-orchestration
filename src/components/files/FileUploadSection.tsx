@@ -81,7 +81,7 @@ export const FileUploadSection = () => {
   return (
     <Card className="h-[600px] flex flex-col">
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-8">
           <div>
             <CardTitle className="text-base font-bold text-[hsl(var(--heading-primary))]">Uploaded Files</CardTitle>
             <p className="text-sm text-muted-foreground mt-1">
