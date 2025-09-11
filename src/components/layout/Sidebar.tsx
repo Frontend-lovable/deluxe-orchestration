@@ -112,7 +112,7 @@ export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggl
                   TOOLS
                 </div>
               )}
-              <ChevronLeft className={`w-4 h-4 transition-transform ${collapsed ? 'rotate-0' : 'rotate-0'}`} />
+              <ChevronLeft className={`w-4 h-4 transition-transform ${collapsed ? 'rotate-180' : 'rotate-0'}`} />
             </Button>
           )}
           {(!collapsed || isMobile) && (
