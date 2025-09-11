@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectLabel,
   SelectSeparator,
@@ -61,13 +62,17 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps
               <SelectValue placeholder="Create / Update" />
             </SelectTrigger>
             <SelectContent>
-              <SelectLabel>Existing BRD</SelectLabel>
-              <SelectItem value="upi">UPI</SelectItem>
-              <SelectItem value="lorem-ipsum">Lorem Ipsum</SelectItem>
+              <SelectGroup>
+                <SelectLabel>Existing BRD</SelectLabel>
+                <SelectItem value="upi">UPI</SelectItem>
+                <SelectItem value="lorem-ipsum">Lorem Ipsum</SelectItem>
+              </SelectGroup>
               <SelectSeparator />
-              <SelectLabel>Create new BRD</SelectLabel>
-              <SelectItem value="template-1">Template 1</SelectItem>
-              <SelectItem value="template-2">Template 2</SelectItem>
+              <SelectGroup>
+                <SelectLabel>Create new BRD</SelectLabel>
+                <SelectItem value="template-1">Template 1</SelectItem>
+                <SelectItem value="template-2">Template 2</SelectItem>
+              </SelectGroup>
             </SelectContent>
           </Select>
         )}
