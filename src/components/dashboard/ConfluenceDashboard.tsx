@@ -262,7 +262,7 @@ export const ConfluenceDashboard = () => {
           {/* Right Content Area */}
           <div className="col-span-8 border border-[#CCCCCC]">
             {/* Header */}
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-6 border-b border-[#CCCCCC] p-[24px]">
               <h1 className="text-2xl font-semibold">{selectedPage}</h1>
               <div className="flex gap-3">
                 <Button variant="outline" className="bg-white border border-[#8C8C8C] hover:bg-gray-50">
