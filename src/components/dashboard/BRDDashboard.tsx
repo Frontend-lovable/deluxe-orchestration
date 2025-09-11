@@ -2,6 +2,8 @@ import { useState } from "react";
 import { BRDProgress } from "../brd/BRDProgress";
 import { ChatInterface } from "../chat/ChatInterface";
 import { FileUploadSection } from "../files/FileUploadSection";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 
 const sectionContent = {
   "Executive Summary": {
@@ -42,7 +44,11 @@ const sectionContent = {
   }
 };
 
-export const BRDDashboard = () => {
+interface BRDDashboardProps {
+  onBack?: () => void;
+}
+
+export const BRDDashboard = ({ onBack }: BRDDashboardProps) => {
   const [selectedSection, setSelectedSection] = useState<string>("Executive Summary");
   const [completedSections, setCompletedSections] = useState<string[]>([]);
   
@@ -71,7 +77,17 @@ export const BRDDashboard = () => {
   return (
     <div className="p-4 sm:p-6 lg:p-8 bg-white">
       <div className="mb-6 lg:mb-8">
-        <h1 className="text-xl sm:text-2xl font-bold mb-2">Payment Gateway</h1>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onBack}
+            className="p-2 hover:bg-accent"
+          >
+            <ArrowLeft className="w-4 h-4" />
+          </Button>
+          <h1 className="text-xl sm:text-2xl font-bold">Payment Gateway</h1>
+        </div>
       </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-8 items-stretch">

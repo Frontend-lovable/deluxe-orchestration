@@ -20,7 +20,7 @@ const Index = () => {
   const renderContent = () => {
     switch (currentView) {
       case "brd":
-        return <BRDDashboard />;
+        return <BRDDashboard onBack={handleBack} />;
       case "confluence":
         return <ConfluenceDashboard />;
       case "jira":
