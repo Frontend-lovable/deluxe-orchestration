@@ -82,7 +82,12 @@ export const FileUploadSection = () => {
     <Card className="h-[600px] flex flex-col">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-base font-bold text-[hsl(var(--heading-primary))]">Uploaded Files</CardTitle>
+          <div>
+            <CardTitle className="text-base font-bold text-[hsl(var(--heading-primary))]">Uploaded Files</CardTitle>
+            <p className="text-sm text-muted-foreground mt-1">
+              {uploadedFiles.length} files available for BRD creation
+            </p>
+          </div>
           <div>
             <input
               ref={fileInputRef}
@@ -102,9 +107,6 @@ export const FileUploadSection = () => {
             </Button>
           </div>
         </div>
-        <p className="text-sm text-muted-foreground">
-          {uploadedFiles.length} files available for BRD creation
-        </p>
       </CardHeader>
       <CardContent className="flex-1 overflow-y-auto pr-2">
         <div className="space-y-4">
