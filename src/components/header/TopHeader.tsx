@@ -54,9 +54,9 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps
         </Select>
         
         {currentView === "brd" && (
-          <Select defaultValue="create-update-brd">
+          <Select>
             <SelectTrigger className="w-32 sm:w-40" style={{ backgroundColor: '#fff' }}>
-              <SelectValue placeholder="BRD Section" />
+              <SelectValue placeholder="Create / Update" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="create-update-brd">Create / Update BRD</SelectItem>
