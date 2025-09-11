@@ -260,7 +260,7 @@ export const ConfluenceDashboard = () => {
           </div>
 
           {/* Right Content Area */}
-          <div className="col-span-8">
+          <div className="col-span-8 border border-[#CCCCCC]">
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
               <h1 className="text-2xl font-semibold">{selectedPage}</h1>
@@ -278,7 +278,7 @@ export const ConfluenceDashboard = () => {
             </div>
 
             {/* Content Details */}
-            <div className="border border-border rounded-lg p-6 bg-white">
+            <div className="rounded-lg p-6 bg-white">
               <div className="flex items-center gap-3 mb-4">
                 <Avatar className="h-8 w-8">
                   <AvatarFallback className="text-sm">
