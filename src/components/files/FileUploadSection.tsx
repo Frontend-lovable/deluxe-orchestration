@@ -92,9 +92,13 @@ export const FileUploadSection = () => {
               onChange={handleFileUpload}
               className="hidden"
             />
-            <Button variant="outline" size="sm" onClick={triggerFileUpload}>
-              <Upload className="w-4 h-4 mr-2" />
-              Upload
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={triggerFileUpload}
+              className="bg-white border border-[#3B3B3B] hover:bg-gray-50"
+            >
+              <Upload className="w-4 h-4 text-[#3B3B3B]" />
             </Button>
           </div>
         </div>
