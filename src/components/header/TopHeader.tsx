@@ -54,11 +54,12 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps
         </Select>
         
         {currentView === "brd" && (
-          <Select defaultValue="existing-brd">
+          <Select defaultValue="create-update-brd">
             <SelectTrigger className="w-32 sm:w-40" style={{ backgroundColor: '#fff' }}>
               <SelectValue placeholder="BRD Section" />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="create-update-brd">Create / Update BRD</SelectItem>
               <SelectItem value="existing-brd">Existing BRD</SelectItem>
               <SelectItem value="payment-gateway">Payment Gateway</SelectItem>
               <SelectItem value="upi">UPI</SelectItem>
