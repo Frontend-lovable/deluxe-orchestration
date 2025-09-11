@@ -197,7 +197,7 @@ export const ConfluenceDashboard = () => {
       <div className="p-6">
         <div className="grid grid-cols-12 gap-6 h-full">
           {/* Left Sidebar - Search and Pages List */}
-          <div className="col-span-4 h-[650px] flex flex-col border border-[#CCCCCC] p-[15px]">
+          <div className="col-span-4 h-[650px] flex flex-col border border-[#CCCCCC] p-[25px]">
             {/* Search Bar */}
             <div className="mb-6">
               <div className="relative">
