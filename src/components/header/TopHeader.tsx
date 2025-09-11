@@ -11,9 +11,10 @@ import {
 interface TopHeaderProps {
   onMenuClick?: () => void;
   isMobile?: boolean;
+  currentView?: string;
 }
 
-export const TopHeader = ({ onMenuClick, isMobile }: TopHeaderProps) => {
+export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps) => {
   return (
     <div className="h-16 border-b border-border px-4 sm:px-6 lg:px-8 flex items-center justify-between" style={{ backgroundColor: '#fff' }}>
       <div className="flex items-center gap-4">
@@ -51,6 +52,20 @@ export const TopHeader = ({ onMenuClick, isMobile }: TopHeaderProps) => {
             <SelectItem value="user-portal">User Portal</SelectItem>
           </SelectContent>
         </Select>
+        
+        {currentView === "brd" && (
+          <Select defaultValue="section">
+            <SelectTrigger className="w-32 sm:w-40" style={{ backgroundColor: '#fff' }}>
+              <SelectValue placeholder="BRD Section" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="section">BRD Section</SelectItem>
+              <SelectItem value="overview">Overview</SelectItem>
+              <SelectItem value="requirements">Requirements</SelectItem>
+              <SelectItem value="acceptance">Acceptance Criteria</SelectItem>
+            </SelectContent>
+          </Select>
+        )}
         
         <Button className="bg-primary hover:bg-primary/90 text-primary-foreground text-sm px-3 sm:px-4">
           <span className="hidden sm:inline">Create New Project</span>

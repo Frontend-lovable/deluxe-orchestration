@@ -69,6 +69,7 @@ export const MainLayout = ({ children, onNavigate, showBackButton, onBack, curre
           <TopHeader 
             onMenuClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             isMobile={isMobile}
+            currentView={currentView}
           />
         </div>
         
