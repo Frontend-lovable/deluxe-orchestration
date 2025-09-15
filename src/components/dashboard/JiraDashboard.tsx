@@ -237,7 +237,7 @@ export const JiraDashboard = () => {
             {/* Issue Details Grid */}
             <div className="grid grid-cols-11 gap-4 sm:gap-6 mb-4 sm:mb-6">
               {/* Priority, Story Points, Sprint Column */}
-              <div className="col-span-6 border border-[#CCCCCC] rounded p-3 flex gap-6">
+              <div className="col-span-6 border border-[#CCCCCC] rounded p-3 flex justify-between">
                 <div>
                   <span style={{ color: '#747474', fontSize: '12px', fontWeight: 'normal' }}>Priority</span>
                   <div className="flex items-center gap-1 mt-1">
