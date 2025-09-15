@@ -172,11 +172,12 @@ export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggl
             <Button
               key={item.label}
               variant="ghost"
-              className={`w-full ${collapsed ? 'justify-center p-0 h-10' : 'justify-start h-9'} text-muted-foreground hover:bg-accent`}
+              className={`w-full ${collapsed ? 'justify-center p-0 h-10' : 'justify-start h-9'} hover:bg-accent`}
+              style={{ fontSize: '14px', color: '#3B3B3B', fontWeight: 'normal' }}
               title={collapsed ? item.label : undefined}
             >
-              <item.icon className={`w-4 h-4 ${collapsed ? '' : 'mr-3'}`} />
-              {!collapsed && item.label}
+              <item.icon className={`w-4 h-4 ${collapsed ? '' : 'mr-2'}`} />
+              {!collapsed && <span style={{ fontSize: '14px', color: '#3B3B3B', fontWeight: 'normal' }}>{item.label}</span>}
             </Button>
           ))}
         </div>
