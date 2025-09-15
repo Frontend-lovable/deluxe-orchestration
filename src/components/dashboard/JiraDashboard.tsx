@@ -131,20 +131,22 @@ export const JiraDashboard = () => {
             <h3 className="font-semibold text-sm mb-4">Issues</h3>
             <div className="space-y-2">
               {jiraIssues.map(issue => <div key={issue.id} className={`p-3 border border-[#DEDCDC] rounded cursor-pointer hover:bg-gray-50 transition-colors ${selectedIssue.id === issue.id ? 'border-blue-500 bg-blue-50' : ''}`} onClick={() => setSelectedIssue(issue)}>
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="font-medium text-sm">{issue.id}</span>
-                    <Badge className={`${getTypeBadge(issue.type)} text-xs px-2 py-0`}>
-                      {issue.type}
-                    </Badge>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium" style={{ color: '#6C6C6C', fontSize: '12px' }}>{issue.id}</span>
+                      <Badge className={`${getTypeBadge(issue.type)} text-xs px-2 py-0`}>
+                        {issue.type}
+                      </Badge>
+                    </div>
                     {getPriorityIcon(issue.priority)}
                   </div>
                   
-                  <h4 className="font-medium text-sm text-foreground mb-2 line-clamp-2">
+                  <h4 className="font-medium mb-2 line-clamp-2" style={{ fontSize: '16px', color: '#3B3B3B', fontWeight: 'medium' }}>
                     {issue.title}
                   </h4>
                   
-                  <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <div className="flex items-center gap-1 min-w-0 flex-1">
+                  <div className="flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-1 min-w-0 flex-1" style={{ color: '#747474' }}>
                       <Avatar className="h-4 w-4 flex-shrink-0">
                         <AvatarFallback className="text-xs">
                           {issue.assignee.split(' ').map(n => n[0]).join('')}
