@@ -253,33 +253,39 @@ export const JiraDashboard = () => {
           </div>
 
           {/* BRD Integration Actions */}
-          <div className="bg-blue-50">
-            <div className="border border-[#CCCCCC] rounded-md p-4">
-              <h3 className="font-semibold mb-2">BRD Integration Actions</h3>
-              <p className="text-sm text-blue-700 mb-4">
-                Create BRD from Issue<br />
+          {/* BRD Integration Actions */}
+          <div className="border border-[#CCCCCC] rounded-md p-4">
+            <h3 className="font-semibold mb-4 text-[#3B3B3B]">BRD Integration Actions</h3>
+            
+            {/* Blue background section */}
+            <div className="bg-blue-50 border border-blue-200 rounded-md p-4 mb-4">
+              <button className="text-blue-600 font-medium mb-2 hover:underline cursor-pointer bg-transparent border-none p-0">
+                Create BRD from Issue
+              </button>
+              <p className="text-[#3B3B3B] text-sm mb-4">
                 Generate a Business Requirements Document based on this Jira issue and its details.
               </p>
               <Button style={{
-              backgroundColor: '#D61120'
-            }} className="text-white hover:bg-red-700 mb-4">
+                backgroundColor: '#D61120'
+              }} className="text-white hover:bg-red-700">
                 Generate BRD from Issue
               </Button>
-              
-              <div className="flex gap-3">
-                <Button variant="outline" size="sm" className="gap-2">
-                  <Link className="w-4 h-4" />
-                  Link to BRD
-                </Button>
-                <Button variant="outline" size="sm" className="gap-2">
-                  <FileText className="w-4 h-4" />
-                  Export Details
-                </Button>
-                <Button variant="outline" size="sm" className="gap-2">
-                  <Clock className="w-4 h-4" />
-                  Track Progress
-                </Button>
-              </div>
+            </div>
+            
+            {/* Action buttons outside blue section */}
+            <div className="flex gap-3 justify-center">
+              <Button variant="outline" size="sm" className="gap-2">
+                <Link className="w-4 h-4" />
+                Link to BRD
+              </Button>
+              <Button variant="outline" size="sm" className="gap-2">
+                <FileText className="w-4 h-4" />
+                Export Details
+              </Button>
+              <Button variant="outline" size="sm" className="gap-2">
+                <Clock className="w-4 h-4" />
+                Track Progress
+              </Button>
             </div>
           </div>
            </div>
