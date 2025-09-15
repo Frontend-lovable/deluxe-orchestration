@@ -243,8 +243,8 @@ export const ConfluenceDashboard = () => {
                         </div>
                         
                         <div className="flex items-center justify-between">
-                          <span className="text-xs text-muted-foreground truncate">{page.timestamp}</span>
-                          <Badge className={`${getStatusBadge(page.status)} text-xs px-2 py-1 flex-shrink-0`}>
+                          <span className="text-xs truncate" style={{color: '#747474'}}>{page.timestamp}</span>
+                          <Badge className={`${getStatusBadge(page.status)} text-xs px-2 py-1 flex-shrink-0 border`} style={{fontWeight: 'normal', borderColor: '#DEDCDC'}}>
                             {page.status}
                           </Badge>
                         </div>
@@ -305,11 +305,11 @@ export const ConfluenceDashboard = () => {
                 </div>
 
                 <div className="space-y-4">
-                  <p className="text-sm text-foreground leading-relaxed">
+                  <p className="text-sm text-foreground leading-relaxed" style={{color: '#747474'}}>
                     This document outlines the high-level architecture for the Payment Exchange system, including component interactions, data flows, and integration patterns
                   </p>
                   
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs" style={{color: '#747474'}}>
                     This is a preview of the page content. The full page contains detailed technical specifications, diagrams, and implementation guidelines relevant to the Payment Exchange project.
                   </p>
                   
