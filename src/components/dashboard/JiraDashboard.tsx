@@ -253,33 +253,35 @@ export const JiraDashboard = () => {
           </div>
 
           {/* BRD Integration Actions */}
-          <div className="bg-blue-50 border border-[#CCCCCC] rounded-md p-4">
-            <h3 className="font-semibold mb-2">BRD Integration Actions</h3>
-            <p className="text-sm text-blue-700 mb-4">
-              Create BRD from Issue<br />
-              Generate a Business Requirements Document based on this Jira issue and its details.
-            </p>
-            <Button style={{
-            backgroundColor: '#D61120'
-          }} className="text-white hover:bg-red-700 mb-4">
-              Generate BRD from Issue
-            </Button>
-            
-            <div className="flex gap-3">
-              <Button variant="outline" size="sm" className="gap-2">
-                <Link className="w-4 h-4" />
-                Link to BRD
+          <div className="bg-blue-50">
+            <div className="border border-[#CCCCCC] rounded-md p-4">
+              <h3 className="font-semibold mb-2">BRD Integration Actions</h3>
+              <p className="text-sm text-blue-700 mb-4">
+                Create BRD from Issue<br />
+                Generate a Business Requirements Document based on this Jira issue and its details.
+              </p>
+              <Button style={{
+              backgroundColor: '#D61120'
+            }} className="text-white hover:bg-red-700 mb-4">
+                Generate BRD from Issue
               </Button>
-              <Button variant="outline" size="sm" className="gap-2">
-                <FileText className="w-4 h-4" />
-                Export Details
-              </Button>
-              <Button variant="outline" size="sm" className="gap-2">
-                <Clock className="w-4 h-4" />
-                Track Progress
-              </Button>
+              
+              <div className="flex gap-3">
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Link className="w-4 h-4" />
+                  Link to BRD
+                </Button>
+                <Button variant="outline" size="sm" className="gap-2">
+                  <FileText className="w-4 h-4" />
+                  Export Details
+                </Button>
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Clock className="w-4 h-4" />
+                  Track Progress
+                </Button>
+              </div>
             </div>
-             </div>
+          </div>
            </div>
          </div>
        </div>
