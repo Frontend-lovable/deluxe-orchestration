@@ -130,7 +130,7 @@ export const JiraDashboard = () => {
           <div className="flex-1 overflow-y-auto">
             <h3 className="font-semibold text-sm mb-4">Issues</h3>
             <div className="space-y-2">
-              {jiraIssues.map(issue => <div key={issue.id} className={`p-3 border border-[#DEDCDC] rounded cursor-pointer hover:bg-gray-50 transition-colors ${selectedIssue.id === issue.id ? 'border-blue-500 bg-blue-50' : ''}`} onClick={() => setSelectedIssue(issue)}>
+              {jiraIssues.map(issue => <div><div key={issue.id} className={`p-3 border border-[#DEDCDC] rounded cursor-pointer hover:bg-gray-50 transition-colors ${selectedIssue.id === issue.id ? 'border-blue-500 bg-blue-50' : ''}`} onClick={() => setSelectedIssue(issue)}>
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <span className="font-medium" style={{
@@ -168,7 +168,7 @@ export const JiraDashboard = () => {
                       {issue.status}
                     </Badge>
                   </div>
-                </div>)}
+                </div></div>)}
             </div>
             </div>
             </div>
