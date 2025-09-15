@@ -71,7 +71,7 @@ export const ChatInterface = ({
         scrollbarColor: '#cbd5e1 transparent'
       }}>
           {messages.map(message => <div key={message.id} className="space-y-2 max-w-full" style={{ backgroundColor: '#F6F6F6', padding: '20px', borderRadius: '8px' }}>
-              <div className={`flex ${message.isBot ? 'justify-start' : 'justify-end'}`}>
+              <div className="flex justify-start">
                 <div className={`w-full max-w-[90%] sm:max-w-[80%] rounded-lg ${message.isBot ? 'text-secondary-foreground' : 'text-foreground'}`}>
                   <p className="text-sm whitespace-pre-line break-words">{message.content}</p>
                 </div>
