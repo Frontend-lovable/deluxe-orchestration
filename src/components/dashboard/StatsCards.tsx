@@ -29,7 +29,7 @@ export const StatsCards = () => {
       {stats.map((stat, index) => (
         <Card key={index} className="border border-border">
           <CardContent className="p-6 text-center">
-            <div className={`text-4xl font-bold mb-2 ${stat.color}`}>
+            <div className={`text-4xl font-medium mb-2 ${stat.color}`}>
               {stat.value}
             </div>
             <div className="text-sm text-muted-foreground">{stat.label}</div>
