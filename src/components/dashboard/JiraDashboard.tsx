@@ -90,7 +90,7 @@ export const JiraDashboard = () => {
       
 
       <div className="p-6">
-        <div className="flex gap-6 h-[calc(100vh-200px)]">
+        <div className="flex gap-6">
           <div className="w-80">
             <div className="border border-[#CCCCCC] rounded-md">
               <div className="p-6 flex flex-col bg-white h-full rounded-md">
