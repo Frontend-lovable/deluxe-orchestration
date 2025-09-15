@@ -14,7 +14,7 @@ export const ProjectOverview = () => {
         <div className="lg:col-span-2">
           <div className="bg-card rounded-lg border border-border p-4 sm:p-6">
             <div className="mb-4">
-              <h2 className="text-base font-bold mb-2">SDLC Orchestration Assistant</h2>
+              <h2 className="text-base font-bold">SDLC Orchestration Assistant</h2>
               <p className="text-xs" style={{ color: '#727272' }}>
                 Your AI guide for software development lifecycle management
               </p>
