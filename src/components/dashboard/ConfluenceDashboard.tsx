@@ -1,4 +1,4 @@
-import { Search, ChevronRight, User, FileText, Users, Calendar, Tag } from "lucide-react";
+import { Search, ChevronRight, User, FileText, Users, Calendar, Tag, ExternalLink, Plus, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -268,15 +268,18 @@ export const ConfluenceDashboard = () => {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 border-b border-[#CCCCCC] p-4 sm:p-[24px] gap-4">
                 <h1 className="text-base font-semibold truncate flex-1">{selectedPage}</h1>
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                  <Button variant="outline" className="bg-white border border-[#8C8C8C] hover:bg-gray-50 text-sm">
+                  <Button variant="outline" className="bg-white border border-[#8C8C8C] hover:bg-gray-50 text-sm flex items-center gap-2">
+                    <ExternalLink className="w-4 h-4" />
                     <span className="hidden sm:inline">View in Confluence</span>
                     <span className="sm:hidden">View</span>
                   </Button>
-                  <Button variant="outline" className="bg-white border border-[#8C8C8C] hover:bg-gray-50 text-sm">
+                  <Button variant="outline" className="bg-white border border-[#8C8C8C] hover:bg-gray-50 text-sm flex items-center gap-2">
+                    <Plus className="w-4 h-4" />
                     <span className="hidden sm:inline">Create Epic & Story</span>
                     <span className="sm:hidden">Create</span>
                   </Button>
-                  <Button variant="outline" className="bg-white border border-[#8C8C8C] hover:bg-gray-50 text-sm">
+                  <Button variant="outline" className="bg-white border border-[#8C8C8C] hover:bg-gray-50 text-sm flex items-center gap-2">
+                    <Eye className="w-4 h-4" />
                     <span className="hidden sm:inline">Preview Jira Integration</span>
                     <span className="sm:hidden">Preview</span>
                   </Button>
