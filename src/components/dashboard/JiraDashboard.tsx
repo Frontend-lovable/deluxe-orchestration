@@ -133,7 +133,10 @@ export const JiraDashboard = () => {
               {jiraIssues.map(issue => <div key={issue.id} className={`p-3 border border-[#DEDCDC] rounded cursor-pointer hover:bg-gray-50 transition-colors ${selectedIssue.id === issue.id ? 'border-blue-500 bg-blue-50' : ''}`} onClick={() => setSelectedIssue(issue)}>
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <span className="font-medium" style={{ color: '#6C6C6C', fontSize: '12px' }}>{issue.id}</span>
+                      <span className="font-medium" style={{
+                          color: '#6C6C6C',
+                          fontSize: '12px'
+                        }}>{issue.id}</span>
                       <Badge className={`${getTypeBadge(issue.type)} text-xs px-2 py-0`}>
                         {issue.type}
                       </Badge>
@@ -141,12 +144,18 @@ export const JiraDashboard = () => {
                     {getPriorityIcon(issue.priority)}
                   </div>
                   
-                  <h4 className="font-medium mb-2 line-clamp-2" style={{ fontSize: '16px', color: '#3B3B3B', fontWeight: 'medium' }}>
+                  <h4 className="font-medium mb-2 line-clamp-2" style={{
+                      fontSize: '16px',
+                      color: '#3B3B3B',
+                      fontWeight: 'medium'
+                    }}>
                     {issue.title}
                   </h4>
                   
                   <div className="flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-1 min-w-0 flex-1" style={{ color: '#747474' }}>
+                    <div className="flex items-center gap-1 min-w-0 flex-1" style={{
+                        color: '#747474'
+                      }}>
                       <Avatar className="h-4 w-4 flex-shrink-0">
                         <AvatarFallback className="text-xs">
                           {issue.assignee.split(' ').map(n => n[0]).join('')}
@@ -183,14 +192,14 @@ export const JiraDashboard = () => {
               </div>
               
               <div className="flex flex-col sm:flex-row gap-2">
-                <Button variant="outline" size="sm" className="gap-2 text-sm">
+                <Button variant="outline" size="sm" className="gap-2 text-sm font-normal">
                   <ExternalLink className="w-4 h-4" />
                   <span className="hidden sm:inline">View in Jira</span>
                   <span className="sm:hidden">View</span>
                 </Button>
                 <Button variant="outline" size="sm" className="gap-2 text-sm">
                   <Code className="w-4 h-4" />
-                  <span className="hidden sm:inline">Generate Code</span>
+                  <span className="hidden sm:inline font-normal">Generate Code</span>
                   <span className="sm:hidden">Generate</span>
                 </Button>
               </div>
@@ -290,4 +299,4 @@ export const JiraDashboard = () => {
          </div>
        </div>
      </div>;
- };
+};
