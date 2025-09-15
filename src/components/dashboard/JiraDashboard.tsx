@@ -253,7 +253,7 @@ export const JiraDashboard = () => {
           </div>
 
           {/* BRD Integration Actions */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="bg-blue-50 border border-[#CCCCCC] rounded-md p-4">
             <h3 className="font-semibold mb-2">BRD Integration Actions</h3>
             <p className="text-sm text-blue-700 mb-4">
               Create BRD from Issue<br />
