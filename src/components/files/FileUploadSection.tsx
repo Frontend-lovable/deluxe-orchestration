@@ -79,16 +79,16 @@ export const FileUploadSection = () => {
     fileInputRef.current?.click();
   };
   return (
-    <Card className="h-[600px] flex flex-col">
-      <CardHeader>
-        <div className="flex items-center justify-between gap-8">
-          <div>
-            <CardTitle className="text-base font-bold text-[hsl(var(--heading-primary))]">Uploaded Files</CardTitle>
+    <Card className="h-auto xl:h-[600px] flex flex-col">
+      <CardHeader className="pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex-1 min-w-0">
+            <CardTitle className="text-base font-bold text-[hsl(var(--heading-primary))] break-words">Uploaded Files</CardTitle>
             <p className="text-sm text-muted-foreground mt-1">
               {uploadedFiles.length} files available for BRD creation
             </p>
           </div>
-          <div>
+          <div className="flex-shrink-0">
             <input
               ref={fileInputRef}
               type="file"
@@ -101,9 +101,10 @@ export const FileUploadSection = () => {
               variant="outline" 
               size="sm" 
               onClick={triggerFileUpload}
-              className="bg-white border border-[#3B3B3B] hover:bg-gray-50"
+              className="bg-white border border-[#3B3B3B] hover:bg-gray-50 w-full sm:w-auto"
             >
-              <Upload className="w-4 h-4 text-[#3B3B3B]" />
+              <Upload className="w-4 h-4 text-[#3B3B3B] mr-2 sm:mr-0" />
+              <span className="sm:hidden">Upload Files</span>
             </Button>
           </div>
         </div>
@@ -111,27 +112,28 @@ export const FileUploadSection = () => {
       <CardContent className="flex-1 overflow-y-auto pr-2">
         <div className="space-y-4">
           {uploadedFiles.length === 0 ? (
-            <div className="flex items-center justify-center h-32 text-muted-foreground">
-              No file selected.
+            <div className="flex items-center justify-center h-24 sm:h-32 text-muted-foreground text-center">
+              <p className="text-sm">No file selected.</p>
             </div>
           ) : (
             <div className="space-y-3 mb-4">
               {uploadedFiles.map((file) => (
-                <div key={file.id} className="flex items-center justify-between p-3 border border-border rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <FileText className="w-5 h-5 text-muted-foreground" />
-                    <div>
-                      <div className="font-medium text-sm">{file.name}</div>
+                <div key={file.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 border border-border rounded-lg gap-3">
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <FileText className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <div className="font-medium text-sm truncate" title={file.name}>{file.name}</div>
                       <div className="text-xs text-muted-foreground">
                         {file.size} • {file.timestamp}
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-shrink-0">
                     <Button 
                       variant="ghost" 
                       size="sm"
                       onClick={() => handleDownloadFile(file)}
+                      className="h-8 w-8 p-0"
                     >
                       <Download className="w-4 h-4" />
                     </Button>
@@ -139,7 +141,7 @@ export const FileUploadSection = () => {
                       variant="ghost" 
                       size="sm"
                       onClick={() => handleDeleteFile(file.id)}
-                      className="text-destructive hover:text-destructive"
+                      className="text-destructive hover:text-destructive h-8 w-8 p-0"
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -152,14 +154,14 @@ export const FileUploadSection = () => {
         {uploadedFiles.length > 0 && (
           <div className="mt-6 space-y-4">
             <div className="flex items-center gap-2 text-sm">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              All files processed and draft ready for review
+              <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
+              <span className="text-sm">All files processed and draft ready for review</span>
             </div>
             <Button variant="outline" className="w-full justify-center gap-2 h-12 bg-white border border-[#8C8C8C] hover:bg-gray-50">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
               </svg>
-              Submit Files
+              <span>Submit Files</span>
             </Button>
           </div>
         )}
@@ -168,16 +170,16 @@ export const FileUploadSection = () => {
           <h4 className="font-medium mb-3">Actions</h4>
           <div className="space-y-2">
             <Button variant="outline" className="w-full justify-center h-12 bg-white border border-[#8C8C8C] hover:bg-gray-50" disabled={uploadedFiles.length === 0}>
-              <Upload className="w-4 h-4 mr-2" />
-              Upload to Confluence
+              <Upload className="w-4 h-4 mr-2 flex-shrink-0" />
+              <span>Upload to Confluence</span>
             </Button>
             <p className="text-xs text-muted-foreground px-2">
               Complete all BRD sections before submitting for approval
             </p>
           </div>
           <Button className="w-full mt-4" variant="default" disabled={uploadedFiles.length === 0}>
-            <Download className="w-4 h-4 mr-2" />
-            Download BRD
+            <Download className="w-4 h-4 mr-2 flex-shrink-0" />
+            <span>Download BRD</span>
           </Button>
         </div>
         </div>

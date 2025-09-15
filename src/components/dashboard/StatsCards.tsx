@@ -25,11 +25,11 @@ const stats = [
 
 export const StatsCards = () => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
       {stats.map((stat, index) => (
         <Card key={index} className="border border-border">
-          <CardContent className="p-6 text-center">
-            <div className={`text-4xl font-medium mb-2 ${stat.color}`}>
+          <CardContent className="p-4 sm:p-6 text-center">
+            <div className={`text-2xl sm:text-3xl lg:text-4xl font-medium mb-2 ${stat.color}`}>
               {stat.value}
             </div>
             <div className="text-sm font-normal" style={{ color: '#3B3B3B' }}>{stat.label}</div>

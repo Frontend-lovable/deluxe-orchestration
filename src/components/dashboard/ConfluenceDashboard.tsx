@@ -194,125 +194,132 @@ export const ConfluenceDashboard = () => {
 
   return (
     <div className="h-full bg-white">
-      <div className="p-6">
-        <div className="grid grid-cols-12 gap-6 h-full">
+      <div className="p-2 sm:p-4 md:p-6">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 sm:gap-6 h-auto xl:h-full">
           {/* Left Sidebar - Search and Pages List */}
-          <div className="col-span-4 h-[650px] flex flex-col border border-[#CCCCCC] p-[25px] rounded-lg">
-            {/* Search Bar */}
-            <div className="mb-6">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <input
-                  type="text"
-                  placeholder="Search pages"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full h-[45px] pl-10 pr-4 border border-[#DEDCDC] rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-ring text-sm"
-                />
+          <div className="xl:col-span-4 order-2 xl:order-1">
+            <div className="h-auto xl:h-[650px] flex flex-col border border-[#CCCCCC] p-4 sm:p-[25px] rounded-lg">
+              {/* Search Bar */}
+              <div className="mb-4 sm:mb-6">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <input
+                    type="text"
+                    placeholder="Search pages"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full h-[45px] pl-10 pr-4 border border-[#DEDCDC] rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-ring text-sm"
+                  />
+                </div>
               </div>
-            </div>
 
-            {/* Payment Gateway Section */}
-            <div className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-[#E6E6E6] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full">
-              <div className="pr-[20px]">
-                <h2 className="text-lg font-semibold mb-4">Payment Gateway</h2>
-                <div className="space-y-2">
-                  {filteredPages.map((page) => (
-                    <div 
-                      key={page.id} 
-                      className={`p-4 border-[#DEDCDC] border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors ${
-                        selectedPage === page.title ? 'border-primary bg-primary/5' : ''
-                      }`}
-                      onClick={() => setSelectedPage(page.title)}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-medium text-sm text-foreground truncate pr-2">
-                          {page.title}
-                        </h3>
-                        <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+              {/* Payment Gateway Section */}
+              <div className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-[#E6E6E6] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full">
+                <div className="pr-2 sm:pr-[20px]">
+                  <h2 className="text-base sm:text-lg font-semibold mb-4">Payment Gateway</h2>
+                  <div className="space-y-2">
+                    {filteredPages.map((page) => (
+                      <div 
+                        key={page.id} 
+                        className={`p-3 sm:p-4 border-[#DEDCDC] border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors ${
+                          selectedPage === page.title ? 'border-primary bg-primary/5' : ''
+                        }`}
+                        onClick={() => setSelectedPage(page.title)}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <h3 className="font-medium text-sm text-foreground truncate pr-2 flex-1">
+                            {page.title}
+                          </h3>
+                          <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                        </div>
+                        
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
+                          <Avatar className="h-4 w-4 flex-shrink-0">
+                            <AvatarFallback className="text-xs">
+                              {page.author.split(' ').map(n => n[0]).join('')}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="truncate">{page.author}</span>
+                        </div>
+                        
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-muted-foreground truncate">{page.timestamp}</span>
+                          <Badge className={`${getStatusBadge(page.status)} text-xs px-2 py-1 flex-shrink-0`}>
+                            {page.status}
+                          </Badge>
+                        </div>
                       </div>
-                      
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
-                        <Avatar className="h-4 w-4">
-                          <AvatarFallback className="text-xs">
-                            {page.author.split(' ').map(n => n[0]).join('')}
-                          </AvatarFallback>
-                        </Avatar>
-                        <span>{page.author}</span>
+                    ))}
+                    {filteredPages.length === 0 && (
+                      <div className="text-center text-muted-foreground text-sm py-8">
+                        No pages found matching your search.
                       </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-muted-foreground">{page.timestamp}</span>
-                        <Badge className={`${getStatusBadge(page.status)} text-xs px-2 py-1`}>
-                          {page.status}
-                        </Badge>
-                      </div>
-                    </div>
-                  ))}
-                  {filteredPages.length === 0 && (
-                    <div className="text-center text-muted-foreground text-sm py-8">
-                      No pages found matching your search.
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Right Content Area */}
-          <div className="col-span-8 border border-[#CCCCCC] rounded-lg">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-6 border-b border-[#CCCCCC] p-[24px]">
-              <h1 className="text-base font-semibold">{selectedPage}</h1>
-              <div className="flex gap-3">
-                <Button variant="outline" className="bg-white border border-[#8C8C8C] hover:bg-gray-50">
-                  View in Confluence
-                </Button>
-                <Button variant="outline" className="bg-white border border-[#8C8C8C] hover:bg-gray-50">
-                  Create Epic & Story
-                </Button>
-                <Button variant="outline" className="bg-white border border-[#8C8C8C] hover:bg-gray-50">
-                  Preview Jira Integration
-                </Button>
-              </div>
-            </div>
-
-            {/* Content Details */}
-            <div className="rounded-lg p-6 bg-white">
-              <div className="flex items-center gap-3 mb-4">
-                <Avatar className="h-8 w-8">
-                  <AvatarFallback className="text-sm">
-                    SJ
-                  </AvatarFallback>
-                </Avatar>
-                <span className="text-sm font-medium">Sarah Johnson</span>
-              </div>
-              
-              <div className="flex items-center gap-4 mb-6 text-sm text-muted-foreground">
-                <div className="flex items-center gap-1">
-                  <Calendar className="w-4 h-4" />
-                  <span>Jan 15, 4:00 PM</span>
+          <div className="xl:col-span-8 order-1 xl:order-2">
+            <div className="border border-[#CCCCCC] rounded-lg h-auto">
+              {/* Header */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 border-b border-[#CCCCCC] p-4 sm:p-[24px] gap-4">
+                <h1 className="text-base font-semibold truncate flex-1">{selectedPage}</h1>
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                  <Button variant="outline" className="bg-white border border-[#8C8C8C] hover:bg-gray-50 text-sm">
+                    <span className="hidden sm:inline">View in Confluence</span>
+                    <span className="sm:hidden">View</span>
+                  </Button>
+                  <Button variant="outline" className="bg-white border border-[#8C8C8C] hover:bg-gray-50 text-sm">
+                    <span className="hidden sm:inline">Create Epic & Story</span>
+                    <span className="sm:hidden">Create</span>
+                  </Button>
+                  <Button variant="outline" className="bg-white border border-[#8C8C8C] hover:bg-gray-50 text-sm">
+                    <span className="hidden sm:inline">Preview Jira Integration</span>
+                    <span className="sm:hidden">Preview</span>
+                  </Button>
                 </div>
-                <Badge className="bg-green-100 text-green-700">
-                  Approved
-                </Badge>
               </div>
 
-              <div className="space-y-4">
-                <p className="text-sm text-foreground leading-relaxed">
-                  This document outlines the high-level architecture for the Payment Exchange system, including component interactions, data flows, and integration patterns
-                </p>
+              {/* Content Details */}
+              <div className="rounded-lg p-4 sm:p-6 bg-white">
+                <div className="flex items-center gap-3 mb-4">
+                  <Avatar className="h-8 w-8 flex-shrink-0">
+                    <AvatarFallback className="text-sm">
+                      SJ
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="text-sm font-medium">Sarah Johnson</span>
+                </div>
                 
-                <p className="text-xs text-muted-foreground">
-                  This is a preview of the page content. The full page contains detailed technical specifications, diagrams, and implementation guidelines relevant to the Payment Exchange project.
-                </p>
-                
-                <div className="mt-6">
-                  <h4 className="text-sm font-medium mb-3">Labels</h4>
-                  <div className="flex gap-2">
-                    <Badge variant="secondary" className="text-xs">Architecture</Badge>
-                    <Badge variant="secondary" className="text-xs">Payment</Badge>
-                    <Badge variant="secondary" className="text-xs">Overview</Badge>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-6 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-1">
+                    <Calendar className="w-4 h-4 flex-shrink-0" />
+                    <span>Jan 15, 4:00 PM</span>
+                  </div>
+                  <Badge className="bg-green-100 text-green-700 self-start">
+                    Approved
+                  </Badge>
+                </div>
+
+                <div className="space-y-4">
+                  <p className="text-sm text-foreground leading-relaxed">
+                    This document outlines the high-level architecture for the Payment Exchange system, including component interactions, data flows, and integration patterns
+                  </p>
+                  
+                  <p className="text-xs text-muted-foreground">
+                    This is a preview of the page content. The full page contains detailed technical specifications, diagrams, and implementation guidelines relevant to the Payment Exchange project.
+                  </p>
+                  
+                  <div className="mt-6">
+                    <h4 className="text-sm font-medium mb-3">Labels</h4>
+                    <div className="flex flex-wrap gap-2">
+                      <Badge variant="secondary" className="text-xs">Architecture</Badge>
+                      <Badge variant="secondary" className="text-xs">Payment</Badge>
+                      <Badge variant="secondary" className="text-xs">Overview</Badge>
+                    </div>
                   </div>
                 </div>
               </div>

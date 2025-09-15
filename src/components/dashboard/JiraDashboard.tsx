@@ -86,16 +86,13 @@ export const JiraDashboard = () => {
     return typeConfig[type] || "bg-gray-100 text-gray-700";
   };
   return <div className="h-full bg-white">
-      {/* Header */}
-      
-
-      <div className="p-6">
-        <div className="flex gap-6">
-          <div className="w-80">
+      <div className="p-2 sm:p-4 md:p-6">
+        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
+          <div className="w-full lg:w-80 xl:w-96">
             <div className="border border-[#CCCCCC] rounded-md">
-              <div className="p-6 flex flex-col bg-white h-full rounded-md">
+              <div className="p-4 sm:p-6 flex flex-col bg-white h-full rounded-md">
           {/* Search and Filters */}
-          <div className="space-y-4 mb-6">
+          <div className="space-y-4 mb-4 sm:mb-6">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input type="text" placeholder="Search pages" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full h-10 pl-10 pr-4 border border-[#DEDCDC] rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-ring text-sm" />
@@ -147,16 +144,16 @@ export const JiraDashboard = () => {
                   </h4>
                   
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <div className="flex items-center gap-1">
-                      <Avatar className="h-4 w-4">
+                    <div className="flex items-center gap-1 min-w-0 flex-1">
+                      <Avatar className="h-4 w-4 flex-shrink-0">
                         <AvatarFallback className="text-xs">
                           {issue.assignee.split(' ').map(n => n[0]).join('')}
                         </AvatarFallback>
                       </Avatar>
-                      <span>{issue.assignee}</span>
-                      <span>• {issue.points} pts</span>
+                      <span className="truncate">{issue.assignee}</span>
+                      <span className="flex-shrink-0">• {issue.points} pts</span>
                     </div>
-                    <Badge className={`${getStatusBadge(issue.status)} text-xs px-2 py-0`}>
+                    <Badge className={`${getStatusBadge(issue.status)} text-xs px-2 py-0 flex-shrink-0 ml-2`}>
                       {issue.status}
                     </Badge>
                   </div>
@@ -170,10 +167,10 @@ export const JiraDashboard = () => {
         {/* Main Content - Issue Details */}
         <div className="flex-1 bg-white rounded-md">
           {/* Wrapped Issue Details */}
-          <div className="rounded-md border border-[#CCCCCC] p-6 mb-6">
+          <div className="rounded-md border border-[#CCCCCC] p-4 sm:p-6 mb-4 sm:mb-6">
             {/* Issue Header */}
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 gap-4">
+              <div className="flex items-center gap-3 flex-wrap">
                 <span className="font-medium text-sm">{selectedIssue.id}</span>
                 <Badge className={`${getTypeBadge(selectedIssue.type)} text-xs px-2 py-1`}>
                   {selectedIssue.type}
@@ -183,30 +180,32 @@ export const JiraDashboard = () => {
                 </Badge>
               </div>
               
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" className="gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Button variant="outline" size="sm" className="gap-2 text-sm">
                   <ExternalLink className="w-4 h-4" />
-                  View in Jira
+                  <span className="hidden sm:inline">View in Jira</span>
+                  <span className="sm:hidden">View</span>
                 </Button>
-                <Button variant="outline" size="sm" className="gap-2">
+                <Button variant="outline" size="sm" className="gap-2 text-sm">
                   <Code className="w-4 h-4" />
-                  Generate Code
+                  <span className="hidden sm:inline">Generate Code</span>
+                  <span className="sm:hidden">Generate</span>
                 </Button>
               </div>
             </div>
 
             {/* Issue Title */}
-            <h1 className="text-xl font-semibold mb-6">{selectedIssue.title}</h1>
+            <h1 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6 break-words">{selectedIssue.title}</h1>
 
             {/* Issue Metadata */}
-            <div className="grid grid-cols-4 gap-6 mb-6 text-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-4 sm:mb-6 text-sm">
               <div>
                 <span className="text-muted-foreground">Assignee:</span>
-                <div className="font-medium">{selectedIssue.assignee}</div>
+                <div className="font-medium truncate">{selectedIssue.assignee}</div>
               </div>
               <div>
                 <span className="text-muted-foreground">Reporter:</span>
-                <div className="font-medium">{selectedIssue.reporter}</div>
+                <div className="font-medium truncate">{selectedIssue.reporter}</div>
               </div>
               <div>
                 <span className="text-muted-foreground">Created:</span>
@@ -219,13 +218,13 @@ export const JiraDashboard = () => {
             </div>
 
             {/* Description */}
-            <div className="mb-6">
+            <div className="mb-4 sm:mb-6">
               <h3 className="font-semibold mb-2">Description</h3>
               <p className="text-sm text-foreground leading-relaxed">{selectedIssue.description}</p>
             </div>
 
             {/* Issue Details Grid */}
-            <div className="grid grid-cols-4 gap-6 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-4 sm:mb-6">
               <div>
                 <span className="text-sm text-muted-foreground">Priority</span>
                 <div className="flex items-center gap-1 mt-1">
@@ -253,7 +252,6 @@ export const JiraDashboard = () => {
           </div>
 
           {/* BRD Integration Actions */}
-          {/* BRD Integration Actions */}
           <div className="border border-[#CCCCCC] rounded-md p-4">
             <h3 className="font-semibold mb-4 text-[#3B3B3B]">BRD Integration Actions</h3>
             
@@ -265,13 +263,13 @@ export const JiraDashboard = () => {
               <p className="text-[#3B3B3B] text-sm mb-4">
                 Generate a Business Requirements Document based on this Jira issue and its details.
               </p>
-              <Button className="bg-[hsl(var(--primary))] text-white hover:bg-[hsl(var(--primary))]/90">
+              <Button className="bg-[hsl(var(--primary))] text-white hover:bg-[hsl(var(--primary))]/90 w-full sm:w-auto">
                 Generate BRD from Issue
               </Button>
             </div>
             
             {/* Action buttons outside blue section */}
-            <div className="flex gap-3 justify-center">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:justify-center">
               <Button variant="outline" size="sm" className="gap-2">
                 <Link className="w-4 h-4" />
                 Link to BRD
