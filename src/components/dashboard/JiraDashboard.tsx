@@ -168,7 +168,7 @@ export const JiraDashboard = () => {
           {/* Issues List */}
           <div className="flex-1 overflow-y-auto">
             <h3 className="font-semibold text-sm mb-4">Issues</h3>
-            <div className="space-y-2 max-h-96 overflow-y-auto issues-scrollbar" style={{
+            <div className="space-y-2 max-h-100 overflow-y-auto issues-scrollbar" style={{
               scrollbarWidth: 'thin',
               scrollbarColor: '#E6E6E6 transparent'
             }}>
