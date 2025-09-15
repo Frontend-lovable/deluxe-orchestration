@@ -164,7 +164,7 @@ export const JiraDashboard = () => {
         </div>
 
         {/* Right Content - Issue Details */}
-        <div className="flex-1 p-6 bg-white border-l-2 border-solid" style={{ borderColor: '#dbdbdb' }}>
+        <div className="flex-1 p-6 bg-white">
           {/* Issue Header */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
