@@ -94,29 +94,29 @@ export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggl
           {showBackButton && (
             <Button
               variant="ghost"
-              onClick={onToggleCollapse}
-              className={`w-full ${collapsed ? 'justify-center' : 'justify-between'} p-0 h-auto mb-3 text-muted-foreground hover:text-foreground hover:bg-transparent`}
+              onClick={!isMobile ? onToggleCollapse : undefined}
+              className={`w-full ${collapsed ? 'justify-center' : 'justify-between'} p-0 h-auto mb-3 text-muted-foreground hover:text-foreground hover:bg-transparent ${isMobile ? 'cursor-default' : ''}`}
             >
               {!collapsed && (
                 <div className="text-xs font-medium uppercase tracking-wide">
                   TOOLS
                 </div>
               )}
-              <ChevronLeft className={`w-4 h-4 transition-transform ${collapsed ? 'rotate-180' : 'rotate-0'}`} />
+              <ChevronLeft className={`w-4 h-4 transition-transform ${collapsed ? 'rotate-180' : 'rotate-0'} ${isMobile ? 'pointer-events-none' : ''}`} />
             </Button>
           )}
           {!showBackButton && (
             <Button
               variant="ghost"
-              onClick={onToggleCollapse}
-              className={`w-full ${collapsed ? 'justify-center' : 'justify-between'} p-0 h-auto mb-3 text-muted-foreground hover:text-foreground hover:bg-transparent`}
+              onClick={!isMobile ? onToggleCollapse : undefined}
+              className={`w-full ${collapsed ? 'justify-center' : 'justify-between'} p-0 h-auto mb-3 text-muted-foreground hover:text-foreground hover:bg-transparent ${isMobile ? 'cursor-default' : ''}`}
             >
               {!collapsed && (
                 <div className="text-xs font-medium uppercase tracking-wide">
                   TOOLS
                 </div>
               )}
-              <ChevronLeft className={`w-4 h-4 transition-transform ${collapsed ? 'rotate-180' : 'rotate-0'}`} />
+              <ChevronLeft className={`w-4 h-4 transition-transform ${collapsed ? 'rotate-180' : 'rotate-0'} ${isMobile ? 'pointer-events-none' : ''}`} />
             </Button>
           )}
           {(!collapsed || isMobile) && (
