@@ -179,7 +179,7 @@ export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggl
             <Button
               key={item.label}
               variant="ghost"
-              className={`w-full ${collapsed ? 'justify-center p-0 h-10' : 'justify-start h-9'} hover:bg-accent`}
+              className={`w-full justify-start ${collapsed ? 'p-0 h-10' : 'h-9'} hover:bg-accent`}
               style={{ fontSize: '14px', color: '#3B3B3B', fontWeight: 'normal' }}
               title={collapsed ? item.label : undefined}
             >
