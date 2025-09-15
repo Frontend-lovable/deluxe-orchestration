@@ -169,9 +169,9 @@ export const FileUploadSection = () => {
         <div className="mt-4">
           <h4 className="font-medium mb-3">Actions</h4>
           <div className="space-y-2">
-            <Button variant="outline" className="w-full justify-center h-12 bg-white border border-[#8C8C8C] hover:bg-gray-50" disabled={uploadedFiles.length === 0}>
+            <Button variant="outline" className="w-full justify-center items-center h-12 bg-white border border-[#8C8C8C] hover:bg-gray-50 px-3" disabled={uploadedFiles.length === 0}>
               <Upload className="w-4 h-4 mr-2 flex-shrink-0" />
-              <span>Upload to Confluence</span>
+              <span className="truncate">Upload to Confluence</span>
             </Button>
             <p className="text-xs text-muted-foreground px-2">
               Complete all BRD sections before submitting for approval
