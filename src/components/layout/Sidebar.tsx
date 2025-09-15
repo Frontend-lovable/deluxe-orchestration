@@ -184,7 +184,7 @@ export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggl
               title={collapsed ? item.label : undefined}
             >
               <item.icon className={`w-4 h-4 ${collapsed ? '' : 'mr-2'}`} />
-              {!collapsed && <span style={{ fontSize: '14px', color: '#3B3B3B', fontWeight: 'normal' }}>{item.label}</span>}
+              <span style={{ fontSize: '14px', color: '#3B3B3B', fontWeight: 'normal' }}>{item.label}</span>
             </Button>
           ))}
         </div>
