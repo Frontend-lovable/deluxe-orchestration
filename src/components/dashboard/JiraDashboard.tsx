@@ -90,10 +90,10 @@ export const JiraDashboard = () => {
       
 
       <div className="p-6">
-        <div className="grid grid-cols-12 h-[calc(100vh-200px)] gap-6">
-          {/* Sorting/Filters - Column 3 */}
-          <div className="col-span-3 border border-[#CCCCCC] rounded-md">
-            <div className="p-6 flex flex-col bg-white h-full">
+        <div className="flex gap-6 h-[calc(100vh-200px)]">
+          <div className="w-80">
+            <div className="border border-[#CCCCCC] rounded-md">
+              <div className="p-6 flex flex-col bg-white h-full">
           {/* Search and Filters */}
           <div className="space-y-4 mb-6">
             <div className="relative">
@@ -163,10 +163,12 @@ export const JiraDashboard = () => {
                 </div>)}
             </div>
             </div>
+            </div>
           </div>
+        </div>
 
-          {/* Main Content - Issue Details - Column 9 */}
-          <div className="col-span-9 p-6 bg-white">
+        {/* Main Content - Issue Details */}
+        <div className="flex-1 p-6 bg-white">
           {/* Issue Header */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
@@ -274,10 +276,9 @@ export const JiraDashboard = () => {
                 Track Progress
               </Button>
             </div>
-          </div>
-          </div>
-          </div>
-        </div>
-      </div>
-    </div>;
-};
+             </div>
+           </div>
+         </div>
+       </div>
+     </div>;
+ };
