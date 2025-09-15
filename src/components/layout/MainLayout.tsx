@@ -59,7 +59,7 @@ export const MainLayout = ({ children, onNavigate, showBackButton, onBack, curre
       </div>
       
       {/* Main content */}
-      <div className={`flex-1 overflow-auto transition-all duration-300 ${
+      <div className={`flex-1 overflow-auto transition-all duration-300 bg-white ${
         isMobile ? 'ml-0' : (sidebarCollapsed ? 'ml-16' : 'ml-60')
       }`}>
         {/* Header */}
