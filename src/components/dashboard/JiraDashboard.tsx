@@ -91,7 +91,7 @@ export const JiraDashboard = () => {
 
       <div className="flex h-[calc(100vh-140px)]">
         {/* Left Sidebar - Issues List */}
-        <div className="w-96 p-6 flex flex-col bg-white h-full border rounded-md" style={{ borderColor: '#CCCCCC' }}>
+        <div className="w-96 p-6 flex flex-col bg-white h-full">
           {/* Search and Filters */}
           <div className="space-y-4 mb-6">
             <div className="relative">
