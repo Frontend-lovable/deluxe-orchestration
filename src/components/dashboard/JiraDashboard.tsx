@@ -88,9 +88,9 @@ export const JiraDashboard = () => {
   return <div className="h-full bg-white">
       <div className="p-2 sm:p-4 md:p-6">
         <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
-          <div className="w-full lg:w-80 xl:w-96">
-            <div className="border border-[#CCCCCC] rounded-md">
-              <div className="p-4 sm:p-6 flex flex-col bg-white h-full rounded-md">
+           <div className="w-full lg:w-80 xl:w-96 lg:self-stretch">
+             <div className="border border-[#CCCCCC] rounded-md h-full">
+               <div className="p-4 sm:p-6 flex flex-col bg-white h-full rounded-md">
           {/* Search and Filters */}
           <div className="space-y-4 mb-4 sm:mb-6">
             <div className="relative">
