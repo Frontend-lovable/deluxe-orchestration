@@ -51,7 +51,7 @@ export const BRDProgress = ({ selectedSection, onSectionChange, completedSection
           </div>
         </div>
       </CardHeader>
-      <CardContent className="flex-1 overflow-y-auto">
+      <CardContent className="flex-1 overflow-y-auto pr-3">
         <div className="space-y-3 pr-2">
           {brdSections.map(section => <div 
               key={section.title} 
