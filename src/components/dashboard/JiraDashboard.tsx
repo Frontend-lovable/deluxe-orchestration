@@ -286,15 +286,15 @@ export const JiraDashboard = () => {
             
             {/* Action buttons outside blue section */}
             <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:justify-center">
-              <Button variant="outline" size="sm" className="gap-2">
+              <Button variant="outline" size="sm" className="gap-2 bg-white font-normal">
                 <Link className="w-4 h-4" />
                 Link to BRD
               </Button>
-              <Button variant="outline" size="sm" className="gap-2">
+              <Button variant="outline" size="sm" className="gap-2 bg-white font-normal">
                 <FileText className="w-4 h-4" />
                 Export Details
               </Button>
-              <Button variant="outline" size="sm" className="gap-2">
+              <Button variant="outline" size="sm" className="gap-2 bg-white font-normal">
                 <Clock className="w-4 h-4" />
                 Track Progress
               </Button>
