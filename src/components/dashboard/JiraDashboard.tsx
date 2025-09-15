@@ -169,82 +169,85 @@ export const JiraDashboard = () => {
 
         {/* Main Content - Issue Details */}
         <div className="flex-1 p-6 bg-white rounded-md border border-[#CCCCCC]">
-          {/* Issue Header */}
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <span className="font-medium text-sm">{selectedIssue.id}</span>
-              <Badge className={`${getTypeBadge(selectedIssue.type)} text-xs px-2 py-1`}>
-                {selectedIssue.type}
-              </Badge>
-              <Badge className={`${getStatusBadge(selectedIssue.status)} text-xs px-2 py-1`}>
-                {selectedIssue.status}
-              </Badge>
-            </div>
-            
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" className="gap-2">
-                <ExternalLink className="w-4 h-4" />
-                View in Jira
-              </Button>
-              <Button variant="outline" size="sm" className="gap-2">
-                <Code className="w-4 h-4" />
-                Generate Code
-              </Button>
-            </div>
-          </div>
-
-          {/* Issue Title */}
-          <h1 className="text-xl font-semibold mb-6">{selectedIssue.title}</h1>
-
-          {/* Issue Metadata */}
-          <div className="grid grid-cols-4 gap-6 mb-6 text-sm">
-            <div>
-              <span className="text-muted-foreground">Assignee:</span>
-              <div className="font-medium">{selectedIssue.assignee}</div>
-            </div>
-            <div>
-              <span className="text-muted-foreground">Reporter:</span>
-              <div className="font-medium">{selectedIssue.reporter}</div>
-            </div>
-            <div>
-              <span className="text-muted-foreground">Created:</span>
-              <div className="font-medium">{selectedIssue.created}</div>
-            </div>
-            <div>
-              <span className="text-muted-foreground">Updated:</span>
-              <div className="font-medium">{selectedIssue.updated}</div>
-            </div>
-          </div>
-
-          {/* Description */}
-          <div className="mb-6">
-            <h3 className="font-semibold mb-2">Description</h3>
-            <p className="text-sm text-foreground leading-relaxed">{selectedIssue.description}</p>
-          </div>
-
-          {/* Issue Details Grid */}
-          <div className="grid grid-cols-4 gap-6 mb-6">
-            <div>
-              <span className="text-sm text-muted-foreground">Priority</span>
-              <div className="flex items-center gap-1 mt-1">
-                {getPriorityIcon(selectedIssue.priority)}
-                <span className="text-sm font-medium capitalize">{selectedIssue.priority}</span>
+          {/* Wrapped Issue Details */}
+          <div className="rounded-md border border-[#CCCCCC] p-6 mb-6">
+            {/* Issue Header */}
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <span className="font-medium text-sm">{selectedIssue.id}</span>
+                <Badge className={`${getTypeBadge(selectedIssue.type)} text-xs px-2 py-1`}>
+                  {selectedIssue.type}
+                </Badge>
+                <Badge className={`${getStatusBadge(selectedIssue.status)} text-xs px-2 py-1`}>
+                  {selectedIssue.status}
+                </Badge>
+              </div>
+              
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" className="gap-2">
+                  <ExternalLink className="w-4 h-4" />
+                  View in Jira
+                </Button>
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Code className="w-4 h-4" />
+                  Generate Code
+                </Button>
               </div>
             </div>
-            <div>
-              <span className="text-sm text-muted-foreground">Story Points</span>
-              <div className="text-sm font-medium mt-1">{selectedIssue.points}</div>
+
+            {/* Issue Title */}
+            <h1 className="text-xl font-semibold mb-6">{selectedIssue.title}</h1>
+
+            {/* Issue Metadata */}
+            <div className="grid grid-cols-4 gap-6 mb-6 text-sm">
+              <div>
+                <span className="text-muted-foreground">Assignee:</span>
+                <div className="font-medium">{selectedIssue.assignee}</div>
+              </div>
+              <div>
+                <span className="text-muted-foreground">Reporter:</span>
+                <div className="font-medium">{selectedIssue.reporter}</div>
+              </div>
+              <div>
+                <span className="text-muted-foreground">Created:</span>
+                <div className="font-medium">{selectedIssue.created}</div>
+              </div>
+              <div>
+                <span className="text-muted-foreground">Updated:</span>
+                <div className="font-medium">{selectedIssue.updated}</div>
+              </div>
             </div>
-            <div>
-              <span className="text-sm text-muted-foreground">Sprint</span>
-              <div className="text-sm font-medium mt-1">{selectedIssue.sprint}</div>
+
+            {/* Description */}
+            <div className="mb-6">
+              <h3 className="font-semibold mb-2">Description</h3>
+              <p className="text-sm text-foreground leading-relaxed">{selectedIssue.description}</p>
             </div>
-            <div>
-              <span className="text-sm text-muted-foreground">Labels</span>
-              <div className="flex flex-wrap gap-1 mt-1">
-                {selectedIssue.labels.map((label, index) => <Badge key={index} variant="secondary" className="text-xs">
-                    {label}
-                  </Badge>)}
+
+            {/* Issue Details Grid */}
+            <div className="grid grid-cols-4 gap-6 mb-6">
+              <div>
+                <span className="text-sm text-muted-foreground">Priority</span>
+                <div className="flex items-center gap-1 mt-1">
+                  {getPriorityIcon(selectedIssue.priority)}
+                  <span className="text-sm font-medium capitalize">{selectedIssue.priority}</span>
+                </div>
+              </div>
+              <div>
+                <span className="text-sm text-muted-foreground">Story Points</span>
+                <div className="text-sm font-medium mt-1">{selectedIssue.points}</div>
+              </div>
+              <div>
+                <span className="text-sm text-muted-foreground">Sprint</span>
+                <div className="text-sm font-medium mt-1">{selectedIssue.sprint}</div>
+              </div>
+              <div>
+                <span className="text-sm text-muted-foreground">Labels</span>
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {selectedIssue.labels.map((label, index) => <Badge key={index} variant="secondary" className="text-xs">
+                      {label}
+                    </Badge>)}
+                </div>
               </div>
             </div>
           </div>
