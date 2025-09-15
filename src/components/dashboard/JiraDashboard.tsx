@@ -265,9 +265,7 @@ export const JiraDashboard = () => {
               <p className="text-[#3B3B3B] text-sm mb-4">
                 Generate a Business Requirements Document based on this Jira issue and its details.
               </p>
-              <Button style={{
-                backgroundColor: '#D61120'
-              }} className="text-white hover:bg-red-700">
+              <Button className="bg-[hsl(var(--primary))] text-white hover:bg-[hsl(var(--primary))]/90">
                 Generate BRD from Issue
               </Button>
             </div>
