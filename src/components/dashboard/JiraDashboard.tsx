@@ -229,7 +229,7 @@ export const JiraDashboard = () => {
             </div>
 
             {/* Description */}
-            <div className="mb-4 sm:mb-6">
+            <div className="mb-4 sm:mb-6 pt-4 sm:pt-6 border-t border-[#CCCCCC]">
               <h3 className="font-semibold mb-2">Description</h3>
               <p className="text-sm text-foreground leading-relaxed">{selectedIssue.description}</p>
             </div>
