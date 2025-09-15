@@ -60,6 +60,20 @@ const jiraIssues = [{
   description: "Epic for the complete Payment Exchange Platform development including all sub-tasks and stories.",
   sprint: "Sprint 24.1",
   labels: ["Epic", "Platform", "Payment"]
+}, {
+  id: "PAYEX-127",
+  title: "Add user authentication system",
+  type: "Story",
+  priority: "medium",
+  status: "To-do",
+  assignee: "Michael Chen",
+  reporter: "Sarah Johnson",
+  points: "5",
+  created: "Jan 17, 10:00 AM",
+  updated: "Jan 17, 10:00 AM",
+  description: "Implement secure user authentication system with login, logout, and session management functionality.",
+  sprint: "Sprint 24.1",
+  labels: ["Authentication", "Security", "Frontend"]
 }];
 export const JiraDashboard = () => {
   const [selectedIssue, setSelectedIssue] = useState(jiraIssues[0]);
