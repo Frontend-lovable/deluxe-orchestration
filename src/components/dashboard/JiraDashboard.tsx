@@ -235,23 +235,21 @@ export const JiraDashboard = () => {
             </div>
 
             {/* Issue Details Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
-              <div className="space-y-4">
-                <div>
-                  <span style={{ color: '#747474', fontSize: '12px', fontWeight: 'normal' }}>Priority</span>
-                  <div className="flex items-center gap-1 mt-1">
-                    {getPriorityIcon(selectedIssue.priority)}
-                    <span style={{ color: '#3B3B3B', fontWeight: 'normal' }} className="text-sm capitalize">{selectedIssue.priority}</span>
-                  </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-4 sm:mb-6">
+              <div>
+                <span style={{ color: '#747474', fontSize: '12px', fontWeight: 'normal' }}>Priority</span>
+                <div className="flex items-center gap-1 mt-1">
+                  {getPriorityIcon(selectedIssue.priority)}
+                  <span style={{ color: '#3B3B3B', fontWeight: 'normal' }} className="text-sm capitalize">{selectedIssue.priority}</span>
                 </div>
-                <div>
-                  <span style={{ color: '#747474', fontSize: '12px', fontWeight: 'normal' }}>Story Points</span>
-                  <div style={{ color: '#3B3B3B', fontWeight: 'normal' }} className="text-sm mt-1">{selectedIssue.points}</div>
-                </div>
-                <div>
-                  <span style={{ color: '#747474', fontSize: '12px', fontWeight: 'normal' }}>Sprint</span>
-                  <div style={{ color: '#3B3B3B', fontWeight: 'normal' }} className="text-sm mt-1">{selectedIssue.sprint}</div>
-                </div>
+              </div>
+              <div>
+                <span style={{ color: '#747474', fontSize: '12px', fontWeight: 'normal' }}>Story Points</span>
+                <div style={{ color: '#3B3B3B', fontWeight: 'normal' }} className="text-sm mt-1">{selectedIssue.points}</div>
+              </div>
+              <div>
+                <span style={{ color: '#747474', fontSize: '12px', fontWeight: 'normal' }}>Sprint</span>
+                <div style={{ color: '#3B3B3B', fontWeight: 'normal' }} className="text-sm mt-1">{selectedIssue.sprint}</div>
               </div>
               <div>
                 <span style={{ color: '#747474', fontSize: '12px', fontWeight: 'normal' }}>Labels</span>
