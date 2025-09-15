@@ -180,7 +180,7 @@ export const JiraDashboard = () => {
           {/* Wrapped Issue Details */}
           <div className="rounded-md border border-[#CCCCCC] p-4 sm:p-6 mb-4 sm:mb-6">
             {/* Issue Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 md:mb-4 gap-4">
               <div className="flex items-center gap-3 flex-wrap">
                 <span className="font-medium text-sm">{selectedIssue.id}</span>
                 <Badge className={`${getTypeBadge(selectedIssue.type)} text-xs px-2 py-1`}>
@@ -211,20 +211,20 @@ export const JiraDashboard = () => {
             {/* Issue Metadata */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-4 sm:mb-6 text-sm">
               <div>
-                <span className="text-muted-foreground">Assignee:</span>
-                <div className="font-medium truncate">{selectedIssue.assignee}</div>
+                <span style={{ color: '#747474', fontSize: '12px', fontWeight: 'normal' }}>Assignee:</span>
+                <div style={{ color: '#3B3B3B', fontWeight: 'normal' }} className="truncate">{selectedIssue.assignee}</div>
               </div>
               <div>
-                <span className="text-muted-foreground">Reporter:</span>
-                <div className="font-medium truncate">{selectedIssue.reporter}</div>
+                <span style={{ color: '#747474', fontSize: '12px', fontWeight: 'normal' }}>Reporter:</span>
+                <div style={{ color: '#3B3B3B', fontWeight: 'normal' }} className="truncate">{selectedIssue.reporter}</div>
               </div>
               <div>
-                <span className="text-muted-foreground">Created:</span>
-                <div className="font-medium">{selectedIssue.created}</div>
+                <span style={{ color: '#747474', fontSize: '12px', fontWeight: 'normal' }}>Created:</span>
+                <div style={{ color: '#3B3B3B', fontWeight: 'normal' }}>{selectedIssue.created}</div>
               </div>
               <div>
-                <span className="text-muted-foreground">Updated:</span>
-                <div className="font-medium">{selectedIssue.updated}</div>
+                <span style={{ color: '#747474', fontSize: '12px', fontWeight: 'normal' }}>Updated:</span>
+                <div style={{ color: '#3B3B3B', fontWeight: 'normal' }}>{selectedIssue.updated}</div>
               </div>
             </div>
 
@@ -237,22 +237,22 @@ export const JiraDashboard = () => {
             {/* Issue Details Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-4 sm:mb-6">
               <div>
-                <span className="text-sm text-muted-foreground">Priority</span>
+                <span style={{ color: '#747474', fontSize: '12px', fontWeight: 'normal' }}>Priority</span>
                 <div className="flex items-center gap-1 mt-1">
                   {getPriorityIcon(selectedIssue.priority)}
-                  <span className="text-sm font-medium capitalize">{selectedIssue.priority}</span>
+                  <span style={{ color: '#3B3B3B', fontWeight: 'normal' }} className="text-sm capitalize">{selectedIssue.priority}</span>
                 </div>
               </div>
               <div>
-                <span className="text-sm text-muted-foreground">Story Points</span>
-                <div className="text-sm font-medium mt-1">{selectedIssue.points}</div>
+                <span style={{ color: '#747474', fontSize: '12px', fontWeight: 'normal' }}>Story Points</span>
+                <div style={{ color: '#3B3B3B', fontWeight: 'normal' }} className="text-sm mt-1">{selectedIssue.points}</div>
               </div>
               <div>
-                <span className="text-sm text-muted-foreground">Sprint</span>
-                <div className="text-sm font-medium mt-1">{selectedIssue.sprint}</div>
+                <span style={{ color: '#747474', fontSize: '12px', fontWeight: 'normal' }}>Sprint</span>
+                <div style={{ color: '#3B3B3B', fontWeight: 'normal' }} className="text-sm mt-1">{selectedIssue.sprint}</div>
               </div>
               <div>
-                <span className="text-sm text-muted-foreground">Labels</span>
+                <span style={{ color: '#747474', fontSize: '12px', fontWeight: 'normal' }}>Labels</span>
                 <div className="flex flex-wrap gap-1 mt-1">
                   {selectedIssue.labels.map((label, index) => <Badge key={index} variant="secondary" className="text-xs">
                       {label}
