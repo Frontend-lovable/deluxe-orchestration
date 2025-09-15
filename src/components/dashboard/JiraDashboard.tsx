@@ -102,6 +102,33 @@ export const JiraDashboard = () => {
 
   return (
     <div className="h-full bg-white">
+      {/* Header */}
+      <div className="flex items-center justify-between p-6 border-b border-[#CCCCCC]">
+        <div className="flex items-center gap-4">
+          <Select defaultValue="model">
+            <SelectTrigger className="w-32">
+              <SelectValue placeholder="Model" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="model">Model</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        
+        <div className="flex items-center gap-4">
+          <Select defaultValue="payment-gateway">
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder="Payment Gateway" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="payment-gateway">Payment Gateway</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button style={{ backgroundColor: '#D61120' }} className="text-white hover:bg-red-700">
+            Create New Project
+          </Button>
+        </div>
+      </div>
 
       <div className="flex h-[calc(100vh-140px)]">
         {/* Left Sidebar - Issues List */}
