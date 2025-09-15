@@ -134,8 +134,8 @@ export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggl
                     <div className="flex items-start gap-3 w-full">
                       <item.icon className="w-4 h-4 mt-0.5 flex-shrink-0" />
                       <div className="flex-1 min-w-0">
-                        <div className="text-sm font-medium">{item.label}</div>
-                        <div className="text-xs text-muted-foreground">
+                        <div style={{ color: '#3B3B3B', fontSize: '14px', fontWeight: 'normal' }}>{item.label}</div>
+                        <div style={{ fontSize: '12px', color: '#858585', fontWeight: 'normal' }}>
                           {item.description}
                         </div>
                       </div>
@@ -201,7 +201,7 @@ export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggl
                   <AvatarFallback>JD</AvatarFallback>
                 </Avatar>
                 <div className="text-left">
-                  <div className="text-sm font-medium">Jane Doe</div>
+                  <div style={{ color: '#3B3B3B', fontSize: '14px', fontWeight: 'normal' }}>Jane Doe</div>
                 </div>
               </div>
               <ChevronRight className="w-4 h-4" />
