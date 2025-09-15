@@ -84,7 +84,7 @@ export const FileUploadSection = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex-1 min-w-0">
             <CardTitle className="text-base font-bold text-[hsl(var(--heading-primary))] break-words">Uploaded Files</CardTitle>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-sm text-muted-foreground mt-1" style={{color: '#727272'}}>
               {uploadedFiles.length} files available for BRD creation
             </p>
           </div>
@@ -113,7 +113,7 @@ export const FileUploadSection = () => {
         <div className="space-y-4">
           {uploadedFiles.length === 0 ? (
             <div className="flex items-center justify-center h-24 sm:h-32 text-muted-foreground text-center">
-              <p className="text-sm">No file selected.</p>
+              <p className="text-sm" style={{color: '#727272'}}>No file selected.</p>
             </div>
           ) : (
             <div className="space-y-3 mb-4">
@@ -173,7 +173,7 @@ export const FileUploadSection = () => {
               <Upload className="w-4 h-4 mr-2 flex-shrink-0" />
               <span className="truncate">Upload to Confluence</span>
             </Button>
-            <p className="text-xs text-muted-foreground px-2">
+            <p className="text-xs text-muted-foreground px-2" style={{color: '#727272'}}>
               Complete all BRD sections before submitting for approval
             </p>
           </div>
