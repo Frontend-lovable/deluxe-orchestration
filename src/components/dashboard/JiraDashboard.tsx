@@ -69,21 +69,21 @@ export const JiraDashboard = () => {
   };
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      "In Progress": "bg-blue-100 text-blue-700",
-      "To-do": "bg-gray-100 text-gray-700",
-      "Under Review": "bg-yellow-100 text-yellow-700",
-      "Done": "bg-green-100 text-green-700"
+      "In Progress": "bg-white text-blue-700",
+      "To-do": "bg-white text-gray-700",
+      "Under Review": "bg-white text-yellow-700",
+      "Done": "bg-white text-green-700"
     };
-    return statusConfig[status] || "bg-gray-100 text-gray-700";
+    return statusConfig[status] || "bg-white text-gray-700";
   };
   const getTypeBadge = (type: string) => {
     const typeConfig = {
-      "Story": "bg-green-100 text-green-700",
-      "Bug": "bg-red-100 text-red-700",
-      "Task": "bg-blue-100 text-blue-700",
-      "Epic": "bg-purple-100 text-purple-700"
+      "Story": "bg-white text-green-700",
+      "Bug": "bg-white text-red-700",
+      "Task": "bg-white text-blue-700",
+      "Epic": "bg-white text-purple-700"
     };
-    return typeConfig[type] || "bg-gray-100 text-gray-700";
+    return typeConfig[type] || "bg-white text-gray-700";
   };
   return <div className="h-full bg-white">
       <div className="p-2 sm:p-4 md:p-6">
