@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, ChevronDown, ArrowUp, User, Calendar, Link, FileText, Clock, ExternalLink, Code } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -78,6 +78,31 @@ const jiraIssues = [{
 export const JiraDashboard = () => {
   const [selectedIssue, setSelectedIssue] = useState(jiraIssues[0]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all-status");
+  const [typeFilter, setTypeFilter] = useState("all-type");
+
+  // Filter issues based on search term, status, and type
+  const filteredIssues = jiraIssues.filter(issue => {
+    const matchesSearch = searchTerm === "" || 
+      issue.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      issue.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      issue.id.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesStatus = statusFilter === "all-status" || 
+      issue.status.toLowerCase().replace(/[-\s]/g, '') === statusFilter.replace(/[-\s]/g, '');
+    
+    const matchesType = typeFilter === "all-type" || 
+      issue.type.toLowerCase() === typeFilter;
+
+    return matchesSearch && matchesStatus && matchesType;
+  });
+
+  // Update selected issue if it's filtered out
+  useEffect(() => {
+    if (filteredIssues.length > 0 && !filteredIssues.find(issue => issue.id === selectedIssue.id)) {
+      setSelectedIssue(filteredIssues[0]);
+    }
+  }, [filteredIssues, selectedIssue.id]);
   const getPriorityIcon = (priority: string) => {
     return priority === "high" ? <ArrowUp className="w-3 h-3 text-red-500" /> : <ArrowUp className="w-3 h-3 text-orange-500 rotate-45" />;
   };
@@ -113,24 +138,24 @@ export const JiraDashboard = () => {
             </div>
             
             <div className="flex gap-2">
-              <Select defaultValue="all-status">
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="flex-1 bg-white">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all-status">Status</SelectItem>
-                  <SelectItem value="in-progress">In Progress</SelectItem>
-                  <SelectItem value="to-do">To-do</SelectItem>
-                  <SelectItem value="under-review">Under Review</SelectItem>
+                  <SelectItem value="all-status">All Status</SelectItem>
+                  <SelectItem value="inprogress">In Progress</SelectItem>
+                  <SelectItem value="todo">To-do</SelectItem>
+                  <SelectItem value="underreview">Under Review</SelectItem>
                 </SelectContent>
               </Select>
               
-              <Select defaultValue="all-type">
+              <Select value={typeFilter} onValueChange={setTypeFilter}>
                 <SelectTrigger className="flex-1 bg-white">
                   <SelectValue placeholder="Type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all-type">Type</SelectItem>
+                  <SelectItem value="all-type">All Type</SelectItem>
                   <SelectItem value="story">Story</SelectItem>
                   <SelectItem value="bug">Bug</SelectItem>
                   <SelectItem value="task">Task</SelectItem>
@@ -144,7 +169,7 @@ export const JiraDashboard = () => {
           <div className="flex-1 overflow-y-auto">
             <h3 className="font-semibold text-sm mb-4">Issues</h3>
             <div className="space-y-2 max-h-80 overflow-y-auto">
-              {jiraIssues.map(issue => <div><div key={issue.id} className={`p-3 border border-[#DEDCDC] rounded cursor-pointer hover:bg-gray-50 transition-colors ${selectedIssue.id === issue.id ? 'border-blue-500 bg-blue-50' : ''}`} onClick={() => setSelectedIssue(issue)}>
+              {filteredIssues.map(issue => <div><div key={issue.id} className={`p-3 border border-[#DEDCDC] rounded cursor-pointer hover:bg-gray-50 transition-colors ${selectedIssue.id === issue.id ? 'border-blue-500 bg-blue-50' : ''}`} onClick={() => setSelectedIssue(issue)}>
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <span className="font-medium" style={{
