@@ -70,13 +70,13 @@ export const ChatInterface = ({
         scrollbarWidth: 'thin',
         scrollbarColor: '#cbd5e1 transparent'
       }}>
-          {messages.map(message => <div key={message.id} className="space-y-2">
+          {messages.map(message => <div key={message.id} className="space-y-2" style={{ backgroundColor: '#F6F6F6', padding: '20px', borderRadius: '8px' }}>
               <div className={`flex ${message.isBot ? 'justify-start' : 'justify-end'}`}>
                 <div className={`max-w-[80%] p-3 rounded-lg ${message.isBot ? 'bg-secondary text-secondary-foreground' : 'bg-primary text-primary-foreground'}`}>
-                  <p className="text-sm">{message.content}</p>
+                  <p className="text-sm whitespace-pre-line">{message.content}</p>
                 </div>
               </div>
-              <div className={`text-xs text-muted-foreground ${message.isBot ? 'text-left' : 'text-right'}`}>
+              <div className={`text-xs ${message.isBot ? 'text-left' : 'text-right'}`} style={{ color: '#8F8F8F', fontSize: '12px' }}>
                 {message.timestamp}
               </div>
             </div>)}
