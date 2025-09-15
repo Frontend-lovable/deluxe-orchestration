@@ -60,6 +60,21 @@ export const BRDProgress = ({ selectedSection, onSectionChange, completedSection
                 selectedSection === section.title ? 'bg-accent border-2 border-primary' : ''
               }`}
             >
+              <div className="flex-shrink-0">
+                {completedSections.includes(section.title) ? (
+                  <div 
+                    className="px-2 py-1 rounded-md text-xs font-medium"
+                    style={{ 
+                      color: '#008236', 
+                      backgroundColor: '#DBFCE7' 
+                    }}
+                  >
+                    Done
+                  </div>
+                ) : (
+                  <div className="w-12 h-6"></div>
+                )}
+              </div>
               <div className="flex-1">
                 <div className="font-medium text-sm">{section.title}</div>
                 <div className="text-xs" style={{color: '#727272'}}>
