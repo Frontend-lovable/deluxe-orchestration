@@ -206,7 +206,7 @@ export const JiraDashboard = () => {
             </div>
 
             {/* Issue Title */}
-            <h1 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6 break-words">{selectedIssue.title}</h1>
+            <h1 className="text-lg mb-4 sm:mb-6 break-words sm:text-base font-bold">{selectedIssue.title}</h1>
 
             {/* Issue Metadata */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-4 sm:mb-6 text-sm">
