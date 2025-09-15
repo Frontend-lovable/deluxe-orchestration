@@ -65,7 +65,7 @@ export const BRDDashboard = ({
     }
   };
   return <div className="p-4 sm:p-6 lg:p-8 bg-white">
-      <div className="mb-6 lg:mb-8">
+      <div className="mb-4 lg:mb-2">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="sm" onClick={onBack} className="p-2 hover:bg-accent">
             <ArrowLeft className="w-4 h-4" />
