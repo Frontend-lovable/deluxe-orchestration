@@ -57,7 +57,7 @@ export const BRDProgress = ({ selectedSection, onSectionChange, completedSection
               key={section.title} 
               onClick={() => onSectionChange(section.title)}
               className={`flex items-start gap-3 p-3 rounded-lg hover:bg-accent transition-colors cursor-pointer ${
-                selectedSection === section.title ? 'bg-accent border-2 border-primary' : ''
+                selectedSection === section.title ? 'bg-accent border-2 border-primary' : 'border border-[#ccc] rounded-[4px]'
               }`}
             >
               <div className="flex-1">
