@@ -114,7 +114,7 @@ export const JiraDashboard = () => {
             
             <div className="flex gap-2">
               <Select defaultValue="all-status">
-                <SelectTrigger className="flex-1">
+                <SelectTrigger className="flex-1 bg-white">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -126,7 +126,7 @@ export const JiraDashboard = () => {
               </Select>
               
               <Select defaultValue="all-type">
-                <SelectTrigger className="flex-1">
+                <SelectTrigger className="flex-1 bg-white">
                   <SelectValue placeholder="Type" />
                 </SelectTrigger>
                 <SelectContent>
