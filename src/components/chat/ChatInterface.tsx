@@ -72,7 +72,7 @@ export const ChatInterface = ({
       }}>
           {messages.map(message => <div key={message.id} className="space-y-2" style={{ backgroundColor: '#F6F6F6', padding: '20px', borderRadius: '8px', width: '480px' }}>
               <div className={`flex ${message.isBot ? 'justify-start' : 'justify-end'}`}>
-                <div className={`max-w-[80%] p-3 rounded-lg ${message.isBot ? 'bg-secondary text-secondary-foreground' : 'bg-transparent text-foreground border border-border'}`}>
+                <div className={`max-w-[80%] rounded-lg ${message.isBot ? 'text-secondary-foreground' : 'text-foreground'}`}>
                   <p className="text-sm whitespace-pre-line">{message.content}</p>
                 </div>
               </div>
