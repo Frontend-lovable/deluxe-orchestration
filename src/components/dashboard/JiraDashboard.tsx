@@ -168,7 +168,24 @@ export const JiraDashboard = () => {
           {/* Issues List */}
           <div className="flex-1 overflow-y-auto">
             <h3 className="font-semibold text-sm mb-4">Issues</h3>
-            <div className="space-y-2 max-h-80 overflow-y-auto">
+            <div className="space-y-2 max-h-96 overflow-y-auto issues-scrollbar" style={{
+              scrollbarWidth: 'thin',
+              scrollbarColor: '#E6E6E6 transparent'
+            }}>
+              <style dangerouslySetInnerHTML={{
+                __html: `
+                  .issues-scrollbar::-webkit-scrollbar {
+                    width: 6px;
+                  }
+                  .issues-scrollbar::-webkit-scrollbar-thumb {
+                    background-color: #E6E6E6;
+                    border-radius: 3px;
+                  }
+                  .issues-scrollbar::-webkit-scrollbar-track {
+                    background: transparent;
+                  }
+                `
+              }} />
               {filteredIssues.map(issue => <div><div key={issue.id} className={`p-3 border border-[#DEDCDC] rounded cursor-pointer hover:bg-gray-50 transition-colors ${selectedIssue.id === issue.id ? 'border-blue-500 bg-blue-50' : ''}`} onClick={() => setSelectedIssue(issue)}>
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
