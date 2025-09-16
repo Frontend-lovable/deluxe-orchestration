@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ChatMessage } from "./ChatMessage";
+import { VPNConnectionTest } from "./VPNConnectionTest";
 import { ChatbotService } from "@/services/chatbotApi";
 import { toast } from "sonner";
 interface ChatMessageType {
@@ -132,10 +133,13 @@ export const ChatInterface = ({
             </AvatarFallback>
           </Avatar>
           <div>
-            
-            
+            <h3 className="font-semibold text-sm">{title}</h3>
+            <p className="text-xs text-muted-foreground">{subtitle}</p>
           </div>
         </div>
+        
+        {/* VPN Connection Tester - Remove this after confirming connection works */}
+        <VPNConnectionTest />
       </CardHeader>
       
       <CardContent className="flex-1 flex flex-col min-h-0">

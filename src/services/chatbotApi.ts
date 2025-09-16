@@ -27,6 +27,8 @@ export class ChatbotService {
   }
 
   static async sendMessage(message: string): Promise<ChatResponse> {
+    console.log('Sending message to API:', this.API_BASE_URL);
+    
     try {
       const requestBody: ChatRequest = {
         message,
@@ -34,45 +36,66 @@ export class ChatbotService {
         ...API_CONFIG.DEFAULT_PARAMS
       };
 
+      console.log('Request payload:', requestBody);
+
+      // Extended timeout for VPN connections
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT);
+      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 seconds for VPN
 
       const response = await fetch(`${this.API_BASE_URL}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          // Add any additional headers that might be needed for your internal API
+          'Accept': 'application/json',
         },
         body: JSON.stringify(requestBody),
         signal: controller.signal,
+        // Disable cache for dynamic responses
+        cache: 'no-cache',
+        // Handle credentials if needed
+        credentials: 'omit'
       });
 
       clearTimeout(timeoutId);
+      console.log('Response status:', response.status);
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorText = await response.text();
+        console.error('API Error Response:', errorText);
+        throw new Error(`API Error (${response.status}): ${errorText}`);
       }
 
       const data: ChatResponse = await response.json();
+      console.log('API Response:', data);
       
       // Store session ID for future requests
       if (data.session_id) {
         this.setSessionId(data.session_id);
+        console.log('Session ID stored:', data.session_id);
       }
 
       return data;
     } catch (error) {
-      console.error('Error calling chatbot API:', error);
+      console.error('Detailed error calling chatbot API:', {
+        error,
+        url: `${this.API_BASE_URL}/chat`,
+        timestamp: new Date().toISOString()
+      });
       
       if (error instanceof Error) {
         if (error.name === 'AbortError') {
-          throw new Error('Request timeout. Please try again.');
+          throw new Error('Request timeout after 60 seconds. Your VPN connection might be slow.');
         }
         if (error.message.includes('Failed to fetch')) {
-          throw new Error('Cannot connect to API. Please check if the API is publicly accessible and CORS is configured.');
+          throw new Error('Network error: Cannot reach the API through VPN. Please check your VPN connection and ensure the internal load balancer is accessible.');
+        }
+        if (error.message.includes('CORS')) {
+          throw new Error('CORS error: Please ensure your API has the correct CORS headers configured.');
         }
       }
       
-      throw new Error('Failed to get response from chatbot. Please try again.');
+      throw error instanceof Error ? error : new Error('Unknown API error occurred.');
     }
   }
 }
