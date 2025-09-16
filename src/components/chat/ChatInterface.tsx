@@ -1,14 +1,18 @@
-import { useState } from "react";
-import { Send } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Send, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-interface ChatMessage {
+import { ChatMessage } from "./ChatMessage";
+import { ChatbotService } from "@/services/chatbotApi";
+import { toast } from "sonner";
+interface ChatMessageType {
   id: string;
   content: string;
   isBot: boolean;
   timestamp: string;
+  isTyping?: boolean;
 }
 interface ChatInterfaceProps {
   title: string;
@@ -24,16 +28,28 @@ export const ChatInterface = ({
   placeholder = "Type your message about business requirements...",
   onReviewed
 }: ChatInterfaceProps) => {
-  const [messages, setMessages] = useState<ChatMessage[]>([...(initialMessage ? [{
+  const [messages, setMessages] = useState<ChatMessageType[]>([...(initialMessage ? [{
     id: "1",
     content: initialMessage,
     isBot: true,
-    timestamp: "2:05:11 PM"
+    timestamp: new Date().toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit'
+    })
   }] : [])]);
   const [inputValue, setInputValue] = useState("");
-  const handleSend = () => {
-    if (!inputValue.trim()) return;
-    const newMessage: ChatMessage = {
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Auto scroll to bottom when new messages arrive
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const handleSend = async () => {
+    if (!inputValue.trim() || isLoading) return;
+    
+    const userMessage: ChatMessageType = {
       id: Date.now().toString(),
       content: inputValue,
       isBot: false,
@@ -42,13 +58,70 @@ export const ChatInterface = ({
         minute: '2-digit'
       })
     };
-    setMessages([...messages, newMessage]);
-
-    // Check if the message is "reviewed" and trigger the callback
-    if (inputValue.trim().toLowerCase() === "reviewed" && onReviewed) {
-      onReviewed();
-    }
+    
+    const currentMessage = inputValue;
+    setMessages(prev => [...prev, userMessage]);
     setInputValue("");
+    setIsLoading(true);
+
+    try {
+      // Add loading message
+      const loadingMessage: ChatMessageType = {
+        id: `loading-${Date.now()}`,
+        content: "...",
+        isBot: true,
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      };
+      setMessages(prev => [...prev, loadingMessage]);
+
+      // Call API
+      const response = await ChatbotService.sendMessage(currentMessage);
+      
+      // Remove loading message and add actual response with typing effect
+      setMessages(prev => {
+        const withoutLoading = prev.filter(msg => !msg.id.startsWith('loading-'));
+        const botMessage: ChatMessageType = {
+          id: `bot-${Date.now()}`,
+          content: response.response,
+          isBot: true,
+          timestamp: new Date().toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit'
+          }),
+          isTyping: true
+        };
+        return [...withoutLoading, botMessage];
+      });
+
+      // Check if the message is "reviewed" and trigger the callback
+      if (currentMessage.trim().toLowerCase() === "reviewed" && onReviewed) {
+        onReviewed();
+      }
+    } catch (error) {
+      console.error('Chat error:', error);
+      
+      // Remove loading message and add error message
+      setMessages(prev => {
+        const withoutLoading = prev.filter(msg => !msg.id.startsWith('loading-'));
+        const errorMessage: ChatMessageType = {
+          id: `error-${Date.now()}`,
+          content: "Sorry, I couldn't process your message right now. This might be due to network issues or the API not being publicly accessible. Please try again later.",
+          isBot: true,
+          timestamp: new Date().toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit'
+          })
+        };
+        return [...withoutLoading, errorMessage];
+      });
+      
+      toast.error("Failed to send message. Please check your connection and try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
   return <Card className="h-full flex flex-col overflow-hidden">
       <CardHeader className="pb-4">
@@ -66,28 +139,45 @@ export const ChatInterface = ({
       </CardHeader>
       
       <CardContent className="flex-1 flex flex-col min-h-0">
-        <div className="flex-1 space-y-4 mb-4 overflow-y-auto max-h-full pr-2" style={{
-        scrollbarWidth: 'thin',
-        scrollbarColor: '#cbd5e1 transparent'
-      }}>
-          {messages.map(message => <div key={message.id} className="space-y-2 max-w-full" style={{ backgroundColor: '#F6F6F6', padding: '20px', borderRadius: '8px' }}>
-              <div className="flex justify-start">
-                <div className={`w-full max-w-[90%] sm:max-w-[80%] rounded-lg ${message.isBot ? 'text-secondary-foreground' : 'text-foreground'}`}>
-                  <p className="text-sm whitespace-pre-line break-words">{message.content}</p>
-                </div>
-              </div>
-              <div className={`text-xs ${message.isBot ? 'text-left' : 'text-left'}`} style={{ color: '#8F8F8F', fontSize: '12px' }}>
-                {message.timestamp}
-              </div>
-            </div>)}
+        <div className="flex-1 mb-4 overflow-y-auto max-h-full pr-2" style={{
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#cbd5e1 transparent'
+        }}>
+          {messages.length === 0 ? (
+            <div className="flex items-center justify-center h-full text-muted-foreground">
+              <p className="text-sm">Start a conversation...</p>
+            </div>
+          ) : (
+            <div className="space-y-1">
+              {messages.map(message => (
+                <ChatMessage key={message.id} message={message} />
+              ))}
+              <div ref={messagesEndRef} />
+            </div>
+          )}
         </div>
         
         <div className="flex gap-2">
-          <Input value={inputValue} onChange={e => setInputValue(e.target.value)} placeholder={placeholder} onKeyPress={e => e.key === 'Enter' && handleSend()} className="flex-1" style={{
-          backgroundColor: '#fff'
-        }} />
-          <Button onClick={handleSend} size="sm" className="px-3">
-            <Send className="w-4 h-4" />
+          <Input 
+            value={inputValue} 
+            onChange={e => setInputValue(e.target.value)} 
+            placeholder={placeholder}
+            onKeyPress={e => e.key === 'Enter' && !e.shiftKey && handleSend()}
+            disabled={isLoading}
+            className="flex-1" 
+            style={{ backgroundColor: '#fff' }}
+          />
+          <Button 
+            onClick={handleSend} 
+            size="sm" 
+            className="px-3"
+            disabled={isLoading || !inputValue.trim()}
+          >
+            {isLoading ? (
+              <div className="w-4 h-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+            ) : (
+              <Send className="w-4 h-4" />
+            )}
           </Button>
         </div>
       </CardContent>
