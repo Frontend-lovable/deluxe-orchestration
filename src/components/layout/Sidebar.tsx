@@ -3,6 +3,7 @@ import {
   BookOpen, 
   Ticket, 
   Palette, 
+  Database,
   Bell, 
   Settings, 
   HelpCircle,
@@ -39,6 +40,12 @@ const navigationItems = [
     label: "Design Assistant",
     description: "Technical architecture planning",
     id: "design",
+  },
+  {
+    icon: Database,
+    label: "Projects",
+    description: "View & manage all projects",
+    id: "projects",
   },
 ];
 
