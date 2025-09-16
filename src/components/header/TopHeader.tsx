@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ProjectSelect } from "@/components/projects/ProjectSelect";
 
 interface TopHeaderProps {
   onMenuClick?: () => void;
@@ -45,16 +46,9 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps
       </div>
       
       <div className="flex items-center gap-2 sm:gap-4">
-        <Select defaultValue="project">
-          <SelectTrigger className="w-32 sm:w-48" style={{ backgroundColor: '#EDEDED' }}>
-            <SelectValue placeholder="Select Project" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="project">Select Project</SelectItem>
-            <SelectItem value="payment-gateway">Payment Gateway</SelectItem>
-            <SelectItem value="user-portal">User Portal</SelectItem>
-          </SelectContent>
-        </Select>
+        <ProjectSelect 
+          onProjectSelect={(projectId) => console.log('Selected project:', projectId)}
+        />
         
         {currentView === "brd" && (
           <Select>
