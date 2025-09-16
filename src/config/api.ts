@@ -1,20 +1,23 @@
-// API Configuration for VPN-connected internal API
+// API Configuration
+// Replace this URL with your publicly accessible API endpoint
 export const API_CONFIG = {
-  // Internal AWS Load Balancer URL (accessible via VPN)
+  // Current internal URL (won't work from browser)
   CHATBOT_API_URL: "http://internal-ai-sandbox-internal-702602954.us-east-1.elb.amazonaws.com:8000/api/v1",
   
-  // Extended timeout for VPN connections (60 seconds)
-  TIMEOUT: 60000,
+  // Example of what the URL should look like when properly exposed:
+  // CHATBOT_API_URL: "https://your-api-domain.com/api/v1",
+  // or
+  // CHATBOT_API_URL: "https://api.yourdomain.com/v1",
   
-  // Default request parameters matching your API
+  // Request timeout in milliseconds
+  TIMEOUT: 30000,
+  
+  // Default request parameters
   DEFAULT_PARAMS: {
     include_context: true,
     max_tokens: 4000,
     temperature: 0.7
-  },
-  
-  // Debug mode for troubleshooting VPN connections
-  DEBUG: true
+  }
 };
 
 // Instructions for making the API accessible:
