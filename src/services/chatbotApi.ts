@@ -59,6 +59,11 @@ export async function sendChatMessage(message: string): Promise<ChatResponse> {
       
       console.log('Response status:', response.status);
       console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+      console.log('Response URL:', response.url);
+
+      // Get content type before reading response body
+      const contentType = response.headers.get('content-type');
+      console.log('Content-Type:', contentType);
 
       if (!response.ok) {
         let errorText;
@@ -68,19 +73,43 @@ export async function sendChatMessage(message: string): Promise<ChatResponse> {
           errorText = 'Unable to read error response';
         }
         console.log('Error response body:', errorText);
+        console.log('Error response length:', errorText.length);
+        
+        // Check if it's an HTML error page
+        if (errorText.includes('<!DOCTYPE') || errorText.includes('<html')) {
+          throw new Error(`Server returned HTML error page (status: ${response.status}). The API endpoint may not be properly configured or accessible.`);
+        }
+        
         throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
       }
 
-      // Check if response is JSON
-      const contentType = response.headers.get('content-type');
+      // Read response as text first to inspect it
+      const responseText = await response.text();
+      console.log('Raw response text:', responseText.substring(0, 200) + (responseText.length > 200 ? '...' : ''));
+      console.log('Response text length:', responseText.length);
+
+      // Check if response is JSON by content type AND by trying to parse it
       if (!contentType || !contentType.includes('application/json')) {
-        const responseText = await response.text();
-        console.log('Non-JSON response received:', responseText);
-        throw new Error('API returned non-JSON response. Please check if the API endpoint is correct.');
+        console.log('Non-JSON content type detected:', contentType);
+        
+        // Check if it looks like HTML
+        if (responseText.includes('<!DOCTYPE') || responseText.includes('<html')) {
+          throw new Error(`API returned HTML instead of JSON. This usually means the API endpoint is not correctly configured or the proxy is not working. Received HTML page instead of API response.`);
+        }
+        
+        throw new Error(`API returned non-JSON response (Content-Type: ${contentType}). Expected application/json but received: ${responseText.substring(0, 100)}`);
       }
 
-      const data: ChatResponse = await response.json();
-      console.log('Success response:', data);
+      // Try to parse as JSON
+      let data: ChatResponse;
+      try {
+        data = JSON.parse(responseText);
+        console.log('Success response:', data);
+      } catch (parseError) {
+        console.error('JSON parse error:', parseError);
+        console.log('Failed to parse response text:', responseText);
+        throw new Error(`API returned invalid JSON. Response text: ${responseText.substring(0, 200)}`);
+      }
       
     // Store session ID for future requests
     if (data.session_id) {
