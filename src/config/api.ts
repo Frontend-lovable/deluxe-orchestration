@@ -2,7 +2,7 @@
 // Replace this URL with your publicly accessible API endpoint
 export const API_CONFIG = {
   // Updated public URL
-  CHATBOT_API_URL: "/api/v1",
+  CHATBOT_API_URL: "http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1",
   
   // Example of what the URL should look like when properly exposed:
   // CHATBOT_API_URL: "https://your-api-domain.com/api/v1",

@@ -27,12 +27,16 @@ export class ChatbotService {
   }
 
   static async sendMessage(message: string): Promise<ChatResponse> {
+    console.log('Sending request to:', `${this.API_BASE_URL}/chat`);
+    
     try {
       const requestBody: ChatRequest = {
         message,
         session_id: this.getSessionId(),
         ...API_CONFIG.DEFAULT_PARAMS
       };
+
+      console.log('Request body:', requestBody);
 
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT);
@@ -44,15 +48,22 @@ export class ChatbotService {
         },
         body: JSON.stringify(requestBody),
         signal: controller.signal,
+        mode: 'cors',
       });
 
       clearTimeout(timeoutId);
+      
+      console.log('Response status:', response.status);
+      console.log('Response headers:', Object.fromEntries(response.headers.entries()));
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorText = await response.text();
+        console.log('Error response body:', errorText);
+        throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
       }
 
       const data: ChatResponse = await response.json();
+      console.log('Success response:', data);
       
       // Store session ID for future requests
       if (data.session_id) {
