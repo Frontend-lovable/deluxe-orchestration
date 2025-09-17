@@ -37,8 +37,8 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
               ? 'bg-muted text-muted-foreground rounded-bl-md' 
               : 'bg-primary rounded-br-md'
             }
-          `} style={!message.isBot ? { color: '#fff' } : {}}>
-            <p className="text-sm whitespace-pre-wrap break-words">
+          `}>
+            <p className={`text-sm whitespace-pre-wrap break-words ${!message.isBot ? 'text-white' : ''}`} style={!message.isBot ? { color: '#fff !important' } : {}}>
               {content}
               {message.isTyping && isTyping && (
                 <span className="inline-block w-2 h-4 bg-current animate-pulse ml-1" />
