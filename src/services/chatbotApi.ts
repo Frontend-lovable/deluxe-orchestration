@@ -33,6 +33,23 @@ export async function sendChatMessage(message: string): Promise<ChatResponse> {
   const API_BASE_URL = API_CONFIG.CHATBOT_API_URL;
   console.log('Sending request to:', `${API_BASE_URL}/chat`);
   
+  // Function to try direct API call as fallback
+  async function tryDirectAPI(requestBody: ChatRequest) {
+    const directURL = "http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1/chat";
+    console.log('Trying direct API call to:', directURL);
+    
+    const response = await fetch(directURL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
+      mode: 'cors',
+    });
+    
+    return response;
+  }
+  
   try {
     const requestBody: ChatRequest = {
       message,
@@ -42,10 +59,15 @@ export async function sendChatMessage(message: string): Promise<ChatResponse> {
 
     console.log('Request body:', requestBody);
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT);
+    let response: Response;
+    let usingFallback = false;
 
-    const response = await fetch(`${API_BASE_URL}/chat`, {
+    try {
+      // First try the proxy
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT);
+
+      response = await fetch(`${API_BASE_URL}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -56,14 +78,33 @@ export async function sendChatMessage(message: string): Promise<ChatResponse> {
       });
 
       clearTimeout(timeoutId);
+
+      // Check if we got HTML instead of JSON (proxy failure)
+      const contentType = response.headers.get('content-type');
+      const responseClone = response.clone();
+      const responseText = await responseClone.text();
+      
+      if (responseText.includes('<!DOCTYPE') || responseText.includes('<html') || 
+          (contentType && !contentType.includes('application/json') && contentType.includes('text/html'))) {
+        console.log('Proxy returned HTML, trying direct API...');
+        throw new Error('Proxy returned HTML, fallback needed');
+      }
+    } catch (proxyError) {
+      console.log('Proxy failed, trying direct API call...', proxyError);
+      try {
+        response = await tryDirectAPI(requestBody);
+        usingFallback = true;
+        console.log('Direct API call successful');
+      } catch (directError) {
+        console.error('Both proxy and direct API failed:', directError);
+        throw new Error('Both proxy and direct API calls failed. Please check your network connection and API configuration.');
+      }
+    }
       
       console.log('Response status:', response.status);
       console.log('Response headers:', Object.fromEntries(response.headers.entries()));
       console.log('Response URL:', response.url);
-
-      // Get content type before reading response body
-      const contentType = response.headers.get('content-type');
-      console.log('Content-Type:', contentType);
+      console.log('Using fallback:', usingFallback);
 
       if (!response.ok) {
         let errorText;
@@ -88,16 +129,20 @@ export async function sendChatMessage(message: string): Promise<ChatResponse> {
       console.log('Raw response text:', responseText.substring(0, 200) + (responseText.length > 200 ? '...' : ''));
       console.log('Response text length:', responseText.length);
 
+      // Get final content type
+      const finalContentType = response.headers.get('content-type');
+      console.log('Final Content-Type:', finalContentType);
+
       // Check if response is JSON by content type AND by trying to parse it
-      if (!contentType || !contentType.includes('application/json')) {
-        console.log('Non-JSON content type detected:', contentType);
+      if (!finalContentType || !finalContentType.includes('application/json')) {
+        console.log('Non-JSON content type detected:', finalContentType);
         
         // Check if it looks like HTML
         if (responseText.includes('<!DOCTYPE') || responseText.includes('<html')) {
           throw new Error(`API returned HTML instead of JSON. This usually means the API endpoint is not correctly configured or the proxy is not working. Received HTML page instead of API response.`);
         }
         
-        throw new Error(`API returned non-JSON response (Content-Type: ${contentType}). Expected application/json but received: ${responseText.substring(0, 100)}`);
+        throw new Error(`API returned non-JSON response (Content-Type: ${finalContentType}). Expected application/json but received: ${responseText.substring(0, 100)}`);
       }
 
       // Try to parse as JSON
