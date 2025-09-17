@@ -1,4 +1,5 @@
 import { API_CONFIG } from "@/config/api";
+import { useMutation } from "@tanstack/react-query";
 
 // Chatbot API service
 export interface ChatRequest {
@@ -14,8 +15,8 @@ export interface ChatResponse {
   session_id: string;
 }
 
-export class ChatbotService {
-  private static readonly API_BASE_URL = API_CONFIG.CHATBOT_API_URL;
+// Session management utility
+export class SessionManager {
   private static readonly SESSION_KEY = "chatbot_session_id";
 
   static getSessionId(): string | null {
@@ -25,23 +26,26 @@ export class ChatbotService {
   static setSessionId(sessionId: string): void {
     localStorage.setItem(this.SESSION_KEY, sessionId);
   }
+}
 
-  static async sendMessage(message: string): Promise<ChatResponse> {
-    console.log('Sending request to:', `${this.API_BASE_URL}/chat`);
-    
-    try {
-      const requestBody: ChatRequest = {
-        message,
-        session_id: this.getSessionId(),
-        ...API_CONFIG.DEFAULT_PARAMS
-      };
+// API function for sending chat messages
+export async function sendChatMessage(message: string): Promise<ChatResponse> {
+  const API_BASE_URL = API_CONFIG.CHATBOT_API_URL;
+  console.log('Sending request to:', `${API_BASE_URL}/chat`);
+  
+  try {
+    const requestBody: ChatRequest = {
+      message,
+      session_id: SessionManager.getSessionId(),
+      ...API_CONFIG.DEFAULT_PARAMS
+    };
 
-      console.log('Request body:', requestBody);
+    console.log('Request body:', requestBody);
 
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT);
 
-      const response = await fetch(`${this.API_BASE_URL}/chat`, {
+    const response = await fetch(`${API_BASE_URL}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -78,25 +82,37 @@ export class ChatbotService {
       const data: ChatResponse = await response.json();
       console.log('Success response:', data);
       
-      // Store session ID for future requests
-      if (data.session_id) {
-        this.setSessionId(data.session_id);
-      }
-
-      return data;
-    } catch (error) {
-      console.error('Error calling chatbot API:', error);
-      
-      if (error instanceof Error) {
-        if (error.name === 'AbortError') {
-          throw new Error('Request timeout. Please try again.');
-        }
-        if (error.message.includes('Failed to fetch')) {
-          throw new Error('Cannot connect to API. Please check if the API is publicly accessible and CORS is configured.');
-        }
-      }
-      
-      throw new Error('Failed to get response from chatbot. Please try again.');
+    // Store session ID for future requests
+    if (data.session_id) {
+      SessionManager.setSessionId(data.session_id);
     }
+
+    return data;
+  } catch (error) {
+    console.error('Error calling chatbot API:', error);
+    
+    if (error instanceof Error) {
+      if (error.name === 'AbortError') {
+        throw new Error('Request timeout. Please try again.');
+      }
+      if (error.message.includes('Failed to fetch')) {
+        throw new Error('Cannot connect to API. Please check if the API is publicly accessible and CORS is configured.');
+      }
+    }
+    
+    throw new Error('Failed to get response from chatbot. Please try again.');
   }
+}
+
+// TanStack Query hook for sending chat messages
+export function useChatMessage() {
+  return useMutation({
+    mutationFn: sendChatMessage,
+    onError: (error) => {
+      console.error('Chat error:', error);
+    },
+    onSuccess: (data) => {
+      console.log('Chat success:', data);
+    },
+  });
 }
