@@ -13,16 +13,17 @@ export default defineConfig(({ mode }) => ({
         target: "http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000",
         changeOrigin: true,
         secure: false,
-        rewrite: (path) => path,
+        // Keep the same path (/api/v1/chat -> /api/v1/chat)
+        rewrite: (path) => path.replace(/^\/api/, "/api"),
         configure: (proxy, options) => {
-          proxy.on('error', (err, req, res) => {
-            console.log('proxy error', err);
+          proxy.on("error", (err, req, res) => {
+            console.error("Proxy error", err);
           });
-          proxy.on('proxyReq', (proxyReq, req, res) => {
-            console.log('Sending Request to the Target:', req.method, req.url);
+          proxy.on("proxyReq", (proxyReq, req, res) => {
+            console.log("➡️ Sending Request to Target:", req.method, req.url);
           });
-          proxy.on('proxyRes', (proxyRes, req, res) => {
-            console.log('Received Response from the Target:', proxyRes.statusCode, req.url);
+          proxy.on("proxyRes", (proxyRes, req, res) => {
+            console.log("⬅️ Received Response:", proxyRes.statusCode, req.url);
           });
         },
       },
