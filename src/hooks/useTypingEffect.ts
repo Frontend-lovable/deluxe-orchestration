@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export const useTypingEffect = (text: string, speed: number = 30) => {
+export const useTypingEffect = (text: string, speed: number = 15) => {
   const [displayedText, setDisplayedText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
 
@@ -10,11 +10,19 @@ export const useTypingEffect = (text: string, speed: number = 30) => {
     setIsTyping(true);
     setDisplayedText('');
     
-    let index = 0;
+    const lines = text.split('\n');
+    let lineIndex = 0;
+    
     const timer = setInterval(() => {
-      if (index < text.length) {
-        setDisplayedText(prev => prev + text[index]);
-        index++;
+      if (lineIndex < lines.length) {
+        setDisplayedText(prev => {
+          if (lineIndex === 0) {
+            return lines[lineIndex];
+          } else {
+            return prev + '\n' + lines[lineIndex];
+          }
+        });
+        lineIndex++;
       } else {
         setIsTyping(false);
         clearInterval(timer);
