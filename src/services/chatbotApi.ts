@@ -57,9 +57,22 @@ export class ChatbotService {
       console.log('Response headers:', Object.fromEntries(response.headers.entries()));
 
       if (!response.ok) {
-        const errorText = await response.text();
+        let errorText;
+        try {
+          errorText = await response.text();
+        } catch (e) {
+          errorText = 'Unable to read error response';
+        }
         console.log('Error response body:', errorText);
         throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+      }
+
+      // Check if response is JSON
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const responseText = await response.text();
+        console.log('Non-JSON response received:', responseText);
+        throw new Error('API returned non-JSON response. Please check if the API endpoint is correct.');
       }
 
       const data: ChatResponse = await response.json();
