@@ -14,7 +14,7 @@ interface ChatMessageProps {
 export const ChatMessage = ({ message }: ChatMessageProps) => {
   const { displayedText, isTyping } = useTypingEffect(
     message.isTyping ? message.content : '', 
-    30
+    5
   );
 
   const content = message.isTyping ? displayedText : message.content;
