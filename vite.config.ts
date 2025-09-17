@@ -12,9 +12,6 @@ export default defineConfig(({ mode }) => ({
       "/api": {
         target: "http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000",
         changeOrigin: true,
-        secure: false,
-        // Keep the same path (/api/v1/chat -> /api/v1/chat)
-        rewrite: (path) => path.replace(/^\/api/, "/api"),
         configure: (proxy, options) => {
           proxy.on("error", (err, req, res) => {
             console.error("Proxy error", err);
