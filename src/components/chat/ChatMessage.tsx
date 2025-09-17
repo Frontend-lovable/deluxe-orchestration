@@ -53,13 +53,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
           </div>
         </div>
 
-       // {!message.isBot && (
-       //   <Avatar className="w-6 h-6 bg-secondary">
-         //   <AvatarFallback className="bg-secondary text-secondary-foreground text-xs">
-           //   U
-          //  </AvatarFallback>
-        //  </Avatar>
-       // )}
+       
       </div>
     </div>
   );
