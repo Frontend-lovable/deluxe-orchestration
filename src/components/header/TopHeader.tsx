@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { CreateProjectModal } from "@/components/modals/CreateProjectModal";
-import { fetchProjects, getProjectById, type Project } from "@/services/projectApi";
+import { fetchProjects, getProjectById, getBRDTemplates, type Project } from "@/services/projectApi";
 import { useToast } from "@/hooks/use-toast";
 
 interface TopHeaderProps {
@@ -26,11 +26,16 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps
   const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isLoadingProjects, setIsLoadingProjects] = useState(false);
+  const [brdTemplates, setBrdTemplates] = useState<string[]>([]);
+  const [isLoadingTemplates, setIsLoadingTemplates] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
     loadProjects();
-  }, []);
+    if (currentView === "brd") {
+      loadBRDTemplates();
+    }
+  }, [currentView]);
 
   const loadProjects = async () => {
     setIsLoadingProjects(true);
@@ -41,6 +46,23 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps
       console.error("Failed to load projects:", error);
     } finally {
       setIsLoadingProjects(false);
+    }
+  };
+
+  const loadBRDTemplates = async () => {
+    setIsLoadingTemplates(true);
+    try {
+      const templates = await getBRDTemplates();
+      setBrdTemplates(templates);
+    } catch (error) {
+      console.error("Failed to load BRD templates:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load BRD templates",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingTemplates(false);
     }
   };
 
@@ -114,7 +136,7 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps
         {currentView === "brd" && (
           <Select>
             <SelectTrigger className="w-32 sm:w-40 border-primary" style={{ backgroundColor: '#fff' }}>
-              <SelectValue placeholder="Create / Update" />
+              <SelectValue placeholder={isLoadingTemplates ? "Loading..." : "Create / Update"} />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
@@ -125,8 +147,17 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps
               <SelectSeparator />
               <SelectGroup>
                 <SelectLabel>Create new BRD</SelectLabel>
-                <SelectItem value="template-1">Template 1</SelectItem>
-                <SelectItem value="template-2">Template 2</SelectItem>
+                {brdTemplates.length > 0 ? (
+                  brdTemplates.map((template, index) => (
+                    <SelectItem key={index} value={template.toLowerCase().replace(/\s+/g, '-')}>
+                      {template}
+                    </SelectItem>
+                  ))
+                ) : (
+                  <SelectItem value="no-templates" disabled>
+                    {isLoadingTemplates ? "Loading templates..." : "No templates available"}
+                  </SelectItem>
+                )}
               </SelectGroup>
             </SelectContent>
           </Select>
