@@ -8,11 +8,11 @@ export interface CreateProjectRequest {
 }
 
 export interface Project {
-  id: string;
+  project_id: string;
   project_name: string;
   description: string;
-  jira_project_key: string;
-  confluence_space_key: string;
+  jira_project_key?: string;
+  confluence_space_key?: string;
   created_at: string;
 }
 
@@ -56,7 +56,7 @@ export const fetchProjects = async (): Promise<Project[]> => {
     }
 
     const data = await response.json();
-    return data;
+    return data.data.projects;
   } catch (error) {
     console.error("Error fetching projects:", error);
     throw error;

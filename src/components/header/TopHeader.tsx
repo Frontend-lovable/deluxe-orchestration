@@ -123,10 +123,10 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps
             </SelectTrigger>
             <SelectContent>
               {projects.map((project) => (
-                <SelectItem key={project.id} value={project.id}>
+                <SelectItem key={project.project_id} value={project.project_id}>
                   <div>
                     <div className="font-medium">{project.project_name}</div>
-                    <div className="text-xs text-muted-foreground">{project.id}</div>
+                    <div className="text-xs text-muted-foreground">{project.project_id}</div>
                   </div>
                 </SelectItem>
               ))}
