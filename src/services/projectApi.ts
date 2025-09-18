@@ -97,7 +97,7 @@ export interface BRDTemplatesResponse {
 
 export const getBRDTemplates = async (): Promise<string[]> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/brds/templates/available`, {
+    const response = await fetch(`${API_BASE_URL}/templates/`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
