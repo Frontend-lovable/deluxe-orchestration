@@ -8,11 +8,9 @@ interface MainLayoutProps {
   showBackButton?: boolean;
   onBack?: () => void;
   currentView?: string;
-  onProjectSelect?: (project: any) => void;
-  onBrdTemplateSelect?: (template: string) => void;
 }
 
-export const MainLayout = ({ children, onNavigate, showBackButton, onBack, currentView, onProjectSelect, onBrdTemplateSelect }: MainLayoutProps) => {
+export const MainLayout = ({ children, onNavigate, showBackButton, onBack, currentView }: MainLayoutProps) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -72,8 +70,6 @@ export const MainLayout = ({ children, onNavigate, showBackButton, onBack, curre
             onMenuClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             isMobile={isMobile}
             currentView={currentView}
-            onProjectSelect={onProjectSelect}
-            onBrdTemplateSelect={onBrdTemplateSelect}
           />
         </div>
         
