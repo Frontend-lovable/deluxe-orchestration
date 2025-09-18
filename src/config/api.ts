@@ -1,11 +1,13 @@
 // API Configuration
-// Direct API endpoint without proxy
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
+const timeout = import.meta.env.VITE_API_TIMEOUT;
+
 export const API_CONFIG = {
-  // Direct API endpoint
-  CHATBOT_API_URL: "http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1",
+  // API endpoint from environment variables
+  CHATBOT_API_URL: apiUrl || "http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1",
   
-  // Request timeout in milliseconds
-  TIMEOUT: 30000,
+  // Request timeout in milliseconds from environment variables
+  TIMEOUT: timeout ? parseInt(timeout) : 30000,
   
   // Default request parameters
   DEFAULT_PARAMS: {
