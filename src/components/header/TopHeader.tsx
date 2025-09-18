@@ -71,10 +71,6 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps
     try {
       const project = await getProjectById(projectId);
       setSelectedProject(project);
-      toast({
-        title: "Project Selected",
-        description: `${project.project_name} - ${project.description}. Created: ${new Date(project.created_at).toLocaleDateString()}`,
-      });
     } catch (error) {
       toast({
         title: "Error",
