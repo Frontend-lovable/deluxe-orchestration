@@ -44,9 +44,13 @@ const sectionContent = {
 };
 interface BRDDashboardProps {
   onBack?: () => void;
+  selectedProject?: any;
+  selectedBRDTemplate?: string | null;
 }
 export const BRDDashboard = ({
-  onBack
+  onBack,
+  selectedProject,
+  selectedBRDTemplate
 }: BRDDashboardProps) => {
   const [selectedSection, setSelectedSection] = useState<string>("Executive Summary");
   const [completedSections, setCompletedSections] = useState<string[]>([]);
@@ -79,7 +83,7 @@ export const BRDDashboard = ({
         scrollbarColor: '#E6E6E6 transparent'
       }}>
         <div className="lg:col-span-3 order-1 lg:order-1">
-          <BRDProgress selectedSection={selectedSection} onSectionChange={setSelectedSection} completedSections={completedSections} />
+          <BRDProgress selectedSection={selectedSection} onSectionChange={setSelectedSection} completedSections={completedSections} hasProjectAndTemplate={!!(selectedProject && selectedBRDTemplate)} />
         </div>
         
         <div className="lg:col-span-6 order-3 lg:order-2">

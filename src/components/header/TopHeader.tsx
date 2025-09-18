@@ -20,14 +20,17 @@ interface TopHeaderProps {
   onMenuClick?: () => void;
   isMobile?: boolean;
   currentView?: string;
+  onProjectSelect?: (project: Project | null) => void;
+  onBRDTemplateSelect?: (template: string | null) => void;
 }
 
-export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps) => {
+export const TopHeader = ({ onMenuClick, isMobile, currentView, onProjectSelect, onBRDTemplateSelect }: TopHeaderProps) => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isLoadingProjects, setIsLoadingProjects] = useState(false);
   const [brdTemplates, setBrdTemplates] = useState<string[]>([]);
+  const [selectedBRDTemplate, setSelectedBRDTemplate] = useState<string | null>(null);
   const [isLoadingTemplates, setIsLoadingTemplates] = useState(false);
   const { toast } = useToast();
 
@@ -72,13 +75,20 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps
     try {
       const project = await getProjectById(projectId);
       setSelectedProject(project);
+      onProjectSelect?.(project);
     } catch (error) {
       toast({
         title: "Error",
         description: "Project not found",
         variant: "destructive",
       });
+      onProjectSelect?.(null);
     }
+  };
+
+  const handleBRDTemplateSelect = (value: string) => {
+    setSelectedBRDTemplate(value);
+    onBRDTemplateSelect?.(value);
   };
 
   return (
@@ -134,7 +144,7 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps
         )}
         
         {currentView === "brd" && (
-          <Select>
+          <Select onValueChange={handleBRDTemplateSelect}>
             <SelectTrigger className="w-32 sm:w-40 border-primary" style={{ backgroundColor: '#fff' }}>
               <SelectValue placeholder={isLoadingTemplates ? "Loading..." : "Create / Update"} />
             </SelectTrigger>

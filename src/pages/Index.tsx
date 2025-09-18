@@ -5,9 +5,12 @@ import { BRDDashboard } from "@/components/dashboard/BRDDashboard";
 import { ConfluenceDashboard } from "@/components/dashboard/ConfluenceDashboard";
 import { JiraDashboard } from "@/components/dashboard/JiraDashboard";
 import { DesignDashboard } from "@/components/dashboard/DesignDashboard";
+import { type Project } from "@/services/projectApi";
 
 const Index = () => {
   const [currentView, setCurrentView] = useState<"overview" | "brd" | "confluence" | "jira" | "design">("overview");
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [selectedBRDTemplate, setSelectedBRDTemplate] = useState<string | null>(null);
 
   const handleNavigate = (view: string) => {
     setCurrentView(view as "overview" | "brd" | "confluence" | "jira" | "design");
@@ -20,7 +23,7 @@ const Index = () => {
   const renderContent = () => {
     switch (currentView) {
       case "brd":
-        return <BRDDashboard onBack={handleBack} />;
+        return <BRDDashboard onBack={handleBack} selectedProject={selectedProject} selectedBRDTemplate={selectedBRDTemplate} />;
       case "confluence":
         return <ConfluenceDashboard />;
       case "jira":
@@ -39,6 +42,10 @@ const Index = () => {
         showBackButton={currentView !== "overview"}
         onBack={handleBack}
         currentView={currentView}
+        selectedProject={selectedProject}
+        selectedBRDTemplate={selectedBRDTemplate}
+        onProjectSelect={setSelectedProject}
+        onBRDTemplateSelect={setSelectedBRDTemplate}
       >
         {renderContent()}
       </MainLayout>
