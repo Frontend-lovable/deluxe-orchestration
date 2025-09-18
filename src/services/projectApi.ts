@@ -7,7 +7,7 @@ export interface CreateProjectRequest {
   confluence_space_key: string;
 }
 
-interface CreateProjectResponse {
+export interface Project {
   id: string;
   project_name: string;
   description: string;
@@ -15,6 +15,8 @@ interface CreateProjectResponse {
   confluence_space_key: string;
   created_at: string;
 }
+
+interface CreateProjectResponse extends Project {}
 
 const API_BASE_URL = "http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1";
 
@@ -36,6 +38,51 @@ export const createProject = async (projectData: CreateProjectRequest): Promise<
     return data;
   } catch (error) {
     console.error("Error creating project:", error);
+    throw error;
+  }
+};
+
+export const fetchProjects = async (): Promise<Project[]> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/projects`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+    throw error;
+  }
+};
+
+export const getProjectById = async (projectId: string): Promise<Project> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/projects/${projectId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        throw new Error("Project not found");
+      }
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching project:", error);
     throw error;
   }
 };

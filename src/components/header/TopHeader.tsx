@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronDown, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,6 +12,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { CreateProjectModal } from "@/components/modals/CreateProjectModal";
+import { fetchProjects, getProjectById, type Project } from "@/services/projectApi";
+import { useToast } from "@/hooks/use-toast";
 
 interface TopHeaderProps {
   onMenuClick?: () => void;
@@ -21,6 +23,43 @@ interface TopHeaderProps {
 
 export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps) => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [isLoadingProjects, setIsLoadingProjects] = useState(false);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    loadProjects();
+  }, []);
+
+  const loadProjects = async () => {
+    setIsLoadingProjects(true);
+    try {
+      const projectsData = await fetchProjects();
+      setProjects(projectsData);
+    } catch (error) {
+      console.error("Failed to load projects:", error);
+    } finally {
+      setIsLoadingProjects(false);
+    }
+  };
+
+  const handleProjectSelect = async (projectId: string) => {
+    try {
+      const project = await getProjectById(projectId);
+      setSelectedProject(project);
+      toast({
+        title: "Project Selected",
+        description: `${project.project_name} - ${project.description}. Created: ${new Date(project.created_at).toLocaleDateString()}`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Project not found",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <>
@@ -54,16 +93,23 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps
       </div>
       
       <div className="flex items-center gap-2 sm:gap-4">
-        <Select defaultValue="project">
-          <SelectTrigger className="w-32 sm:w-48" style={{ backgroundColor: '#EDEDED' }}>
-            <SelectValue placeholder="Select Project" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="project">Select Project</SelectItem>
-            <SelectItem value="payment-gateway">Payment Gateway</SelectItem>
-            <SelectItem value="user-portal">User Portal</SelectItem>
-          </SelectContent>
-        </Select>
+        {projects.length > 0 && (
+          <Select onValueChange={handleProjectSelect}>
+            <SelectTrigger className="w-32 sm:w-48" style={{ backgroundColor: '#EDEDED' }}>
+              <SelectValue placeholder="Select Project" />
+            </SelectTrigger>
+            <SelectContent>
+              {projects.map((project) => (
+                <SelectItem key={project.id} value={project.id}>
+                  <div>
+                    <div className="font-medium">{project.project_name}</div>
+                    <div className="text-xs text-muted-foreground">{project.id}</div>
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
         
         {currentView === "brd" && (
           <Select>
