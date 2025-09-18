@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { ChevronDown, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
@@ -112,7 +113,9 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps
       </div>
       
       <div className="flex items-center gap-2 sm:gap-4">
-        {projects.length > 0 && (
+        {isLoadingProjects ? (
+          <Skeleton className="w-32 sm:w-48 h-10" />
+        ) : projects.length > 0 && (
           <Select onValueChange={handleProjectSelect}>
             <SelectTrigger className="w-32 sm:w-48" style={{ backgroundColor: '#EDEDED' }}>
               <SelectValue placeholder="Select Project" />
