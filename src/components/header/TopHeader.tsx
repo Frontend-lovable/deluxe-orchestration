@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { CreateProjectModal } from "@/components/modals/CreateProjectModal";
-import { fetchProjects, getProjectById, getBRDTemplates, type Project } from "@/services/projectApi";
+import { fetchProjects, getProjectById, getBRDTemplates, type Project, type BRDTemplate } from "@/services/projectApi";
 import { useToast } from "@/hooks/use-toast";
 
 interface TopHeaderProps {
@@ -29,7 +29,7 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView, onProjectSelect,
   const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isLoadingProjects, setIsLoadingProjects] = useState(false);
-  const [brdTemplates, setBrdTemplates] = useState<string[]>([]);
+  const [brdTemplates, setBrdTemplates] = useState<BRDTemplate[]>([]);
   const [selectedBRDTemplate, setSelectedBRDTemplate] = useState<string | null>(null);
   const [isLoadingTemplates, setIsLoadingTemplates] = useState(false);
   const { toast } = useToast();
@@ -158,9 +158,9 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView, onProjectSelect,
               <SelectGroup>
                 <SelectLabel>Create new BRD</SelectLabel>
                 {brdTemplates.length > 0 ? (
-                  brdTemplates.map((template, index) => (
-                    <SelectItem key={index} value={template.toLowerCase().replace(/\s+/g, '-')}>
-                      {template}
+                  brdTemplates.map((template) => (
+                    <SelectItem key={template.template_id} value={template.template_id}>
+                      {template.template_name}
                     </SelectItem>
                   ))
                 ) : (

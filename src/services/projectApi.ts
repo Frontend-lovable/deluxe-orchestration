@@ -102,7 +102,7 @@ export interface BRDTemplatesResponse {
   total_count: number;
 }
 
-export const getBRDTemplates = async (): Promise<string[]> => {
+export const getBRDTemplates = async (): Promise<BRDTemplate[]> => {
   try {
     const response = await fetch(`${API_BASE_URL}/templates/`, {
       method: "GET",
@@ -116,7 +116,7 @@ export const getBRDTemplates = async (): Promise<string[]> => {
     }
 
     const data: BRDTemplatesResponse = await response.json();
-    return data.data.map(template => template.template_name);
+    return data.data;
   } catch (error) {
     console.error("Error fetching BRD templates:", error);
     throw error;
