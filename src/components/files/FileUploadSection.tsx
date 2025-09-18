@@ -3,6 +3,7 @@ import { Download, Upload, FileText, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { uploadFiles } from "@/services/projectApi";
 
 interface UploadedFile {
   id: string;
@@ -14,6 +15,7 @@ interface UploadedFile {
 
 export const FileUploadSection = () => {
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -77,6 +79,40 @@ export const FileUploadSection = () => {
 
   const triggerFileUpload = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleSubmitFiles = async () => {
+    if (uploadedFiles.length === 0) return;
+
+    const filesToUpload = uploadedFiles
+      .map(file => file.originalFile)
+      .filter((file): file is File => file !== undefined);
+
+    if (filesToUpload.length === 0) {
+      toast({
+        title: "No files to upload",
+        description: "Please select files before submitting.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await uploadFiles(filesToUpload);
+      toast({
+        title: "Files submitted successfully",
+        description: `${filesToUpload.length} file(s) have been uploaded to the server.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Upload failed",
+        description: "Failed to upload files. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   return (
     <Card className="h-auto xl:h-[600px] flex flex-col">
@@ -157,11 +193,11 @@ export const FileUploadSection = () => {
               <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
               <span className="text-sm">All files processed and draft ready for review</span>
             </div>
-            <Button variant="outline" className="w-full justify-center gap-2 h-12 bg-white border border-[#8C8C8C] hover:bg-gray-50">
+            <Button variant="outline" className="w-full justify-center gap-2 h-12 bg-white border border-[#8C8C8C] hover:bg-gray-50" onClick={handleSubmitFiles} disabled={uploadedFiles.length === 0 || isSubmitting}>
               <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
               </svg>
-              <span>Submit Files</span>
+              <span>{isSubmitting ? "Submitting..." : "Submit Files"}</span>
             </Button>
           </div>
         )}

@@ -122,3 +122,34 @@ export const getBRDTemplates = async (): Promise<BRDTemplate[]> => {
     throw error;
   }
 };
+
+export interface FileUploadResponse {
+  success: boolean;
+  message: string;
+  data?: any;
+}
+
+export const uploadFiles = async (files: File[]): Promise<FileUploadResponse> => {
+  try {
+    const formData = new FormData();
+    
+    files.forEach((file) => {
+      formData.append('file', file);
+    });
+
+    const response = await fetch(`${API_BASE_URL}/files/upload`, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error uploading files:", error);
+    throw error;
+  }
+};
