@@ -44,6 +44,11 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps
       setProjects(projectsData);
     } catch (error) {
       console.error("Failed to load projects:", error);
+      toast({
+        title: "CORS Error",
+        description: "Cannot access API from this domain. Please configure CORS on your server to allow requests from this frontend.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoadingProjects(false);
     }
