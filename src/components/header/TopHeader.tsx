@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { ChevronDown, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { CreateProjectModal } from "@/components/modals/CreateProjectModal";
 
 interface TopHeaderProps {
   onMenuClick?: () => void;
@@ -18,7 +20,14 @@ interface TopHeaderProps {
 }
 
 export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps) => {
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
   return (
+    <>
+      <CreateProjectModal 
+        open={isCreateModalOpen} 
+        onOpenChange={setIsCreateModalOpen} 
+      />
     <div className="h-16 border-b border-border px-4 sm:px-6 lg:px-8 flex items-center justify-between" style={{ backgroundColor: '#fff' }}>
       <div className="flex items-center gap-4">
         {isMobile && (
@@ -77,11 +86,15 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps
           </Select>
         )}
         
-        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground text-sm px-3 sm:px-4">
+        <Button 
+          className="bg-primary hover:bg-primary/90 text-primary-foreground text-sm px-3 sm:px-4"
+          onClick={() => setIsCreateModalOpen(true)}
+        >
           <span className="hidden sm:inline">Create New Project</span>
           <span className="sm:hidden">Create</span>
         </Button>
       </div>
     </div>
+    </>
   );
 };
