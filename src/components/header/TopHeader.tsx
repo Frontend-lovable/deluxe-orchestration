@@ -20,12 +20,15 @@ interface TopHeaderProps {
   onMenuClick?: () => void;
   isMobile?: boolean;
   currentView?: string;
+  onProjectSelect?: (project: Project | null) => void;
+  onBrdTemplateSelect?: (template: string) => void;
 }
 
-export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps) => {
+export const TopHeader = ({ onMenuClick, isMobile, currentView, onProjectSelect, onBrdTemplateSelect }: TopHeaderProps) => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [selectedBrdTemplate, setSelectedBrdTemplate] = useState<string>("");
   const [isLoadingProjects, setIsLoadingProjects] = useState(false);
   const [brdTemplates, setBrdTemplates] = useState<string[]>([]);
   const [isLoadingTemplates, setIsLoadingTemplates] = useState(false);
@@ -72,6 +75,7 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps
     try {
       const project = await getProjectById(projectId);
       setSelectedProject(project);
+      onProjectSelect?.(project);
     } catch (error) {
       toast({
         title: "Error",
@@ -79,6 +83,11 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps
         variant: "destructive",
       });
     }
+  };
+
+  const handleBrdTemplateSelect = (template: string) => {
+    setSelectedBrdTemplate(template);
+    onBrdTemplateSelect?.(template);
   };
 
   return (
@@ -134,7 +143,7 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps
         )}
         
         {currentView === "brd" && (
-          <Select>
+          <Select onValueChange={handleBrdTemplateSelect}>
             <SelectTrigger className="w-32 sm:w-40 border-primary" style={{ backgroundColor: '#fff' }}>
               <SelectValue placeholder={isLoadingTemplates ? "Loading..." : "Create / Update"} />
             </SelectTrigger>

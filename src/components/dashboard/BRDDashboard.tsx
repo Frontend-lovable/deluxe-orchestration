@@ -44,9 +44,13 @@ const sectionContent = {
 };
 interface BRDDashboardProps {
   onBack?: () => void;
+  selectedProject?: any;
+  selectedBrdTemplate?: string;
 }
 export const BRDDashboard = ({
-  onBack
+  onBack,
+  selectedProject,
+  selectedBrdTemplate
 }: BRDDashboardProps) => {
   const [selectedSection, setSelectedSection] = useState<string>("Executive Summary");
   const [completedSections, setCompletedSections] = useState<string[]>([]);
@@ -64,33 +68,50 @@ export const BRDDashboard = ({
       setSelectedSection(nextSection);
     }
   };
+  const showProgress = selectedProject && selectedBrdTemplate;
+
   return <div className="p-4 sm:p-6 lg:p-8 bg-white">
       <div className="mb-4 lg:mb-2">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="sm" onClick={onBack} className="p-2 hover:bg-accent">
             <ArrowLeft className="w-4 h-4" />
           </Button>
-          <h1 className="text-xl font-bold sm:text-base">Payment Gateway</h1>
+          <h1 className="text-xl font-bold sm:text-base">
+            {selectedProject?.project_name || "Payment Gateway"}
+          </h1>
         </div>
       </div>
       
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-8 items-stretch" style={{
-        scrollbarWidth: 'thin',
-        scrollbarColor: '#E6E6E6 transparent'
-      }}>
-        <div className="lg:col-span-3 order-1 lg:order-1">
-          <BRDProgress selectedSection={selectedSection} onSectionChange={setSelectedSection} completedSections={completedSections} />
-        </div>
-        
-        <div className="lg:col-span-6 order-3 lg:order-2">
-          <div className="h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px]">
-            <ChatInterface title={sectionContent[selectedSection as keyof typeof sectionContent]?.title || "BRD Assistant"} subtitle={sectionContent[selectedSection as keyof typeof sectionContent]?.subtitle || "Discuss your business requirements"} initialMessage={sectionContent[selectedSection as keyof typeof sectionContent]?.initialMessage || "Hello! 👋 I'm your BRD Assistant."} placeholder={sectionContent[selectedSection as keyof typeof sectionContent]?.placeholder || "Type your message..."} onReviewed={handleSectionReviewed} />
+      {!showProgress ? (
+        <div className="flex items-center justify-center h-96">
+          <div className="text-center">
+            <h2 className="text-lg font-semibold mb-2" style={{ color: '#3B3B3B' }}>
+              Select Project and BRD Template
+            </h2>
+            <p className="text-sm" style={{ color: '#727272' }}>
+              Please select both a project and BRD template from the header to begin
+            </p>
           </div>
         </div>
-        
-        <div className="lg:col-span-3 order-2 lg:order-3">
-          <FileUploadSection />
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-8 items-stretch" style={{
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#E6E6E6 transparent'
+        }}>
+          <div className="lg:col-span-3 order-1 lg:order-1">
+            <BRDProgress selectedSection={selectedSection} onSectionChange={setSelectedSection} completedSections={completedSections} />
+          </div>
+          
+          <div className="lg:col-span-6 order-3 lg:order-2">
+            <div className="h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px]">
+              <ChatInterface title={sectionContent[selectedSection as keyof typeof sectionContent]?.title || "BRD Assistant"} subtitle={sectionContent[selectedSection as keyof typeof sectionContent]?.subtitle || "Discuss your business requirements"} initialMessage={sectionContent[selectedSection as keyof typeof sectionContent]?.initialMessage || "Hello! 👋 I'm your BRD Assistant."} placeholder={sectionContent[selectedSection as keyof typeof sectionContent]?.placeholder || "Type your message..."} onReviewed={handleSectionReviewed} />
+            </div>
+          </div>
+          
+          <div className="lg:col-span-3 order-2 lg:order-3">
+            <FileUploadSection />
+          </div>
         </div>
-      </div>
+      )}
     </div>;
 };

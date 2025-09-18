@@ -8,6 +8,8 @@ import { DesignDashboard } from "@/components/dashboard/DesignDashboard";
 
 const Index = () => {
   const [currentView, setCurrentView] = useState<"overview" | "brd" | "confluence" | "jira" | "design">("overview");
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [selectedBrdTemplate, setSelectedBrdTemplate] = useState("");
 
   const handleNavigate = (view: string) => {
     setCurrentView(view as "overview" | "brd" | "confluence" | "jira" | "design");
@@ -20,7 +22,7 @@ const Index = () => {
   const renderContent = () => {
     switch (currentView) {
       case "brd":
-        return <BRDDashboard onBack={handleBack} />;
+        return <BRDDashboard onBack={handleBack} selectedProject={selectedProject} selectedBrdTemplate={selectedBrdTemplate} />;
       case "confluence":
         return <ConfluenceDashboard />;
       case "jira":
@@ -39,6 +41,8 @@ const Index = () => {
         showBackButton={currentView !== "overview"}
         onBack={handleBack}
         currentView={currentView}
+        onProjectSelect={setSelectedProject}
+        onBrdTemplateSelect={setSelectedBrdTemplate}
       >
         {renderContent()}
       </MainLayout>
