@@ -87,12 +87,19 @@ export const getProjectById = async (projectId: string): Promise<Project> => {
   }
 };
 
+export interface BRDTemplate {
+  template_id: string;
+  template_name: string;
+  s3_path: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface BRDTemplatesResponse {
   success: boolean;
   message: string;
-  data: {
-    templates: string[];
-  };
+  data: BRDTemplate[];
+  total_count: number;
 }
 
 export const getBRDTemplates = async (): Promise<string[]> => {
@@ -109,7 +116,7 @@ export const getBRDTemplates = async (): Promise<string[]> => {
     }
 
     const data: BRDTemplatesResponse = await response.json();
-    return data.data.templates;
+    return data.data.map(template => template.template_name);
   } catch (error) {
     console.error("Error fetching BRD templates:", error);
     throw error;
