@@ -8,23 +8,7 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
-    proxy: {
-      "/api": {
-        target: "http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000",
-        changeOrigin: true,
-        configure: (proxy, options) => {
-          proxy.on("error", (err, req, res) => {
-            console.error("Proxy error", err);
-          });
-          proxy.on("proxyReq", (proxyReq, req, res) => {
-            console.log("➡️ Sending Request to Target:", req.method, req.url);
-          });
-          proxy.on("proxyRes", (proxyRes, req, res) => {
-            console.log("⬅️ Received Response:", proxyRes.statusCode, req.url);
-          });
-        },
-      },
-    },
+    allowedHosts: process.env.ALLOWED_HOSTS?.split(',') || []
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {

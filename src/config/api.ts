@@ -1,13 +1,8 @@
 // API Configuration
-// Using vite proxy to avoid CORS and mixed content issues
+// Direct API endpoint without proxy
 export const API_CONFIG = {
-  // Proxy endpoint - goes through vite dev server proxy
-  CHATBOT_API_URL: "/api/v1",
-  
-  // Example of what the URL should look like when properly exposed:
-  // CHATBOT_API_URL: "https://your-api-domain.com/api/v1",
-  // or
-  // CHATBOT_API_URL: "https://api.yourdomain.com/v1",
+  // Direct API endpoint
+  CHATBOT_API_URL: "http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1",
   
   // Request timeout in milliseconds
   TIMEOUT: 30000,
