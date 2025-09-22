@@ -18,7 +18,7 @@ export interface Project {
 
 interface CreateProjectResponse extends Project {}
 
-const API_BASE_URL = "http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1";
+const API_BASE_URL = "/api/v1";
 
 export const createProject = async (projectData: CreateProjectRequest): Promise<CreateProjectResponse> => {
   try {

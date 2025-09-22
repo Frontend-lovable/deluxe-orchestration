@@ -1,8 +1,8 @@
 // API Configuration
 // Direct API endpoint without proxy
 export const API_CONFIG = {
-  // Direct API endpoint
-  CHATBOT_API_URL: "http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1/chat",
+  // Using proxy to avoid CORS issues
+  CHATBOT_API_URL: "/api/v1/chat",
   
   // Request timeout in milliseconds
   TIMEOUT: 30000
