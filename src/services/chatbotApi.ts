@@ -89,20 +89,22 @@ export async function sendChatMessage(message: string): Promise<ChatResponse> {
     }
 
     // Try to parse as JSON
-    let data: ChatResponse;
+    let data: any;
     try {
       data = JSON.parse(responseText);
-      console.log('Raw parsed JSON:', data);
+      console.log('=== API RESPONSE DEBUG ===');
+      console.log('Raw parsed JSON:', JSON.stringify(data, null, 2));
       console.log('Data type:', typeof data);
-      console.log('Data keys:', Object.keys(data));
-      console.log('Response field value:', data.response);
-      console.log('Response field type:', typeof data.response);
+      console.log('Data keys:', data ? Object.keys(data) : 'No keys');
       
-      // Validate that the response has the expected structure
-      if (!data.response && !data.message) {
-        console.error('Missing response/message field in API response:', data);
-        throw new Error('API response missing "response" or "message" field');
-      }
+      // Check all possible response fields
+      console.log('data.response:', data.response);
+      console.log('data.message:', data.message);
+      console.log('data.answer:', data.answer);
+      console.log('data.text:', data.text);
+      console.log('data.content:', data.content);
+      console.log('=== END DEBUG ===');
+      
     } catch (parseError) {
       console.error('JSON parse error:', parseError);
       console.log('Failed to parse response text:', responseText);
