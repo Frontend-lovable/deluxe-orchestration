@@ -80,12 +80,21 @@ export const ChatInterface = ({
     // Use TanStack Query mutation
     chatMutation.mutate(currentMessage, {
       onSuccess: (response) => {
+        console.log('Mutation success - Full response:', response);
+        console.log('Response type:', typeof response);
+        console.log('Response.response:', response?.response);
+        console.log('Response keys:', response ? Object.keys(response) : 'No response object');
+        
+        // Extract the actual message content
+        const responseContent = response?.response || response?.message || 'No response received';
+        console.log('Final response content:', responseContent);
+        
         // Remove loading message and add actual response with typing effect
         setMessages(prev => {
           const withoutLoading = prev.filter(msg => !msg.id.startsWith('loading-'));
           const botMessage: ChatMessageType = {
             id: `bot-${Date.now()}`,
-            content: response.response,
+            content: responseContent,
             isBot: true,
             timestamp: new Date().toLocaleTimeString([], {
               hour: '2-digit',

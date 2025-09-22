@@ -14,6 +14,7 @@ export interface ChatResponse {
   message_count?: number;
   model_used?: string;
   processing_time?: number;
+  message?: string; // Fallback field in case API uses 'message' instead of 'response'
 }
 
 // Session management utility
@@ -91,12 +92,16 @@ export async function sendChatMessage(message: string): Promise<ChatResponse> {
     let data: ChatResponse;
     try {
       data = JSON.parse(responseText);
-      console.log('Success response:', data);
+      console.log('Raw parsed JSON:', data);
+      console.log('Data type:', typeof data);
+      console.log('Data keys:', Object.keys(data));
+      console.log('Response field value:', data.response);
+      console.log('Response field type:', typeof data.response);
       
       // Validate that the response has the expected structure
-      if (!data.response) {
-        console.error('Missing response field in API response:', data);
-        throw new Error('API response missing "response" field');
+      if (!data.response && !data.message) {
+        console.error('Missing response/message field in API response:', data);
+        throw new Error('API response missing "response" or "message" field');
       }
     } catch (parseError) {
       console.error('JSON parse error:', parseError);
