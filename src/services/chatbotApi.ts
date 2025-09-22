@@ -10,6 +10,10 @@ export interface ChatRequest {
 export interface ChatResponse {
   response: string;
   session_id: string;
+  timestamp?: string;
+  message_count?: number;
+  model_used?: string;
+  processing_time?: number;
 }
 
 // Session management utility
@@ -88,6 +92,12 @@ export async function sendChatMessage(message: string): Promise<ChatResponse> {
     try {
       data = JSON.parse(responseText);
       console.log('Success response:', data);
+      
+      // Validate that the response has the expected structure
+      if (!data.response) {
+        console.error('Missing response field in API response:', data);
+        throw new Error('API response missing "response" field');
+      }
     } catch (parseError) {
       console.error('JSON parse error:', parseError);
       console.log('Failed to parse response text:', responseText);

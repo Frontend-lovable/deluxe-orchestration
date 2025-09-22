@@ -11,13 +11,31 @@ interface ChatMessageProps {
   };
 }
 
+// Function to format text with proper spacing and structure
+const formatChatText = (text: string): string => {
+  if (!text) return '';
+  
+  return text
+    // Convert markdown headers to formatted text
+    .replace(/^## (.*$)/gm, '\n$1\n')
+    .replace(/^# (.*$)/gm, '\n$1\n')
+    // Add spacing around bullet points
+    .replace(/^- (.*$)/gm, '• $1')
+    .replace(/^\* (.*$)/gm, '• $1')
+    // Add proper paragraph spacing
+    .replace(/\n\n/g, '\n\n')
+    // Clean up extra newlines at start/end
+    .trim();
+};
+
 export const ChatMessage = ({ message }: ChatMessageProps) => {
   const { displayedText, isTyping } = useTypingEffect(
     message.isTyping ? message.content : '', 
     15
   );
 
-  const content = message.isTyping ? displayedText : message.content;
+  const rawContent = message.isTyping ? displayedText : message.content;
+  const content = formatChatText(rawContent);
 
   return (
     <div className={`flex ${message.isBot ? 'justify-start' : 'justify-end'} mb-4`}>
