@@ -117,19 +117,27 @@ export async function sendChatMessage(message: string): Promise<ChatResponse> {
     }
 
     return data;
-  } catch (error) {
-    console.error('Error calling chatbot API:', error);
+    } catch (error) {
+    console.error('=== API ERROR DEBUG ===');
+    console.error('Full error object:', error);
+    console.error('Error type:', typeof error);
+    console.error('Error name:', error instanceof Error ? error.name : 'Unknown');
+    console.error('Error message:', error instanceof Error ? error.message : error);
+    console.error('=== END ERROR DEBUG ===');
     
     if (error instanceof Error) {
       if (error.name === 'AbortError') {
         throw new Error('Request timeout. Please try again.');
       }
       if (error.message.includes('Failed to fetch')) {
-        throw new Error('Cannot connect to API. Please check if the API is publicly accessible and CORS is configured.');
+        throw new Error('CORS/Network error: Cannot connect to API. Check if the API allows browser requests and has proper CORS headers.');
+      }
+      if (error.message.includes('NetworkError')) {
+        throw new Error('Network error: Please check your internet connection and try again.');
       }
     }
     
-    throw new Error('Failed to get response from chatbot. Please try again.');
+    throw new Error(`API Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`);
   }
 }
 
