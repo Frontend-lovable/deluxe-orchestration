@@ -2,17 +2,10 @@
 // Direct API endpoint without proxy
 export const API_CONFIG = {
   // Direct API endpoint
-  CHATBOT_API_URL: "http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1",
+  CHATBOT_API_URL: "http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1/chat",
   
   // Request timeout in milliseconds
-  TIMEOUT: 30000,
-  
-  // Default request parameters
-  DEFAULT_PARAMS: {
-    include_context: true,
-    max_tokens: 4000,
-    temperature: 0.7
-  }
+  TIMEOUT: 30000
 };
 
 // Instructions for making the API accessible:

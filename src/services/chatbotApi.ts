@@ -5,9 +5,6 @@ import { useMutation } from "@tanstack/react-query";
 export interface ChatRequest {
   message: string;
   session_id: string | null;
-  include_context: boolean;
-  max_tokens: number;
-  temperature: number;
 }
 
 export interface ChatResponse {
@@ -31,13 +28,12 @@ export class SessionManager {
 // API function for sending chat messages
 export async function sendChatMessage(message: string): Promise<ChatResponse> {
   const API_BASE_URL = API_CONFIG.CHATBOT_API_URL;
-  console.log('Sending request to:', `${API_BASE_URL}/chat`);
+  console.log('Sending request to:', API_BASE_URL);
   
   try {
     const requestBody: ChatRequest = {
       message,
-      session_id: SessionManager.getSessionId(),
-      ...API_CONFIG.DEFAULT_PARAMS
+      session_id: SessionManager.getSessionId()
     };
 
     console.log('Request body:', requestBody);
@@ -45,7 +41,7 @@ export async function sendChatMessage(message: string): Promise<ChatResponse> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT);
 
-    const response = await fetch(`${API_BASE_URL}/chat`, {
+    const response = await fetch(API_BASE_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
