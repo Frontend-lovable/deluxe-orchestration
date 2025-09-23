@@ -49,14 +49,7 @@ export async function sendChatMessage(message: string): Promise<ChatResponse> {
     const response = await fetch(API_BASE_URL, {
       method: 'POST',
       headers: {
-        'Accept': '*/*',
-        'Accept-Language': 'en-US,en;q=0.9,fil;q=0.8,hi;q=0.7',
-        'Connection': 'keep-alive',
         'Content-Type': 'application/json',
-        'DNT': '1',
-        'Origin': window.location.origin,
-        'Referer': window.location.href,
-        'User-Agent': navigator.userAgent,
       },
       body: JSON.stringify(requestBody),
       signal: controller.signal,

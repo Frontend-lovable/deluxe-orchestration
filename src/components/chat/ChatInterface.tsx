@@ -84,12 +84,16 @@ export const ChatInterface = ({
         console.log('Full response object:', JSON.stringify(response, null, 2));
         console.log('Response type:', typeof response);
         
-        // Extract response content - API returns response in 'response' field
+        // Try different possible response fields
         const responseData = response as any;
-        const responseContent = responseData?.response || 'No response received from API';
+        const responseContent = responseData?.response || 
+                               responseData?.message || 
+                               responseData?.answer || 
+                               responseData?.text || 
+                               responseData?.content ||
+                               'No response received';
         
-        console.log('API Response Content:', responseContent);
-        console.log('Session ID:', responseData?.session_id);
+        console.log('Extracted content:', responseContent);
         console.log('=== END CHAT DEBUG ===');
         
         // Remove loading message and add actual response with typing effect
@@ -121,7 +125,7 @@ export const ChatInterface = ({
           const withoutLoading = prev.filter(msg => !msg.id.startsWith('loading-'));
           const errorMessage: ChatMessageType = {
             id: `error-${Date.now()}`,
-            content: `Sorry, I couldn't connect to the chat API. ${error instanceof Error ? error.message : 'Unknown error'}. Please make sure the API server is running and accessible.`,
+            content: "Sorry, I couldn't process your message right now. This might be due to network issues or the API not being publicly accessible. Please try again later.",
             isBot: true,
             timestamp: new Date().toLocaleTimeString([], {
               hour: '2-digit',
