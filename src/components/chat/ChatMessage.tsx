@@ -34,12 +34,18 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
     15
   );
 
-  // Fix: Use message.content if displayedText is empty/undefined, otherwise use displayedText when typing
-  const rawContent = message.isTyping 
-    ? (displayedText && displayedText.length > 0 ? displayedText : message.content) 
-    : message.content;
+  // Simplified logic: Always ensure we have content to display
+  let rawContent: string;
+  if (message.isTyping) {
+    // If we're typing and have displayedText, use it; otherwise use original content
+    rawContent = displayedText || message.content || '';
+  } else {
+    // Not typing, just use the message content
+    rawContent = message.content || '';
+  }
+  
   const content = formatChatText(rawContent);
-  console.log('ChatMessage - rawContent:', rawContent, 'message.content:', message.content, 'displayedText:', displayedText, 'isTyping:', message.isTyping);
+  console.log('ChatMessage DEBUG - isTyping:', message.isTyping, 'displayedText:', displayedText, 'message.content:', message.content, 'final rawContent:', rawContent);
 
   return (
     <div className={`flex ${message.isBot ? 'justify-start' : 'justify-end'} mb-4`}>
