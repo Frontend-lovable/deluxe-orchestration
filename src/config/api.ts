@@ -1,8 +1,8 @@
 // API Configuration
 // Direct API endpoint from curl command
 export const API_CONFIG = {
-  // Using HTTP as shown in curl command
-  CHATBOT_API_URL: "http://Deluxe-Internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1/chat",
+  // Using exact URL format from curl command (with trailing slash)
+  CHATBOT_API_URL: "http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1/chat/",
   
   // Request timeout in milliseconds
   TIMEOUT: 30000
