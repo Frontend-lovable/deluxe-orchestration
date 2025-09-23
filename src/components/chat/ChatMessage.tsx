@@ -36,7 +36,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
 
   // Fix: Use message.content if displayedText is empty/undefined, otherwise use displayedText when typing
   const rawContent = message.isTyping 
-    ? (displayedText || message.content) 
+    ? (displayedText && displayedText.length > 0 ? displayedText : message.content) 
     : message.content;
   const content = formatChatText(rawContent);
   console.log('ChatMessage - rawContent:', rawContent, 'message.content:', message.content, 'displayedText:', displayedText, 'isTyping:', message.isTyping);
