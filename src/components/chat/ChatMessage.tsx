@@ -44,7 +44,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
     rawContent = message.content || '';
   }
   
-  const content = formatChatText(rawContent);
+  const content = formatChatText(message.content);
   console.log('ChatMessage DEBUG - isTyping:', message.isTyping, 'displayedText:', displayedText, 'message.content:', message.content, 'final rawContent:', rawContent);
 
   return (
