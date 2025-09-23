@@ -36,6 +36,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
 
   const rawContent = message.isTyping ? displayedText : message.content;
   const content = formatChatText(rawContent);
+  console.log('ChatMessage - rawContent:', rawContent, 'message.content:', message.content, 'displayedText:', displayedText);
 
   return (
     <div className={`flex ${message.isBot ? 'justify-start' : 'justify-end'} mb-4`}>

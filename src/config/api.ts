@@ -1,8 +1,8 @@
 // API Configuration
 // Direct API endpoint from curl command
 export const API_CONFIG = {
-  // Using HTTPS for the AWS ELB endpoint (browsers prefer HTTPS)
-  CHATBOT_API_URL: "https://Deluxe-Internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1/chat",
+  // Using the exact URL from your curl command
+  CHATBOT_API_URL: "http://Deluxe-Internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1/chat",
   
   // Request timeout in milliseconds
   TIMEOUT: 30000
