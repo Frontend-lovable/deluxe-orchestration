@@ -122,7 +122,11 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView, onProjectSelect,
         </Select>
       </div>
       
-      <div className="flex items-center gap-2 sm:gap-4">
+      <div className={`flex items-center ${
+        (isLoadingProjects || projects.length > 0 || currentView === "brd" || !["confluence", "jira", "design"].includes(currentView || "")) 
+          ? "gap-2 sm:gap-4" 
+          : ""
+      }`}>
         {isLoadingProjects ? (
           <Skeleton className="w-32 sm:w-48 h-10" />
         ) : projects.length > 0 && (
