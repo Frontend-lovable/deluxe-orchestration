@@ -123,7 +123,7 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView, onProjectSelect,
       </div>
       
       <div className={`flex items-center ${
-        (isLoadingProjects || projects.length > 0 || currentView === "brd" || !["confluence", "jira", "design"].includes(currentView || "")) 
+        (isLoadingProjects || projects.length > 0 || !["confluence", "jira", "design", "brd"].includes(currentView || "")) 
           ? "gap-2 sm:gap-4" 
           : ""
       }`}>
@@ -177,7 +177,7 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView, onProjectSelect,
           </Select>
         )}
         
-        {!["confluence", "jira", "design"].includes(currentView || "") && (
+        {!["confluence", "jira", "design", "brd"].includes(currentView || "") && (
           <Button 
             className="bg-primary hover:bg-primary/90 text-primary-foreground text-sm px-3 sm:px-4"
             onClick={() => setIsCreateModalOpen(true)}
