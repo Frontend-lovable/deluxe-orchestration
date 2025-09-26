@@ -173,13 +173,15 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView, onProjectSelect,
           </Select>
         )}
         
-        <Button 
-          className="bg-primary hover:bg-primary/90 text-primary-foreground text-sm px-3 sm:px-4"
-          onClick={() => setIsCreateModalOpen(true)}
-        >
-          <span className="hidden sm:inline">Create New Project</span>
-          <span className="sm:hidden">Create</span>
-        </Button>
+        {!["confluence", "jira", "design"].includes(currentView || "") && (
+          <Button 
+            className="bg-primary hover:bg-primary/90 text-primary-foreground text-sm px-3 sm:px-4"
+            onClick={() => setIsCreateModalOpen(true)}
+          >
+            <span className="hidden sm:inline">Create New Project</span>
+            <span className="sm:hidden">Create</span>
+          </Button>
+        )}
       </div>
     </div>
     </>
