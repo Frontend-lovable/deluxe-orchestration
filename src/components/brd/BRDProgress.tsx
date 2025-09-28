@@ -139,7 +139,7 @@ export const BRDProgress = ({ selectedSection, onSectionChange, completedSection
         </div>
       </CardHeader>
       <CardContent className="flex-1 overflow-y-auto pr-3">
-        {!hasProjectAndTemplate ? (
+        {!hasProjectAndTemplate && !useTemplateSections ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center text-muted-foreground">
               <div className="text-sm mb-2">Please select a project and BRD template to begin</div>
