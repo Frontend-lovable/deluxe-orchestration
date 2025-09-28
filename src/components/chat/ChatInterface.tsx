@@ -20,13 +20,15 @@ interface ChatInterfaceProps {
   initialMessage?: string;
   placeholder?: string;
   onReviewed?: () => void;
+  externalMessage?: string;
 }
 export const ChatInterface = ({
   title,
   subtitle,
   initialMessage,
   placeholder = "Type your message about business requirements...",
-  onReviewed
+  onReviewed,
+  externalMessage
 }: ChatInterfaceProps) => {
   const [messages, setMessages] = useState<ChatMessageType[]>([...(initialMessage ? [{
     id: "1",
@@ -42,6 +44,23 @@ export const ChatInterface = ({
 
   // TanStack Query mutation for sending chat messages
   const chatMutation = useChatMessage();
+
+  // Handle external messages (like BRD content)
+  useEffect(() => {
+    if (externalMessage) {
+      const brdMessage: ChatMessageType = {
+        id: `brd-${Date.now()}`,
+        content: externalMessage,
+        isBot: true,
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit'
+        }),
+        isTyping: true
+      };
+      setMessages(prev => [...prev, brdMessage]);
+    }
+  }, [externalMessage]);
 
   // Auto scroll to bottom when new messages arrive
   useEffect(() => {

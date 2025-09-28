@@ -15,9 +15,10 @@ interface UploadedFile {
 
 interface FileUploadSectionProps {
   onCreateBRD?: () => void;
+  onBRDGenerated?: (content: string) => void;
 }
 
-export const FileUploadSection = ({ onCreateBRD }: FileUploadSectionProps = {}) => {
+export const FileUploadSection = ({ onCreateBRD, onBRDGenerated }: FileUploadSectionProps = {}) => {
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -119,9 +120,36 @@ export const FileUploadSection = ({ onCreateBRD }: FileUploadSectionProps = {}) 
 
       const result = await response.json();
       
+      // Extract brd_id from the response
+      const brdId = result.brd_id;
+      if (!brdId) {
+        throw new Error('BRD ID not found in response');
+      }
+
       toast({
         title: "Files submitted successfully",
         description: `${filesToUpload.length} file(s) have been uploaded to the server.`,
+      });
+
+      // Make second API call to get BRD content
+      const brdResponse = await fetch(`http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1/files/brd/${brdId}/content-only`, {
+        method: 'GET',
+      });
+
+      if (!brdResponse.ok) {
+        throw new Error(`BRD fetch error! status: ${brdResponse.status}`);
+      }
+
+      const brdResult = await brdResponse.json();
+      
+      // Pass the BRD content to the chat interface
+      if (onBRDGenerated && brdResult.content) {
+        onBRDGenerated(brdResult.content);
+      }
+
+      toast({
+        title: "BRD generated successfully",
+        description: "Your Business Requirements Document has been generated and displayed in the chat.",
       });
     } catch (error) {
       console.error('Upload error:', error);
