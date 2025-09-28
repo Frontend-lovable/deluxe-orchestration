@@ -11,14 +11,15 @@ const Index = () => {
   const [currentView, setCurrentView] = useState<"overview" | "brd" | "confluence" | "jira" | "design">("overview");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [selectedBRDTemplate, setSelectedBRDTemplate] = useState<string | null>(null);
+  const [createBRDTrigger, setCreateBRDTrigger] = useState<number>(0);
 
   const handleNavigate = (view: string) => {
     setCurrentView(view as "overview" | "brd" | "confluence" | "jira" | "design");
   };
 
   const handleCreateBRD = () => {
-    // This will be handled by the BRDDashboard component
-    console.log("Create BRD clicked from header");
+    // Trigger BRD creation by incrementing the trigger counter
+    setCreateBRDTrigger(prev => prev + 1);
   };
 
   const handleBack = () => {
@@ -28,7 +29,7 @@ const Index = () => {
   const renderContent = () => {
     switch (currentView) {
       case "brd":
-        return <BRDDashboard onBack={handleBack} selectedProject={selectedProject} selectedBRDTemplate={selectedBRDTemplate} />;
+        return <BRDDashboard onBack={handleBack} selectedProject={selectedProject} selectedBRDTemplate={selectedBRDTemplate} createBRDTrigger={createBRDTrigger} />;
       case "confluence":
         return <ConfluenceDashboard />;
       case "jira":

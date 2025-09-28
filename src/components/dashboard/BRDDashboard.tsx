@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BRDProgress } from "../brd/BRDProgress";
 import { ChatInterface } from "../chat/ChatInterface";
 import { FileUploadSection } from "../files/FileUploadSection";
@@ -145,11 +145,13 @@ interface BRDDashboardProps {
   onBack?: () => void;
   selectedProject?: any;
   selectedBRDTemplate?: string | null;
+  createBRDTrigger?: number;
 }
 export const BRDDashboard = ({
   onBack,
   selectedProject,
-  selectedBRDTemplate
+  selectedBRDTemplate,
+  createBRDTrigger
 }: BRDDashboardProps) => {
   const [selectedSection, setSelectedSection] = useState<string>("Executive Summary");
   const [completedSections, setCompletedSections] = useState<string[]>([]);
@@ -179,6 +181,13 @@ export const BRDDashboard = ({
     setSelectedSection("Document Overview");
     setCompletedSections([]);
   };
+
+  // Watch for external BRD creation trigger from header
+  useEffect(() => {
+    if (createBRDTrigger && createBRDTrigger > 0) {
+      handleCreateBRD();
+    }
+  }, [createBRDTrigger]);
   return <div className="p-4 sm:p-6 lg:p-8 bg-white">
       <div className="mb-4 lg:mb-2">
         <div className="flex items-center gap-3">
