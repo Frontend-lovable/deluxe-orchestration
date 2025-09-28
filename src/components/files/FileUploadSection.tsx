@@ -103,12 +103,28 @@ export const FileUploadSection = ({ onCreateBRD }: FileUploadSectionProps = {}) 
 
     setIsSubmitting(true);
     try {
-      await uploadFiles(filesToUpload);
+      const formData = new FormData();
+      filesToUpload.forEach((file) => {
+        formData.append('file', file);
+      });
+
+      const response = await fetch('http://localhost:8000/api/v1/files/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      
       toast({
         title: "Files submitted successfully",
         description: `${filesToUpload.length} file(s) have been uploaded to the server.`,
       });
     } catch (error) {
+      console.error('Upload error:', error);
       toast({
         title: "Upload failed",
         description: "Failed to upload files. Please try again.",
