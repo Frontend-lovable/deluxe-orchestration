@@ -10,7 +10,6 @@ import { type Project } from "@/services/projectApi";
 const Index = () => {
   const [currentView, setCurrentView] = useState<"overview" | "brd" | "confluence" | "jira" | "design">("overview");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [selectedBRDTemplate, setSelectedBRDTemplate] = useState<string | null>(null);
   const [createBRDTrigger, setCreateBRDTrigger] = useState<number>(0);
 
   const handleNavigate = (view: string) => {
@@ -29,7 +28,7 @@ const Index = () => {
   const renderContent = () => {
     switch (currentView) {
       case "brd":
-        return <BRDDashboard onBack={handleBack} selectedProject={selectedProject} selectedBRDTemplate={selectedBRDTemplate} createBRDTrigger={createBRDTrigger} />;
+        return <BRDDashboard onBack={handleBack} selectedProject={selectedProject} createBRDTrigger={createBRDTrigger} />;
       case "confluence":
         return <ConfluenceDashboard />;
       case "jira":
@@ -49,9 +48,7 @@ const Index = () => {
         onBack={handleBack}
         currentView={currentView}
         selectedProject={selectedProject}
-        selectedBRDTemplate={selectedBRDTemplate}
         onProjectSelect={setSelectedProject}
-        onBRDTemplateSelect={setSelectedBRDTemplate}
         onCreateBRD={handleCreateBRD}
       >
         {renderContent()}

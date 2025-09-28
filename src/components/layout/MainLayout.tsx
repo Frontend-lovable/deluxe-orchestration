@@ -10,13 +10,11 @@ interface MainLayoutProps {
   onBack?: () => void;
   currentView?: string;
   selectedProject?: Project | null;
-  selectedBRDTemplate?: string | null;
   onProjectSelect?: (project: Project | null) => void;
-  onBRDTemplateSelect?: (template: string | null) => void;
   onCreateBRD?: () => void;
 }
 
-export const MainLayout = ({ children, onNavigate, showBackButton, onBack, currentView, selectedProject, selectedBRDTemplate, onProjectSelect, onBRDTemplateSelect, onCreateBRD }: MainLayoutProps) => {
+export const MainLayout = ({ children, onNavigate, showBackButton, onBack, currentView, selectedProject, onProjectSelect, onCreateBRD }: MainLayoutProps) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -77,7 +75,6 @@ export const MainLayout = ({ children, onNavigate, showBackButton, onBack, curre
             isMobile={isMobile}
             currentView={currentView}
             onProjectSelect={onProjectSelect}
-            onBRDTemplateSelect={onBRDTemplateSelect}
             onCreateBRD={onCreateBRD}
           />
         </div>

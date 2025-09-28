@@ -144,13 +144,11 @@ const templateSectionContent = {
 interface BRDDashboardProps {
   onBack?: () => void;
   selectedProject?: any;
-  selectedBRDTemplate?: string | null;
   createBRDTrigger?: number;
 }
 export const BRDDashboard = ({
   onBack,
   selectedProject,
-  selectedBRDTemplate,
   createBRDTrigger
 }: BRDDashboardProps) => {
   const [selectedSection, setSelectedSection] = useState<string>("Executive Summary");
@@ -207,7 +205,7 @@ export const BRDDashboard = ({
             selectedSection={selectedSection} 
             onSectionChange={setSelectedSection} 
             completedSections={completedSections} 
-            hasProjectAndTemplate={!!(selectedProject && selectedBRDTemplate)} 
+            hasProjectAndTemplate={!!selectedProject} 
             useTemplateSections={useTemplateSections}
           />
         </div>

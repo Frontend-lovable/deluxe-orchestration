@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { CreateProjectModal } from "@/components/modals/CreateProjectModal";
-import { fetchProjects, getProjectById, getBRDTemplates, type Project, type BRDTemplate } from "@/services/projectApi";
+import { fetchProjects, getProjectById, type Project } from "@/services/projectApi";
 import { useToast } from "@/hooks/use-toast";
 
 interface TopHeaderProps {
@@ -21,25 +21,19 @@ interface TopHeaderProps {
   isMobile?: boolean;
   currentView?: string;
   onProjectSelect?: (project: Project | null) => void;
-  onBRDTemplateSelect?: (template: string | null) => void;
+  
   onCreateBRD?: () => void;
 }
 
-export const TopHeader = ({ onMenuClick, isMobile, currentView, onProjectSelect, onBRDTemplateSelect, onCreateBRD }: TopHeaderProps) => {
+export const TopHeader = ({ onMenuClick, isMobile, currentView, onProjectSelect, onCreateBRD }: TopHeaderProps) => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isLoadingProjects, setIsLoadingProjects] = useState(false);
-  const [brdTemplates, setBrdTemplates] = useState<BRDTemplate[]>([]);
-  const [selectedBRDTemplate, setSelectedBRDTemplate] = useState<string | null>(null);
-  const [isLoadingTemplates, setIsLoadingTemplates] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
     loadProjects();
-    if (currentView === "brd") {
-      loadBRDTemplates();
-    }
   }, [currentView]);
 
   const loadProjects = async () => {
@@ -55,22 +49,6 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView, onProjectSelect,
     }
   };
 
-  const loadBRDTemplates = async () => {
-    setIsLoadingTemplates(true);
-    try {
-      const templates = await getBRDTemplates();
-      setBrdTemplates(templates);
-    } catch (error) {
-      console.error("Failed to load BRD templates:", error);
-      toast({
-        title: "Error",
-        description: "Failed to load BRD templates",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoadingTemplates(false);
-    }
-  };
 
   const handleProjectSelect = async (projectId: string) => {
     try {
@@ -87,10 +65,6 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView, onProjectSelect,
     }
   };
 
-  const handleBRDTemplateSelect = (value: string) => {
-    setSelectedBRDTemplate(value);
-    onBRDTemplateSelect?.(value);
-  };
 
   return (
     <>
@@ -159,35 +133,6 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView, onProjectSelect,
           </Button>
         )}
         
-        {currentView === "brd" && (
-          <Select onValueChange={handleBRDTemplateSelect}>
-            <SelectTrigger className="w-32 sm:w-40 border-primary" style={{ backgroundColor: '#fff' }}>
-              <SelectValue placeholder={isLoadingTemplates ? "Loading..." : "Create / Update"} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Existing BRD</SelectLabel>
-                <SelectItem value="upi">UPI</SelectItem>
-                <SelectItem value="lorem-ipsum">Lorem Ipsum</SelectItem>
-              </SelectGroup>
-              <SelectSeparator />
-              <SelectGroup>
-                <SelectLabel>Create new BRD</SelectLabel>
-                {brdTemplates.length > 0 ? (
-                  brdTemplates.map((template) => (
-                    <SelectItem key={template.template_id} value={template.template_id}>
-                      {template.template_name}
-                    </SelectItem>
-                  ))
-                ) : (
-                  <SelectItem value="no-templates" disabled>
-                    {isLoadingTemplates ? "Loading templates..." : "No templates available"}
-                  </SelectItem>
-                )}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        )}
         
         {!["confluence", "jira", "design", "brd"].includes(currentView || "") && (
           <Button 
