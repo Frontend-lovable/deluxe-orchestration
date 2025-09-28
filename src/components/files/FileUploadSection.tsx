@@ -108,7 +108,7 @@ export const FileUploadSection = ({ onCreateBRD }: FileUploadSectionProps = {}) 
         formData.append('file', file);
       });
 
-      const response = await fetch('http://localhost:8000/api/v1/files/upload', {
+      const response = await fetch('http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1/files/upload', {
         method: 'POST',
         body: formData,
       });
