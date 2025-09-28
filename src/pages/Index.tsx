@@ -16,6 +16,11 @@ const Index = () => {
     setCurrentView(view as "overview" | "brd" | "confluence" | "jira" | "design");
   };
 
+  const handleCreateBRD = () => {
+    // This will be handled by the BRDDashboard component
+    console.log("Create BRD clicked from header");
+  };
+
   const handleBack = () => {
     setCurrentView("overview");
   };
@@ -46,6 +51,7 @@ const Index = () => {
         selectedBRDTemplate={selectedBRDTemplate}
         onProjectSelect={setSelectedProject}
         onBRDTemplateSelect={setSelectedBRDTemplate}
+        onCreateBRD={handleCreateBRD}
       >
         {renderContent()}
       </MainLayout>

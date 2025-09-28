@@ -22,9 +22,10 @@ interface TopHeaderProps {
   currentView?: string;
   onProjectSelect?: (project: Project | null) => void;
   onBRDTemplateSelect?: (template: string | null) => void;
+  onCreateBRD?: () => void;
 }
 
-export const TopHeader = ({ onMenuClick, isMobile, currentView, onProjectSelect, onBRDTemplateSelect }: TopHeaderProps) => {
+export const TopHeader = ({ onMenuClick, isMobile, currentView, onProjectSelect, onBRDTemplateSelect, onCreateBRD }: TopHeaderProps) => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -145,6 +146,17 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView, onProjectSelect,
               ))}
             </SelectContent>
           </Select>
+        )}
+        
+        {currentView === "brd" && (
+          <Button 
+            variant="outline" 
+            className="h-10 px-3 sm:px-4"
+            style={{ borderColor: '#D61120', color: '#D61120' }}
+            onClick={onCreateBRD}
+          >
+            <span>Create BRD</span>
+          </Button>
         )}
         
         {currentView === "brd" && (

@@ -218,15 +218,7 @@ export const FileUploadSection = ({ onCreateBRD }: FileUploadSectionProps = {}) 
             </p>
           </div>
           <div className="flex gap-2 mt-4">
-            <Button 
-              className="flex-1" 
-              variant="outline" 
-              style={{ borderColor: '#D61120', color: '#D61120' }}
-              onClick={onCreateBRD}
-            >
-              <span>Create BRD</span>
-            </Button>
-            <Button className="flex-1" variant="default" disabled={uploadedFiles.length === 0}>
+            <Button className="w-full" variant="default" disabled={uploadedFiles.length === 0}>
               <Download className="w-4 h-4 mr-2 flex-shrink-0" />
               <span>Download BRD</span>
             </Button>
