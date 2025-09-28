@@ -13,7 +13,11 @@ interface UploadedFile {
   originalFile?: File;
 }
 
-export const FileUploadSection = () => {
+interface FileUploadSectionProps {
+  onCreateBRD?: () => void;
+}
+
+export const FileUploadSection = ({ onCreateBRD }: FileUploadSectionProps = {}) => {
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -207,16 +211,26 @@ export const FileUploadSection = () => {
           <div className="space-y-2">
             <Button variant="outline" className="w-full justify-center items-center h-12 bg-white border border-[#8C8C8C] hover:bg-gray-50 px-3" disabled={uploadedFiles.length === 0}>
               <Upload className="w-4 h-4 mr-2 flex-shrink-0" />
-              <span className="truncate">Upload to Confluence</span>
+              <span className="truncate">Update</span>
             </Button>
             <p className="text-xs text-muted-foreground px-2" style={{color: '#727272'}}>
               Complete all BRD sections before submitting for approval
             </p>
           </div>
-          <Button className="w-full mt-4" variant="default" disabled={uploadedFiles.length === 0}>
-            <Download className="w-4 h-4 mr-2 flex-shrink-0" />
-            <span>Download BRD</span>
-          </Button>
+          <div className="flex gap-2 mt-4">
+            <Button 
+              className="flex-1" 
+              variant="outline" 
+              style={{ borderColor: '#D61120', color: '#D61120' }}
+              onClick={onCreateBRD}
+            >
+              <span>Create BRD</span>
+            </Button>
+            <Button className="flex-1" variant="default" disabled={uploadedFiles.length === 0}>
+              <Download className="w-4 h-4 mr-2 flex-shrink-0" />
+              <span>Download BRD</span>
+            </Button>
+          </div>
         </div>
         </div>
       </CardContent>

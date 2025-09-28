@@ -1,6 +1,6 @@
 import { CheckCircle, Circle, Users, Target, List, Database, Shield } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-const brdSections = [{
+const defaultBrdSections = [{
   icon: CheckCircle,
   title: "Executive Summary",
   description: "High level overview of the project",
@@ -31,14 +31,98 @@ const brdSections = [{
   description: "Security and compliance needs",
   status: "pending"
 }];
+
+const templateBrdSections = [{
+  icon: CheckCircle,
+  title: "Document Overview",
+  description: "Document purpose and structure",
+  status: "pending"
+}, {
+  icon: Target,
+  title: "Purpose",
+  description: "Project purpose and goals",
+  status: "pending"
+}, {
+  icon: List,
+  title: "Background / Context",
+  description: "Project background information",
+  status: "pending"
+}, {
+  icon: Users,
+  title: "Stakeholders",
+  description: "Key people and roles involved",
+  status: "pending"
+}, {
+  icon: Circle,
+  title: "Scope",
+  description: "Project scope and boundaries",
+  status: "pending"
+}, {
+  icon: Target,
+  title: "Business Objectives & ROI",
+  description: "Business goals and return on investment",
+  status: "pending"
+}, {
+  icon: List,
+  title: "Functional Requirements",
+  description: "What the system must do",
+  status: "pending"
+}, {
+  icon: Shield,
+  title: "Non-Functional Requirements",
+  description: "Performance and quality requirements",
+  status: "pending"
+}, {
+  icon: Users,
+  title: "User Stories / Use Cases",
+  description: "User scenarios and interactions",
+  status: "pending"
+}, {
+  icon: CheckCircle,
+  title: "Assumptions",
+  description: "Project assumptions and dependencies",
+  status: "pending"
+}, {
+  icon: Circle,
+  title: "Constraints", 
+  description: "Project limitations and restrictions",
+  status: "pending"
+}, {
+  icon: Target,
+  title: "Acceptance Criteria / KPIs",
+  description: "Success metrics and criteria",
+  status: "pending"
+}, {
+  icon: List,
+  title: "Timeline / Milestones",
+  description: "Project timeline and key milestones",
+  status: "pending"
+}, {
+  icon: Shield,
+  title: "Risks and Dependencies",
+  description: "Project risks and external dependencies",
+  status: "pending"
+}, {
+  icon: CheckCircle,
+  title: "Approval & Review",
+  description: "Approval process and review criteria",
+  status: "pending"
+}, {
+  icon: Database,
+  title: "Glossary & Appendix",
+  description: "Terms and additional documentation",
+  status: "pending"
+}];
 interface BRDProgressProps {
   selectedSection: string;
   onSectionChange: (section: string) => void;
   completedSections: string[];
   hasProjectAndTemplate?: boolean;
+  useTemplateSections?: boolean;
 }
 
-export const BRDProgress = ({ selectedSection, onSectionChange, completedSections, hasProjectAndTemplate = false }: BRDProgressProps) => {
+export const BRDProgress = ({ selectedSection, onSectionChange, completedSections, hasProjectAndTemplate = false, useTemplateSections = false }: BRDProgressProps) => {
+  const brdSections = useTemplateSections ? templateBrdSections : defaultBrdSections;
   const completedCount = completedSections.length;
   return <Card className="h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] flex flex-col">
       <CardHeader>
