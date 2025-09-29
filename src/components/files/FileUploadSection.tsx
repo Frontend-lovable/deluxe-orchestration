@@ -208,10 +208,6 @@ export const FileUploadSection = ({ onCreateBRD, onBRDGenerated, onBRDSectionsUp
       // Step 2: Get BRD content using the BRD ID
       const brdResponse = await fetch(`http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1/files/brd/${brdId}`);
 
-      if (!brdResponse.ok) {
-        throw new Error(`BRD fetch failed: ${brdResponse.status}`);
-      }
-
       const brdData = await brdResponse.json();
       console.log('BRD data:', brdData);
       
