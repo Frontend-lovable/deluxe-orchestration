@@ -154,6 +154,7 @@ export const BRDDashboard = ({
   const [selectedSection, setSelectedSection] = useState<string>("Executive Summary");
   const [completedSections, setCompletedSections] = useState<string[]>([]);
   const [useTemplateSections, setUseTemplateSections] = useState<boolean>(false);
+  const [brdSections, setBrdSections] = useState<Array<{title: string, content: string}>>([]);
   
   const defaultSectionOrder = ["Executive Summary", "Stakeholders", "Business Objectives", "Functional Requirements", "Data Requirements", "Security Requirements"];
   const templateSectionOrder = ["Document Overview", "Purpose", "Background / Context", "Stakeholders", "Scope", "Business Objectives & ROI", "Functional Requirements", "Non-Functional Requirements", "User Stories / Use Cases", "Assumptions", "Constraints", "Acceptance Criteria / KPIs", "Timeline / Milestones", "Risks and Dependencies", "Approval & Review", "Glossary & Appendix"];
@@ -178,6 +179,20 @@ export const BRDDashboard = ({
     setUseTemplateSections(true);
     setSelectedSection("Document Overview");
     setCompletedSections([]);
+  };
+
+  const handleBRDGenerated = (brdContent: string) => {
+    // Add the BRD content as a message to the chat interface
+    if ((window as any).addBRDToChat) {
+      (window as any).addBRDToChat(brdContent);
+    }
+  };
+
+  const handleBRDSectionsUpdate = (sections: Array<{title: string, content: string}>) => {
+    setBrdSections(sections);
+    // Auto-complete sections that have content
+    const sectionsWithContent = sections.filter(s => s.content.trim().length > 0);
+    setCompletedSections(sectionsWithContent.map(s => s.title));
   };
 
   // Watch for external BRD creation trigger from header
@@ -212,12 +227,23 @@ export const BRDDashboard = ({
         
         <div className="lg:col-span-6 order-3 lg:order-2">
           <div className="h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px]">
-            <ChatInterface title={sectionContent[selectedSection as keyof typeof sectionContent]?.title || "BRD Assistant"} subtitle={sectionContent[selectedSection as keyof typeof sectionContent]?.subtitle || "Discuss your business requirements"} initialMessage={sectionContent[selectedSection as keyof typeof sectionContent]?.initialMessage || "Hello! 👋 I'm your BRD Assistant."} placeholder={sectionContent[selectedSection as keyof typeof sectionContent]?.placeholder || "Type your message..."} onReviewed={handleSectionReviewed} />
+            <ChatInterface 
+              title={sectionContent[selectedSection as keyof typeof sectionContent]?.title || "BRD Assistant"} 
+              subtitle={sectionContent[selectedSection as keyof typeof sectionContent]?.subtitle || "Discuss your business requirements"} 
+              initialMessage={sectionContent[selectedSection as keyof typeof sectionContent]?.initialMessage || "Hello! 👋 I'm your BRD Assistant."} 
+              placeholder={sectionContent[selectedSection as keyof typeof sectionContent]?.placeholder || "Type your message..."} 
+              onReviewed={handleSectionReviewed}
+              onBRDGenerated={handleBRDGenerated}
+            />
           </div>
         </div>
         
         <div className="lg:col-span-3 order-2 lg:order-3">
-          <FileUploadSection onCreateBRD={handleCreateBRD} />
+          <FileUploadSection 
+            onCreateBRD={handleCreateBRD} 
+            onBRDGenerated={handleBRDGenerated}
+            onBRDSectionsUpdate={handleBRDSectionsUpdate}
+          />
         </div>
       </div>
     </div>;
