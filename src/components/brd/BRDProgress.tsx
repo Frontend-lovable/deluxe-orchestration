@@ -119,10 +119,9 @@ interface BRDProgressProps {
   completedSections: string[];
   hasProjectAndTemplate?: boolean;
   useTemplateSections?: boolean;
-  sectionDescriptions?: { [key: string]: string };
 }
 
-export const BRDProgress = ({ selectedSection, onSectionChange, completedSections, hasProjectAndTemplate = false, useTemplateSections = false, sectionDescriptions = {} }: BRDProgressProps) => {
+export const BRDProgress = ({ selectedSection, onSectionChange, completedSections, hasProjectAndTemplate = false, useTemplateSections = false }: BRDProgressProps) => {
   const brdSections = useTemplateSections ? templateBrdSections : defaultBrdSections;
   const completedCount = completedSections.length;
   return <Card className="h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] flex flex-col">
@@ -159,7 +158,7 @@ export const BRDProgress = ({ selectedSection, onSectionChange, completedSection
                 <div className="flex-1">
                   <div className="font-medium text-sm">{section.title}</div>
                   <div className="text-xs" style={{color: '#727272'}}>
-                    {sectionDescriptions[section.title] || section.description}
+                    {section.description}
                   </div>
                 </div>
                 {completedSections.includes(section.title) && (

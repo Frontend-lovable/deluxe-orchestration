@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { uploadFiles } from "@/services/projectApi";
-import { FullScreenLoader } from "@/components/ui/full-screen-loader";
 
 interface UploadedFile {
   id: string;
@@ -16,14 +15,11 @@ interface UploadedFile {
 
 interface FileUploadSectionProps {
   onCreateBRD?: () => void;
-  onBRDGenerated?: (content: string) => void;
-  onBRDSectionsUpdate?: (sections: any[]) => void;
 }
 
-export const FileUploadSection = ({ onCreateBRD, onBRDGenerated, onBRDSectionsUpdate }: FileUploadSectionProps = {}) => {
+export const FileUploadSection = ({ onCreateBRD }: FileUploadSectionProps = {}) => {
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showLoader, setShowLoader] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -89,67 +85,6 @@ export const FileUploadSection = ({ onCreateBRD, onBRDGenerated, onBRDSectionsUp
     fileInputRef.current?.click();
   };
 
-  const parseBRDSections = (brdContent: string) => {
-    const sections = [];
-    const lines = brdContent.split('\n');
-    
-    const sectionMapping = {
-      "Document Overview": ["document overview", "## 1. document overview"],
-      "Purpose": ["## 2. purpose"],
-      "Background / Context": ["## 3. background", "background / context", "background/context"],
-      "Stakeholders": ["## 4. stakeholders"],
-      "Scope": ["## 5. scope"],
-      "Business Objectives & ROI": ["## 6. business objectives", "business objectives & roi", "business objectives and roi"],
-      "Functional Requirements": ["## 7. functional requirements"],
-      "Non-Functional Requirements": ["## 8. non-functional requirements"],
-      "User Stories / Use Cases": ["## 9. user stories", "user stories / use cases"],
-      "Assumptions": ["## 10. assumptions"],
-      "Constraints": ["## 11. constraints"],
-      "Acceptance Criteria / KPIs": ["## 12. acceptance criteria", "acceptance criteria / kpis"],
-      "Timeline / Milestones": ["## 13. timeline", "timeline / milestones"],
-      "Risks and Dependencies": ["## 14. risks and dependencies", "risks & dependencies"],
-      "Approval & Review": ["## 15. approval", "approval & review"],
-      "Glossary & Appendix": ["## 16. glossary", "glossary & appendix"]
-    };
-
-    for (const [sectionTitle, keywords] of Object.entries(sectionMapping)) {
-      let startIndex = -1;
-      let endIndex = -1;
-
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i].toLowerCase().trim();
-        if (keywords.some(keyword => line.includes(keyword.toLowerCase()))) {
-          startIndex = i;
-          break;
-        }
-      }
-
-      if (startIndex !== -1) {
-        for (let i = startIndex + 1; i < lines.length; i++) {
-          const line = lines[i].trim();
-          if (line.startsWith('## ') && i > startIndex) {
-            endIndex = i;
-            break;
-          }
-        }
-        
-        if (endIndex === -1) endIndex = lines.length;
-
-        const sectionLines = lines.slice(startIndex, endIndex);
-        const content = sectionLines.join('\n').trim();
-        
-        if (content.length > 0) {
-          sections.push({
-            title: sectionTitle,
-            content: content
-          });
-        }
-      }
-    }
-
-    return sections;
-  };
-
   const handleSubmitFiles = async () => {
     if (uploadedFiles.length === 0) return;
 
@@ -167,15 +102,13 @@ export const FileUploadSection = ({ onCreateBRD, onBRDGenerated, onBRDSectionsUp
     }
 
     setIsSubmitting(true);
-    setShowLoader(true);
-    
     try {
       const formData = new FormData();
       filesToUpload.forEach((file) => {
         formData.append('file', file);
       });
 
-      const response = await fetch('http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1/files/upload', {
+      const response = await fetch('http://localhost:8000/api/v1/files/upload', {
         method: 'POST',
         body: formData,
       });
@@ -186,42 +119,9 @@ export const FileUploadSection = ({ onCreateBRD, onBRDGenerated, onBRDSectionsUp
 
       const result = await response.json();
       
-      // Extract brd_id from the response
-      const brdId = result.brd_id;
-      if (!brdId) {
-        throw new Error('BRD ID not found in response');
-      }
-
       toast({
         title: "Files submitted successfully",
         description: `${filesToUpload.length} file(s) have been uploaded to the server.`,
-      });
-
-      // Make second API call to get BRD content using the correct endpoint
-      const brdResponse = await fetch(`http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1/files/brd/${brdId}`, {
-        method: 'GET',
-      });
-
-      if (!brdResponse.ok) {
-        throw new Error(`BRD fetch error! status: ${brdResponse.status}`);
-      }
-
-      const brdResult = await brdResponse.json();
-      
-      // Pass the BRD content to the chat interface
-      if (onBRDGenerated && brdResult.content) {
-        onBRDGenerated(brdResult.content);
-      }
-
-      // Parse and pass sections to BRD Progress
-      if (onBRDSectionsUpdate && brdResult.content) {
-        const parsedSections = parseBRDSections(brdResult.content);
-        onBRDSectionsUpdate(parsedSections);
-      }
-
-      toast({
-        title: "BRD generated successfully",
-        description: "Your Business Requirements Document has been generated and displayed in the chat.",
       });
     } catch (error) {
       console.error('Upload error:', error);
@@ -232,14 +132,11 @@ export const FileUploadSection = ({ onCreateBRD, onBRDGenerated, onBRDSectionsUp
       });
     } finally {
       setIsSubmitting(false);
-      setShowLoader(false);
     }
   };
   return (
-    <>
-      <FullScreenLoader isVisible={showLoader} message="Please wait" />
-      <Card className="h-auto xl:h-[600px] flex flex-col">
-        <CardHeader className="pb-4">
+    <Card className="h-auto xl:h-[600px] flex flex-col">
+      <CardHeader className="pb-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex-1 min-w-0">
             <CardTitle className="text-base font-bold text-[hsl(var(--heading-primary))] break-words">Uploaded Files</CardTitle>
@@ -346,6 +243,5 @@ export const FileUploadSection = ({ onCreateBRD, onBRDGenerated, onBRDSectionsUp
         </div>
       </CardContent>
     </Card>
-    </>
   );
 };

@@ -146,83 +146,6 @@ interface BRDDashboardProps {
   selectedProject?: any;
   createBRDTrigger?: number;
 }
-
-interface SectionContent {
-  title: string;
-  subtitle: string;
-  initialMessage: string;
-  placeholder: string;
-}
-
-interface ParsedBRDSection {
-  title: string;
-  content: string;
-}
-
-// Function to parse BRD content and extract sections
-const parseBRDContent = (brdContent: string): ParsedBRDSection[] => {
-  const sections: ParsedBRDSection[] = [];
-  const lines = brdContent.split('\n');
-  
-  const sectionMapping: { [key: string]: string[] } = {
-    "Document Overview": ["document overview", "## 1. document overview"],
-    "Purpose": ["## 2. purpose"],
-    "Background / Context": ["## 3. background", "background / context", "background/context"],
-    "Stakeholders": ["## 4. stakeholders"],
-    "Scope": ["## 5. scope"],
-    "Business Objectives & ROI": ["## 6. business objectives", "business objectives & roi", "business objectives and roi"],
-    "Functional Requirements": ["## 7. functional requirements"],
-    "Non-Functional Requirements": ["## 8. non-functional requirements"],
-    "User Stories / Use Cases": ["## 9. user stories", "user stories / use cases"],
-    "Assumptions": ["## 10. assumptions"],
-    "Constraints": ["## 11. constraints"],
-    "Acceptance Criteria / KPIs": ["## 12. acceptance criteria", "acceptance criteria / kpis"],
-    "Timeline / Milestones": ["## 13. timeline", "timeline / milestones"],
-    "Risks and Dependencies": ["## 14. risks and dependencies", "risks & dependencies"],
-    "Approval & Review": ["## 15. approval", "approval & review"],
-    "Glossary & Appendix": ["## 16. glossary", "glossary & appendix"]
-  };
-
-  for (const [sectionTitle, keywords] of Object.entries(sectionMapping)) {
-    let startIndex = -1;
-    let endIndex = -1;
-
-    // Find the start of the section
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i].toLowerCase().trim();
-      if (keywords.some(keyword => line.includes(keyword.toLowerCase()))) {
-        startIndex = i;
-        break;
-      }
-    }
-
-    if (startIndex !== -1) {
-      // Find the end of the section (next ## heading or end of content)
-      for (let i = startIndex + 1; i < lines.length; i++) {
-        const line = lines[i].trim();
-        if (line.startsWith('## ') && i > startIndex) {
-          endIndex = i;
-          break;
-        }
-      }
-      
-      if (endIndex === -1) endIndex = lines.length;
-
-      // Extract content between start and end
-      const sectionLines = lines.slice(startIndex, endIndex);
-      const content = sectionLines.join('\n').trim();
-      
-      if (content.length > 0) {
-        sections.push({
-          title: sectionTitle,
-          content: content
-        });
-      }
-    }
-  }
-
-  return sections;
-};
 export const BRDDashboard = ({
   onBack,
   selectedProject,
@@ -231,9 +154,6 @@ export const BRDDashboard = ({
   const [selectedSection, setSelectedSection] = useState<string>("Executive Summary");
   const [completedSections, setCompletedSections] = useState<string[]>([]);
   const [useTemplateSections, setUseTemplateSections] = useState<boolean>(false);
-  const [brdContent, setBrdContent] = useState<string>('');
-  const [parsedSections, setParsedSections] = useState<ParsedBRDSection[]>([]);
-  const [sectionDescriptions, setSectionDescriptions] = useState<{ [key: string]: string }>({});
   
   const defaultSectionOrder = ["Executive Summary", "Stakeholders", "Business Objectives", "Functional Requirements", "Data Requirements", "Security Requirements"];
   const templateSectionOrder = ["Document Overview", "Purpose", "Background / Context", "Stakeholders", "Scope", "Business Objectives & ROI", "Functional Requirements", "Non-Functional Requirements", "User Stories / Use Cases", "Assumptions", "Constraints", "Acceptance Criteria / KPIs", "Timeline / Milestones", "Risks and Dependencies", "Approval & Review", "Glossary & Appendix"];
@@ -266,33 +186,6 @@ export const BRDDashboard = ({
       handleCreateBRD();
     }
   }, [createBRDTrigger]);
-
-  // Parse BRD content when it changes
-  useEffect(() => {
-    if (brdContent) {
-      const parsed = parseBRDContent(brdContent);
-      setParsedSections(parsed);
-      
-      // Create descriptions mapping
-      const descriptions: { [key: string]: string } = {};
-      parsed.forEach(section => {
-        // Extract first paragraph as description
-        const lines = section.content.split('\n').filter(line => line.trim() && !line.startsWith('#'));
-        const description = lines.slice(0, 3).join(' ').substring(0, 200) + '...';
-        descriptions[section.title] = description || `Content for ${section.title}`;
-      });
-      setSectionDescriptions(descriptions);
-    }
-  }, [brdContent]);
-
-  // Get current section content for chat
-  const getCurrentSectionContent = () => {
-    const currentParsedSection = parsedSections.find(section => section.title === selectedSection);
-    if (currentParsedSection) {
-      return currentParsedSection.content;
-    }
-    return sectionContent[selectedSection as keyof typeof sectionContent]?.initialMessage || "Hello! 👋 I'm your BRD Assistant.";
-  };
   return <div className="p-4 sm:p-6 lg:p-8 bg-white">
       <div className="mb-4 lg:mb-2">
         <div className="flex items-center gap-3">
@@ -314,31 +207,17 @@ export const BRDDashboard = ({
             completedSections={completedSections} 
             hasProjectAndTemplate={!!selectedProject} 
             useTemplateSections={useTemplateSections}
-            sectionDescriptions={sectionDescriptions}
           />
         </div>
         
         <div className="lg:col-span-6 order-3 lg:order-2">
           <div className="h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px]">
-            <ChatInterface title={sectionContent[selectedSection as keyof typeof sectionContent]?.title || "BRD Assistant"} subtitle={sectionContent[selectedSection as keyof typeof sectionContent]?.subtitle || "Discuss your business requirements"} initialMessage={getCurrentSectionContent()} placeholder={sectionContent[selectedSection as keyof typeof sectionContent]?.placeholder || "Type your message..."} onReviewed={handleSectionReviewed} externalMessage={brdContent} />
+            <ChatInterface title={sectionContent[selectedSection as keyof typeof sectionContent]?.title || "BRD Assistant"} subtitle={sectionContent[selectedSection as keyof typeof sectionContent]?.subtitle || "Discuss your business requirements"} initialMessage={sectionContent[selectedSection as keyof typeof sectionContent]?.initialMessage || "Hello! 👋 I'm your BRD Assistant."} placeholder={sectionContent[selectedSection as keyof typeof sectionContent]?.placeholder || "Type your message..."} onReviewed={handleSectionReviewed} />
           </div>
         </div>
         
         <div className="lg:col-span-3 order-2 lg:order-3">
-          <FileUploadSection 
-            onCreateBRD={handleCreateBRD} 
-            onBRDGenerated={setBrdContent}
-            onBRDSectionsUpdate={(sections) => {
-              const descriptions: { [key: string]: string } = {};
-              sections.forEach(section => {
-                const lines = section.content.split('\n').filter(line => line.trim() && !line.startsWith('#'));
-                const description = lines.slice(0, 3).join(' ').substring(0, 200) + '...';
-                descriptions[section.title] = description || `Content for ${section.title}`;
-              });
-              setSectionDescriptions(descriptions);
-              setParsedSections(sections);
-            }}
-          />
+          <FileUploadSection onCreateBRD={handleCreateBRD} />
         </div>
       </div>
     </div>;
