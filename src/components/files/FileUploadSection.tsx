@@ -182,26 +182,15 @@ export const FileUploadSection = ({ onCreateBRD, onBRDGenerated, onBRDSectionsUp
 
       const uploadResponse = await fetch('http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1/files/upload', {
         method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-        },
-        mode: 'cors',
         body: formData,
       });
 
       if (!uploadResponse.ok) {
-        const errorText = await uploadResponse.text();
-        throw new Error(`Upload failed (${uploadResponse.status}): ${errorText}`);
+        throw new Error(`Upload failed: ${uploadResponse.status}`);
       }
 
       const uploadResult = await uploadResponse.json();
       console.log('Upload result:', uploadResult);
-      
-      // Show success message for upload
-      toast({
-        title: "Files uploaded successfully",
-        description: "Files have been uploaded and processing has started.",
-      });
       
       // Extract BRD ID from response
       const brdId = uploadResult.brd_id || uploadResult.id || uploadResult.brdId;
@@ -210,19 +199,11 @@ export const FileUploadSection = ({ onCreateBRD, onBRDGenerated, onBRDSectionsUp
         throw new Error('No BRD ID received from upload response');
       }
 
-      // Step 2: Immediately get BRD content using the BRD ID
-      const brdResponse = await fetch(`http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1/files/brd/${brdId}`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        mode: 'cors',
-      });
+      // Step 2: Get BRD content using the BRD ID
+      const brdResponse = await fetch(`http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1/files/brd/${brdId}`);
 
       if (!brdResponse.ok) {
-        const errorText = await brdResponse.text();
-        throw new Error(`BRD fetch failed (${brdResponse.status}): ${errorText}`);
+        throw new Error(`BRD fetch failed: ${brdResponse.status}`);
       }
 
       const brdData = await brdResponse.json();
@@ -242,8 +223,6 @@ export const FileUploadSection = ({ onCreateBRD, onBRDGenerated, onBRDSectionsUp
         onBRDSectionsUpdate(sections);
       }
       
-      // Stop loader and show final success message
-      setIsGeneratingBRD(false);
       toast({
         title: "BRD Generated Successfully",
         description: "Your Business Requirements Document has been generated and is ready for review.",
@@ -251,12 +230,13 @@ export const FileUploadSection = ({ onCreateBRD, onBRDGenerated, onBRDSectionsUp
       
     } catch (error) {
       console.error('BRD generation error:', error);
-      setIsGeneratingBRD(false);
       toast({
         title: "BRD Generation Failed",
         description: error instanceof Error ? error.message : "Failed to generate BRD. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsGeneratingBRD(false);
     }
   };
   return (
