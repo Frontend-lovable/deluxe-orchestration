@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { CreateProjectModal } from "@/components/modals/CreateProjectModal";
-import { fetchProjects, getProjectById, type Project } from "@/services/projectApi";
+import { type Project } from "@/services/projectApi";
 import { useToast } from "@/hooks/use-toast";
 
 interface TopHeaderProps {
@@ -39,9 +39,19 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView, onProjectSelect,
   const loadProjects = async () => {
     setIsLoadingProjects(true);
     try {
-      const projectsData = await fetchProjects();
-      setProjects(projectsData);
-      console.log("Projects loaded:", projectsData);
+      // Mock data instead of API call to prevent CORS errors
+      const mockProjects: Project[] = [
+        {
+          project_id: "proj-001",
+          project_name: "SDLC Orchestration Tool",
+          description: "A tool for managing software development lifecycle",
+          jira_project_key: "SOT",
+          confluence_space_key: "SO",
+          created_at: new Date().toISOString()
+        }
+      ];
+      setProjects(mockProjects);
+      console.log("Projects loaded:", mockProjects);
     } catch (error) {
       console.error("Failed to load projects:", error);
     } finally {
@@ -52,9 +62,13 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView, onProjectSelect,
 
   const handleProjectSelect = async (projectId: string) => {
     try {
-      const project = await getProjectById(projectId);
-      setSelectedProject(project);
-      onProjectSelect?.(project);
+      const project = projects.find(p => p.project_id === projectId);
+      if (project) {
+        setSelectedProject(project);
+        onProjectSelect?.(project);
+      } else {
+        throw new Error("Project not found");
+      }
     } catch (error) {
       toast({
         title: "Error",
