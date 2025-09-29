@@ -205,8 +205,8 @@ export const ConfluenceDashboard = () => {
                     }}
                   >
                     <ExternalLink className="w-4 h-4" />
-                    <span className="hidden sm:inline">Hourly Settlement View</span>
-                    <span className="sm:hidden">Settlement</span>
+                    <span className="hidden sm:inline">View in Confluence</span>
+                    <span className="sm:hidden">View</span>
                   </Button>
                   <Button 
                     variant="outline" 
@@ -327,6 +327,19 @@ export const ConfluenceDashboard = () => {
                         </div>
                       )}
                       
+                      <div className="mt-6">
+                        <h4 className="text-sm font-medium mb-3">Links</h4>
+                        <div className="flex flex-wrap gap-2">
+                          <a 
+                            href={`https://siriusai-team-test.atlassian.net/wiki${selectedPage._links.webui}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-blue-600 hover:underline"
+                          >
+                            View in Confluence
+                          </a>
+                        </div>
+                      </div>
                     </div>
                   </>
                 ) : (
