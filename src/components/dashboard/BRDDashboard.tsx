@@ -325,7 +325,20 @@ export const BRDDashboard = ({
         </div>
         
         <div className="lg:col-span-3 order-2 lg:order-3">
-          <FileUploadSection onCreateBRD={handleCreateBRD} onBRDGenerated={setBrdContent} />
+          <FileUploadSection 
+            onCreateBRD={handleCreateBRD} 
+            onBRDGenerated={setBrdContent}
+            onBRDSectionsUpdate={(sections) => {
+              const descriptions: { [key: string]: string } = {};
+              sections.forEach(section => {
+                const lines = section.content.split('\n').filter(line => line.trim() && !line.startsWith('#'));
+                const description = lines.slice(0, 3).join(' ').substring(0, 200) + '...';
+                descriptions[section.title] = description || `Content for ${section.title}`;
+              });
+              setSectionDescriptions(descriptions);
+              setParsedSections(sections);
+            }}
+          />
         </div>
       </div>
     </div>;
