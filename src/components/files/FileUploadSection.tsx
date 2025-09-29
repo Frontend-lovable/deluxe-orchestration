@@ -209,11 +209,56 @@ export const FileUploadSection = ({ onCreateBRD, onBRDGenerated, onBRDSectionsUp
       const brdId = uploadResult.brd_auto_generated.brd_id;
       
       if (brdId) {
-        // Step 2: Get BRD content using the BRD ID
-        const brdResponse = await fetch(`http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1/files/brd/${brdId}`);
+        // Step 2: Get BRD content using the BRD ID with retry logic
+        let brdData;
+        let retryCount = 0;
+        const maxRetries = 3;
+        
+        while (retryCount < maxRetries) {
+          try {
+            const brdResponse = await fetch(
+              `http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1/files/brd/${brdId}`,
+              {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                signal: AbortSignal.timeout(60000), // 60 second timeout
+              }
+            );
 
-        const brdData = await brdResponse.json();
-        console.log('BRD data:', brdData);
+            if (brdResponse.status === 504) {
+              throw new Error('Gateway timeout - processing is taking longer than expected');
+            }
+
+            if (!brdResponse.ok) {
+              throw new Error(`Failed to fetch BRD: ${brdResponse.status}`);
+            }
+
+            brdData = await brdResponse.json();
+            console.log('BRD data:', brdData);
+            break; // Success, exit retry loop
+            
+          } catch (error) {
+            retryCount++;
+            console.log(`BRD fetch attempt ${retryCount} failed:`, error);
+            
+            if (retryCount < maxRetries) {
+              toast({
+                title: "Retrying...",
+                description: `Attempt ${retryCount + 1} of ${maxRetries}. BRD generation is taking longer than expected.`,
+              });
+              // Wait before retrying (exponential backoff)
+              await new Promise(resolve => setTimeout(resolve, 2000 * retryCount));
+            } else {
+              throw new Error(`Failed to fetch BRD after ${maxRetries} attempts: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            }
+          }
+        }
+        
+        if (!brdData) {
+          throw new Error('Failed to retrieve BRD data');
+        }
         
         // Extract BRD content from response
         const brdContent = brdData.content || brdData.brd_content || brdData.data || JSON.stringify(brdData, null, 2);
