@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useState, useEffect } from "react";
 import { fetchConfluenceContent, getPageContent, type ConfluenceContent } from "@/services/confluenceApi";
+import { parseConfluenceContent, formatConfluenceContentAsStructured } from "@/utils/confluenceParser";
 import { useToast } from "@/hooks/use-toast";
 
 
@@ -290,11 +291,38 @@ export const ConfluenceDashboard = () => {
                       {pageContent && pageContent.body && (
                         <div>
                           <h4 className="text-sm font-medium mb-2">Content Preview</h4>
-                          <div className="bg-gray-50 p-4 rounded-lg max-h-60 overflow-y-auto text-xs">
-                            <pre className="whitespace-pre-wrap">
-                              {pageContent.body.storage?.value?.substring(0, 500) || 'No content available'}
-                              {pageContent.body.storage?.value?.length > 500 && '...'}
-                            </pre>
+                          <div className="bg-gray-50 p-4 rounded-lg max-h-80 overflow-y-auto">
+                            {(() => {
+                              const structuredContent = formatConfluenceContentAsStructured(
+                                pageContent.body.storage?.value || ''
+                              );
+                              
+                              return structuredContent.map((item: any) => {
+                                if (item.type === 'heading') {
+                                  return (
+                                    <div key={item.key} className="mb-3">
+                                      <h3 className="text-base font-semibold text-foreground border-b pb-1">
+                                        {item.content}
+                                      </h3>
+                                    </div>
+                                  );
+                                } else if (item.type === 'paragraph') {
+                                  return (
+                                    <div key={item.key} className="mb-3">
+                                      <p className="text-sm text-muted-foreground leading-relaxed">
+                                        {item.content}
+                                      </p>
+                                    </div>
+                                  );
+                                } else {
+                                  return (
+                                    <div key={item.key} className="text-sm text-muted-foreground">
+                                      {item.content}
+                                    </div>
+                                  );
+                                }
+                              });
+                            })()}
                           </div>
                         </div>
                       )}
