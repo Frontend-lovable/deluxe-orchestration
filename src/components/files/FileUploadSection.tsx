@@ -199,7 +199,7 @@ export const FileUploadSection = ({ onCreateBRD, onBRDGenerated, onBRDSectionsUp
       });
       
       // Extract BRD ID from response
-      const brdId = uploadResult.brd_id || uploadResult.id || uploadResult.brdId;
+      const brdId = uploadResult.brd_auto_generated.brd_id;
       
       if (!brdId) {
         throw new Error('No BRD ID received from upload response');
