@@ -39,12 +39,10 @@ export interface ConfluenceResponse {
 }
 
 export const fetchConfluenceContent = async (): Promise<ConfluenceResponse> => {
-  const url = 'https://siriusai-team-test.atlassian.net/wiki/rest/api/content?spaceKey=SO&type=page&expand=ancestors,version,space';
+  const url = '/confluence-api/wiki/rest/api/content?spaceKey=SO&type=page&expand=ancestors,version,space';
   
   const headers = {
-    'Accept': 'application/json',
-    'Authorization': 'Basic c2h1YmhhbS5zaW5naEBzaXJpdXNhaS5jb206QVRBVFQzeEZmR0YwS28zR3F4cXFvTGc1MFhCWVFqazBXcHVwT1JXUjFhdUMzWHpJZnNnQUkxejZSalBRWnhudGlsWHRQMHJjRFdrWThfSWNmSEFUTERjcWFpaVkycWs2dVhKWFllbFN1YkI4QlNRWWxBOU00R1VOdi1Wb1FSSEVRSEg0V0NkZXdRWHU5aDZZUDVQcGxUMW80S2dVQnhkTEZpOU4wZURYZHJfZnBNbTk3aTAycGpzPURFN0JDQjY4',
-    'Cookie': 'atlassian.xsrf.token=f32abaf62147e552ff7e6e565564268648a4979d_lin'
+    'Accept': 'application/json'
   };
 
   try {
@@ -66,12 +64,10 @@ export const fetchConfluenceContent = async (): Promise<ConfluenceResponse> => {
 };
 
 export const getPageContent = async (pageId: string): Promise<any> => {
-  const url = `https://siriusai-team-test.atlassian.net/wiki/rest/api/content/${pageId}?expand=body.storage,version,space`;
+  const url = `/confluence-api/wiki/rest/api/content/${pageId}?expand=body.storage,version,space`;
   
   const headers = {
-    'Accept': 'application/json',
-    'Authorization': 'Basic c2h1YmhhbS5zaW5naEBzaXJpdXNhaS5jb206QVRBVFQzeEZmR0YwS28zR3F4cXFvTGc1MFhCWVFqazBXcHVwT1JXUjFhdUMzWHpJZnNnQUkxejZSalBRWnhudGlsWHRQMHJjRFdrWThfSWNmSEFUTERjcWFpaVkycWs2dVhKWFllbFN1YkI4QlNRWWxBOU00R1VOdi1Wb1FSSEVRSEg0V0NkZXdRWHU5aDZZUDVQcGxUMW80S2dVQnhkTEZpOU4wZURYZHJfZnBNbTk3aTAycGpzPURFN0JDQjY4',
-    'Cookie': 'atlassian.xsrf.token=f32abaf62147e552ff7e6e565564268648a4979d_lin'
+    'Accept': 'application/json'
   };
 
   try {
