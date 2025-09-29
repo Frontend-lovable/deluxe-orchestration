@@ -192,6 +192,12 @@ export const FileUploadSection = ({ onCreateBRD, onBRDGenerated, onBRDSectionsUp
       const uploadResult = await uploadResponse.json();
       console.log('Upload result:', uploadResult);
       
+      // Show success message after upload
+      toast({
+        title: "Files uploaded successfully",
+        description: uploadResult.message || "Files have been uploaded and are being processed.",
+      });
+      
       // Extract BRD ID from response
       const brdId = uploadResult.brd_id || uploadResult.id || uploadResult.brdId;
       
