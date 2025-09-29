@@ -209,6 +209,9 @@ export const FileUploadSection = ({ onCreateBRD, onBRDGenerated, onBRDSectionsUp
       const brdId = uploadResult.brd_auto_generated.brd_id;
       
       if (brdId) {
+        // Wait 3 seconds before fetching BRD content
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        
         // Step 2: Get BRD content using the BRD ID
         const brdResponse = await fetch(`http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1/files/brd/${brdId}`);
 
