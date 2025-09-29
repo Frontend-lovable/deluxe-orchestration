@@ -201,34 +201,38 @@ export const FileUploadSection = ({ onCreateBRD, onBRDGenerated, onBRDSectionsUp
       // Extract BRD ID from response
       const brdId = uploadResult.brd_auto_generated.brd_id;
       
-      if (!brdId) {
-        throw new Error('No BRD ID received from upload response');
-      }
+      if (brdId) {
+        // Step 2: Get BRD content using the BRD ID
+        const brdResponse = await fetch(`http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1/files/brd/${brdId}`);
 
-      // Step 2: Get BRD content using the BRD ID
-      const brdResponse = await fetch(`http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1/files/brd/${brdId}`);
-
-      const brdData = await brdResponse.json();
-      console.log('BRD data:', brdData);
-      
-      // Extract BRD content from response
-      const brdContent = brdData.content || brdData.brd_content || brdData.data || JSON.stringify(brdData, null, 2);
-      
-      // Display in chatbox
-      if (onBRDGenerated) {
-        onBRDGenerated(`# BRD Generated Successfully\n\n${brdContent}`);
+        const brdData = await brdResponse.json();
+        console.log('BRD data:', brdData);
+        
+        // Extract BRD content from response
+        const brdContent = brdData.content || brdData.brd_content || brdData.data || JSON.stringify(brdData, null, 2);
+        
+        // Display in chatbox
+        if (onBRDGenerated) {
+          onBRDGenerated(`# BRD Generated Successfully\n\n${brdContent}`);
+        }
+        
+        // Parse and update BRD sections
+        if (onBRDSectionsUpdate) {
+          const sections = parseBRDSections(brdContent);
+          onBRDSectionsUpdate(sections);
+        }
+        
+        toast({
+          title: "BRD Generated Successfully",
+          description: "Your Business Requirements Document has been generated and is ready for review.",
+        });
+      } else {
+        toast({
+          title: "BRD ID Not Found",
+          description: "Files uploaded but BRD ID was not returned. Please try again.",
+          variant: "destructive",
+        });
       }
-      
-      // Parse and update BRD sections
-      if (onBRDSectionsUpdate) {
-        const sections = parseBRDSections(brdContent);
-        onBRDSectionsUpdate(sections);
-      }
-      
-      toast({
-        title: "BRD Generated Successfully",
-        description: "Your Business Requirements Document has been generated and is ready for review.",
-      });
       
     } catch (error) {
       console.error('BRD generation error:', error);
