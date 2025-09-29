@@ -92,56 +92,63 @@ export const FileUploadSection = ({ onCreateBRD, onBRDGenerated, onBRDSectionsUp
   const parseBRDSections = (brdContent: string) => {
     const sections: Array<{title: string, content: string}> = [];
     
-    // Split content by common section headers
-    const sectionPatterns = [
-      'Executive Summary',
-      'Document Overview',
-      'Purpose',
-      'Background',
-      'Context',
-      'Stakeholders',
-      'Scope',
-      'Business Objectives',
-      'ROI',
-      'Functional Requirements',
-      'Non-Functional Requirements',
-      'User Stories',
-      'Use Cases',
-      'Assumptions',
-      'Constraints',
-      'Acceptance Criteria',
-      'KPIs',
-      'Timeline',
-      'Milestones',
-      'Risks',
-      'Dependencies',
-      'Approval',
-      'Review',
-      'Glossary',
-      'Appendix'
-    ];
+    // Map API section names to BRD Progress section names
+    const sectionMapping: Record<string, string> = {
+      'executive summary': 'Document Overview',
+      'document overview': 'Document Overview',
+      'purpose': 'Purpose',
+      'background': 'Background / Context',
+      'context': 'Background / Context',
+      'stakeholders': 'Stakeholders',
+      'stakeholder': 'Stakeholders',
+      'scope': 'Scope',
+      'business objectives': 'Business Objectives & ROI',
+      'roi': 'Business Objectives & ROI',
+      'return on investment': 'Business Objectives & ROI',
+      'functional requirements': 'Functional Requirements',
+      'non-functional requirements': 'Non-Functional Requirements',
+      'user stories': 'User Stories / Use Cases',
+      'use cases': 'User Stories / Use Cases',
+      'assumptions': 'Assumptions',
+      'constraints': 'Constraints',
+      'acceptance criteria': 'Acceptance Criteria / KPIs',
+      'kpis': 'Acceptance Criteria / KPIs',
+      'key performance indicators': 'Acceptance Criteria / KPIs',
+      'timeline': 'Timeline / Milestones',
+      'milestones': 'Timeline / Milestones',
+      'risks': 'Risks and Dependencies',
+      'dependencies': 'Risks and Dependencies',
+      'approval': 'Approval & Review',
+      'review': 'Approval & Review',
+      'glossary': 'Glossary & Appendix',
+      'appendix': 'Glossary & Appendix'
+    };
     
-    let currentSection = 'Document Content';
+    let currentSection = 'Document Overview';
     let currentContent = '';
     
     const lines = brdContent.split('\n');
     
     for (const line of lines) {
-      const trimmedLine = line.trim();
+      const trimmedLine = line.trim().toLowerCase();
       
       // Check if this line is a section header
-      const foundSection = sectionPatterns.find(pattern => 
-        trimmedLine.toLowerCase().includes(pattern.toLowerCase()) &&
-        (trimmedLine.includes(':') || trimmedLine.includes('#') || trimmedLine.match(/^\d+\./))
-      );
+      let foundSectionKey = '';
+      for (const [key, value] of Object.entries(sectionMapping)) {
+        if (trimmedLine.includes(key) && 
+            (trimmedLine.includes(':') || trimmedLine.includes('#') || trimmedLine.match(/^\d+\./))) {
+          foundSectionKey = value;
+          break;
+        }
+      }
       
-      if (foundSection) {
+      if (foundSectionKey) {
         // Save previous section if it has content
         if (currentContent.trim()) {
           sections.push({ title: currentSection, content: currentContent.trim() });
         }
         
-        currentSection = foundSection;
+        currentSection = foundSectionKey;
         currentContent = line + '\n';
       } else {
         currentContent += line + '\n';
