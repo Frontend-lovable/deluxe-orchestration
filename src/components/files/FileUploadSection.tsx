@@ -166,11 +166,6 @@ export const FileUploadSection = ({ onCreateBRD, onBRDGenerated, onBRDSectionsUp
   const handleSubmitFiles = async () => {
     if (uploadedFiles.length === 0) return;
 
-    // Trigger BRD template mode when file upload starts
-    if (onCreateBRD) {
-      onCreateBRD();
-    }
-
     const filesToUpload = uploadedFiles
       .map(file => file.originalFile)
       .filter((file): file is File => file !== undefined);
