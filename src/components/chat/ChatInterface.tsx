@@ -20,15 +20,13 @@ interface ChatInterfaceProps {
   initialMessage?: string;
   placeholder?: string;
   onReviewed?: () => void;
-  onBRDGenerated?: (brdContent: string) => void;
 }
 export const ChatInterface = ({
   title,
   subtitle,
   initialMessage,
   placeholder = "Type your message about business requirements...",
-  onReviewed,
-  onBRDGenerated
+  onReviewed
 }: ChatInterfaceProps) => {
   const [messages, setMessages] = useState<ChatMessageType[]>([...(initialMessage ? [{
     id: "1",
@@ -49,27 +47,6 @@ export const ChatInterface = ({
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-
-  // Listen for BRD generation from parent
-  useEffect(() => {
-    if (onBRDGenerated) {
-      const handleBRDGenerated = (brdContent: string) => {
-        const brdMessage: ChatMessageType = {
-          id: `brd-${Date.now()}`,
-          content: brdContent,
-          isBot: true,
-          timestamp: new Date().toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit'
-          })
-        };
-        setMessages(prev => [...prev, brdMessage]);
-      };
-
-      // Store the handler for external calls
-      (window as any).addBRDToChat = handleBRDGenerated;
-    }
-  }, [onBRDGenerated]);
 
   const handleSend = async () => {
     if (!inputValue.trim() || chatMutation.isPending) return;
