@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { uploadFiles } from "@/services/projectApi";
+import { FullScreenLoader } from "@/components/ui/full-screen-loader";
 
 interface UploadedFile {
   id: string;
@@ -15,11 +16,14 @@ interface UploadedFile {
 
 interface FileUploadSectionProps {
   onCreateBRD?: () => void;
+  onBRDGenerated?: (brdContent: string) => void;
+  onBRDSectionsUpdate?: (sections: Array<{title: string, content: string}>) => void;
 }
 
-export const FileUploadSection = ({ onCreateBRD }: FileUploadSectionProps = {}) => {
+export const FileUploadSection = ({ onCreateBRD, onBRDGenerated, onBRDSectionsUpdate }: FileUploadSectionProps = {}) => {
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGeneratingBRD, setIsGeneratingBRD] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -85,8 +89,87 @@ export const FileUploadSection = ({ onCreateBRD }: FileUploadSectionProps = {}) 
     fileInputRef.current?.click();
   };
 
+  const parseBRDSections = (brdContent: string) => {
+    const sections: Array<{title: string, content: string}> = [];
+    
+    // Map API section names to BRD Progress section names
+    const sectionMapping: Record<string, string> = {
+      'executive summary': 'Document Overview',
+      'document overview': 'Document Overview',
+      'purpose': 'Purpose',
+      'background': 'Background / Context',
+      'context': 'Background / Context',
+      'stakeholders': 'Stakeholders',
+      'stakeholder': 'Stakeholders',
+      'scope': 'Scope',
+      'business objectives': 'Business Objectives & ROI',
+      'roi': 'Business Objectives & ROI',
+      'return on investment': 'Business Objectives & ROI',
+      'functional requirements': 'Functional Requirements',
+      'non-functional requirements': 'Non-Functional Requirements',
+      'user stories': 'User Stories / Use Cases',
+      'use cases': 'User Stories / Use Cases',
+      'assumptions': 'Assumptions',
+      'constraints': 'Constraints',
+      'acceptance criteria': 'Acceptance Criteria / KPIs',
+      'kpis': 'Acceptance Criteria / KPIs',
+      'key performance indicators': 'Acceptance Criteria / KPIs',
+      'timeline': 'Timeline / Milestones',
+      'milestones': 'Timeline / Milestones',
+      'risks': 'Risks and Dependencies',
+      'dependencies': 'Risks and Dependencies',
+      'approval': 'Approval & Review',
+      'review': 'Approval & Review',
+      'glossary': 'Glossary & Appendix',
+      'appendix': 'Glossary & Appendix'
+    };
+    
+    let currentSection = 'Document Overview';
+    let currentContent = '';
+    
+    const lines = brdContent.split('\n');
+    
+    for (const line of lines) {
+      const trimmedLine = line.trim().toLowerCase();
+      
+      // Check if this line is a section header
+      let foundSectionKey = '';
+      for (const [key, value] of Object.entries(sectionMapping)) {
+        if (trimmedLine.includes(key) && 
+            (trimmedLine.includes(':') || trimmedLine.includes('#') || trimmedLine.match(/^\d+\./))) {
+          foundSectionKey = value;
+          break;
+        }
+      }
+      
+      if (foundSectionKey) {
+        // Save previous section if it has content
+        if (currentContent.trim()) {
+          sections.push({ title: currentSection, content: currentContent.trim() });
+        }
+        
+        currentSection = foundSectionKey;
+        currentContent = line + '\n';
+      } else {
+        currentContent += line + '\n';
+      }
+    }
+    
+    // Add the last section
+    if (currentContent.trim()) {
+      sections.push({ title: currentSection, content: currentContent.trim() });
+    }
+    
+    return sections;
+  };
+
   const handleSubmitFiles = async () => {
     if (uploadedFiles.length === 0) return;
+
+    // Trigger BRD template mode when file upload starts
+    if (onCreateBRD) {
+      onCreateBRD();
+    }
 
     const filesToUpload = uploadedFiles
       .map(file => file.originalFile)
@@ -101,41 +184,84 @@ export const FileUploadSection = ({ onCreateBRD }: FileUploadSectionProps = {}) 
       return;
     }
 
-    setIsSubmitting(true);
+    setIsGeneratingBRD(true);
     try {
+      // Step 1: Upload files and get BRD ID
       const formData = new FormData();
       filesToUpload.forEach((file) => {
         formData.append('file', file);
       });
 
-      const response = await fetch('http://localhost:8000/api/v1/files/upload', {
+      const uploadResponse = await fetch('http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1/files/upload', {
         method: 'POST',
         body: formData,
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (!uploadResponse.ok) {
+        throw new Error(`Upload failed: ${uploadResponse.status}`);
       }
 
-      const result = await response.json();
+      const uploadResult = await uploadResponse.json();
+      console.log('Upload result:', uploadResult);
       
+      // Show success message after upload
       toast({
-        title: "Files submitted successfully",
-        description: `${filesToUpload.length} file(s) have been uploaded to the server.`,
+        title: "Files uploaded successfully",
+        description: uploadResult.message || "Files have been uploaded and are being processed.",
       });
+      
+      // Extract BRD ID from response
+      const brdId = uploadResult.brd_auto_generated.brd_id;
+      
+      if (brdId) {
+        
+        // Step 2: Get BRD content using the BRD ID
+        const brdResponse = await fetch(`http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1/files/brd/${brdId}`);
+
+        const brdData = await brdResponse.json();
+        console.log('BRD data:', brdData);
+        
+        // Extract BRD content from response
+        const brdContent = brdData.content || brdData.brd_content || brdData.data || JSON.stringify(brdData, null, 2);
+        
+        // Display in chatbox
+        if (onBRDGenerated) {
+          onBRDGenerated(`# BRD Generated Successfully\n\n${brdContent}`);
+        }
+        
+        // Parse and update BRD sections
+        if (onBRDSectionsUpdate) {
+          const sections = parseBRDSections(brdContent);
+          onBRDSectionsUpdate(sections);
+        }
+        
+        toast({
+          title: "BRD Generated Successfully",
+          description: "Your Business Requirements Document has been generated and is ready for review.",
+        });
+      } else {
+        toast({
+          title: "BRD ID Not Found",
+          description: "Files uploaded but BRD ID was not returned. Please try again.",
+          variant: "destructive",
+        });
+      }
+      
     } catch (error) {
-      console.error('Upload error:', error);
+      console.error('BRD generation error:', error);
       toast({
-        title: "Upload failed",
-        description: "Failed to upload files. Please try again.",
+        title: "BRD Generation Failed",
+        description: error instanceof Error ? error.message : "Failed to generate BRD. Please try again.",
         variant: "destructive",
       });
     } finally {
-      setIsSubmitting(false);
+      setIsGeneratingBRD(false);
     }
   };
   return (
-    <Card className="h-auto xl:h-[600px] flex flex-col">
+    <>
+      {isGeneratingBRD && <FullScreenLoader message="Generating BRD Please wait" />}
+      <Card className="h-auto xl:h-[600px] flex flex-col">
       <CardHeader className="pb-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex-1 min-w-0">
@@ -213,11 +339,11 @@ export const FileUploadSection = ({ onCreateBRD }: FileUploadSectionProps = {}) 
               <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
               <span className="text-sm">All files processed and draft ready for review</span>
             </div>
-            <Button variant="outline" className="w-full justify-center gap-2 h-12 bg-white border border-[#8C8C8C] hover:bg-gray-50" onClick={handleSubmitFiles} disabled={uploadedFiles.length === 0 || isSubmitting}>
+            <Button variant="outline" className="w-full justify-center gap-2 h-12 bg-white border border-[#8C8C8C] hover:bg-gray-50" onClick={handleSubmitFiles} disabled={uploadedFiles.length === 0 || isGeneratingBRD}>
               <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
               </svg>
-              <span>{isSubmitting ? "Submitting..." : "Submit Files"}</span>
+              <span>{isGeneratingBRD ? "Generating BRD..." : "Submit Files"}</span>
             </Button>
           </div>
         )}
@@ -243,5 +369,6 @@ export const FileUploadSection = ({ onCreateBRD }: FileUploadSectionProps = {}) 
         </div>
       </CardContent>
     </Card>
+    </>
   );
 };
