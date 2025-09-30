@@ -10,15 +10,10 @@ import { type Project } from "@/services/projectApi";
 const Index = () => {
   const [currentView, setCurrentView] = useState<"overview" | "brd" | "confluence" | "jira" | "design">("overview");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [createBRDTrigger, setCreateBRDTrigger] = useState<number>(0);
+  const [selectedBRDTemplate, setSelectedBRDTemplate] = useState<string | null>(null);
 
   const handleNavigate = (view: string) => {
     setCurrentView(view as "overview" | "brd" | "confluence" | "jira" | "design");
-  };
-
-  const handleCreateBRD = () => {
-    // Trigger BRD creation by incrementing the trigger counter
-    setCreateBRDTrigger(prev => prev + 1);
   };
 
   const handleBack = () => {
@@ -28,7 +23,7 @@ const Index = () => {
   const renderContent = () => {
     switch (currentView) {
       case "brd":
-        return <BRDDashboard onBack={handleBack} selectedProject={selectedProject} createBRDTrigger={createBRDTrigger} />;
+        return <BRDDashboard onBack={handleBack} selectedProject={selectedProject} selectedBRDTemplate={selectedBRDTemplate} />;
       case "confluence":
         return <ConfluenceDashboard />;
       case "jira":
@@ -48,8 +43,9 @@ const Index = () => {
         onBack={handleBack}
         currentView={currentView}
         selectedProject={selectedProject}
+        selectedBRDTemplate={selectedBRDTemplate}
         onProjectSelect={setSelectedProject}
-        onCreateBRD={handleCreateBRD}
+        onBRDTemplateSelect={setSelectedBRDTemplate}
       >
         {renderContent()}
       </MainLayout>

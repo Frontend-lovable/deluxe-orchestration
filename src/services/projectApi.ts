@@ -87,6 +87,41 @@ export const getProjectById = async (projectId: string): Promise<Project> => {
   }
 };
 
+export interface BRDTemplate {
+  template_id: string;
+  template_name: string;
+  s3_path: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BRDTemplatesResponse {
+  success: boolean;
+  message: string;
+  data: BRDTemplate[];
+  total_count: number;
+}
+
+export const getBRDTemplates = async (): Promise<BRDTemplate[]> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/templates/`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data: BRDTemplatesResponse = await response.json();
+    return data.data;
+  } catch (error) {
+    console.error("Error fetching BRD templates:", error);
+    throw error;
+  }
+};
 
 export interface FileUploadResponse {
   success: boolean;

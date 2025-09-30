@@ -20,15 +20,13 @@ interface ChatInterfaceProps {
   initialMessage?: string;
   placeholder?: string;
   onReviewed?: () => void;
-  onBRDGenerated?: (brdContent: string) => void;
 }
 export const ChatInterface = ({
   title,
   subtitle,
   initialMessage,
   placeholder = "Type your message about business requirements...",
-  onReviewed,
-  onBRDGenerated
+  onReviewed
 }: ChatInterfaceProps) => {
   const [messages, setMessages] = useState<ChatMessageType[]>([...(initialMessage ? [{
     id: "1",
@@ -49,27 +47,6 @@ export const ChatInterface = ({
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-
-  // Listen for BRD generation from parent
-  useEffect(() => {
-    if (onBRDGenerated) {
-      const handleBRDGenerated = (brdContent: string) => {
-        const brdMessage: ChatMessageType = {
-          id: `brd-${Date.now()}`,
-          content: brdContent,
-          isBot: true,
-          timestamp: new Date().toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit'
-          })
-        };
-        setMessages(prev => [...prev, brdMessage]);
-      };
-
-      // Store the handler for external calls
-      (window as any).addBRDToChat = handleBRDGenerated;
-    }
-  }, [onBRDGenerated]);
 
   const handleSend = async () => {
     if (!inputValue.trim() || chatMutation.isPending) return;
@@ -106,31 +83,17 @@ export const ChatInterface = ({
         console.log('=== CHAT SUCCESS DEBUG ===');
         console.log('Full response object:', JSON.stringify(response, null, 2));
         console.log('Response type:', typeof response);
-        console.log('Response keys:', response ? Object.keys(response) : 'No keys');
         
-        // Extract response content with better handling
+        // Try different possible response fields
         const responseData = response as any;
-        
-        // Check if response is the direct field (most common case)
-        let responseContent = responseData?.response;
-        
-        // If not found, try other common field names
-        if (!responseContent || responseContent === undefined || responseContent === null) {
-          responseContent = responseData?.message || 
-                           responseData?.answer || 
-                           responseData?.text || 
-                           responseData?.content ||
-                           responseData?.data?.response ||
-                           responseData?.data?.message;
-        }
-        
-        // Final fallback
-        if (!responseContent || responseContent === undefined || responseContent === null) {
-          responseContent = 'No response received';
-        }
+        const responseContent = responseData?.response || 
+                               responseData?.message || 
+                               responseData?.answer || 
+                               responseData?.text || 
+                               responseData?.content ||
+                               'No response received';
         
         console.log('Extracted content:', responseContent);
-        console.log('Content type:', typeof responseContent);
         console.log('=== END CHAT DEBUG ===');
         
         // Remove loading message and add actual response with typing effect
