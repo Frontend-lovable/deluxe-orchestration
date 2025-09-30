@@ -165,7 +165,7 @@ export const CreateProjectModal = ({ open, onOpenChange }: CreateProjectModalPro
                 <PopoverContent className="w-full p-0 bg-white" align="start">
                   <Command>
                     <CommandInput placeholder="Search project..." />
-                    <CommandList>
+                    <CommandList className="max-h-[200px] overflow-y-auto">
                       <CommandEmpty>No project found.</CommandEmpty>
                       <CommandGroup>
                         {projects.map((project) => (
@@ -194,43 +194,36 @@ export const CreateProjectModal = ({ open, onOpenChange }: CreateProjectModalPro
 
               {selectedProject && (
                 <>
-                  <div className="flex gap-2">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      className="flex-1"
-                      style={{ 
-                        backgroundColor: 'rgba(214, 17, 32, 0.15)', 
-                        color: '#D61120',
-                        fontWeight: 'normal'
-                      }}
-                    >
-                      Existing BRD
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="flex-1 border-border"
-                      style={{ color: '#3B3B3B' }}
-                    >
-                      Create new BRD
-                    </Button>
-                  </div>
+                  {brdTemplates.length > 0 && (
+                    <>
+                      <div className="flex gap-2">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          className="flex-1"
+                          style={{ 
+                            backgroundColor: 'rgba(214, 17, 32, 0.15)', 
+                            color: '#D61120',
+                            fontWeight: 'normal'
+                          }}
+                        >
+                          Existing BRD
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="flex-1 border-border"
+                          style={{ color: '#3B3B3B' }}
+                        >
+                          Create new BRD
+                        </Button>
+                      </div>
 
-                  <div className="space-y-2 mt-4">
-                    <div className="px-3 py-2 bg-gray-50 rounded text-sm" style={{ color: '#3B3B3B' }}>
-                      BRD 1
-                    </div>
-                    <div className="px-3 py-2 bg-gray-50 rounded text-sm" style={{ color: '#3B3B3B' }}>
-                      BRD 2
-                    </div>
-                    <div className="px-3 py-2 bg-gray-50 rounded text-sm" style={{ color: '#3B3B3B' }}>
-                      Lorium Ipsum
-                    </div>
-                    <div className="px-3 py-2 bg-gray-50 rounded text-sm" style={{ color: '#3B3B3B' }}>
-                      Lorium Ipsum
-                    </div>
-                  </div>
+                      <div className="mt-3 px-3 py-2 bg-gray-50 rounded text-sm font-medium" style={{ color: '#3B3B3B' }}>
+                        {projects.find((project) => project.project_id === selectedProject)?.project_name}
+                      </div>
+                    </>
+                  )}
 
                   <div className="flex justify-end pt-4">
                     <Button
