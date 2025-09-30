@@ -95,7 +95,8 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView, onProjectSelect,
     <>
       <CreateProjectModal 
         open={isCreateModalOpen} 
-        onOpenChange={setIsCreateModalOpen} 
+        onOpenChange={setIsCreateModalOpen}
+        projects={projects}
       />
     <div className="h-16 border-b border-border px-4 sm:px-6 lg:px-8 flex items-center justify-between" style={{ backgroundColor: '#fff' }}>
       <div className="flex items-center gap-4">

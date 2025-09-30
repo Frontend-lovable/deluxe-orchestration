@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { ChevronRight, Check, ChevronsUpDown } from "lucide-react";
 import {
   Dialog,
@@ -25,7 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { createProject, type CreateProjectRequest, getBRDTemplates, type BRDTemplate, fetchProjects, type Project } from "@/services/projectApi";
+import { createProject, type CreateProjectRequest, getBRDTemplates, type BRDTemplate, type Project } from "@/services/projectApi";
 import { cn } from "@/lib/utils";
 import {
   Command,
@@ -51,21 +51,15 @@ type CreateProjectFormData = z.infer<typeof createProjectSchema>;
 interface CreateProjectModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  projects: Project[];
 }
 
-export const CreateProjectModal = ({ open, onOpenChange }: CreateProjectModalProps) => {
+export const CreateProjectModal = ({ open, onOpenChange, projects }: CreateProjectModalProps) => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<"my-project" | "new-project">("new-project");
   const [brdTemplates, setBrdTemplates] = useState<BRDTemplate[]>([]);
   const [selectedProject, setSelectedProject] = useState<string>("");
   const [projectOpen, setProjectOpen] = useState(false);
-
-  // Fetch projects from API
-  const { data: projects = [] } = useQuery<Project[]>({
-    queryKey: ['projects'],
-    queryFn: fetchProjects,
-    enabled: open && activeTab === "my-project",
-  });
   
   const form = useForm<CreateProjectFormData>({
     resolver: zodResolver(createProjectSchema),
