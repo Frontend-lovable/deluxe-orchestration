@@ -52,9 +52,10 @@ interface CreateProjectModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   projects: Project[];
+  isLoadingProjects: boolean;
 }
 
-export const CreateProjectModal = ({ open, onOpenChange, projects }: CreateProjectModalProps) => {
+export const CreateProjectModal = ({ open, onOpenChange, projects, isLoadingProjects }: CreateProjectModalProps) => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<"my-project" | "new-project">("new-project");
   const [brdTemplates, setBrdTemplates] = useState<BRDTemplate[]>([]);
@@ -160,27 +161,35 @@ export const CreateProjectModal = ({ open, onOpenChange, projects }: CreateProje
                   <Command>
                     <CommandInput placeholder="Search project..." />
                     <CommandList className="max-h-[200px] overflow-y-auto">
-                      <CommandEmpty>No project found.</CommandEmpty>
-                      <CommandGroup>
-                        {projects.map((project) => (
-                          <CommandItem
-                            key={project.project_id}
-                            value={project.project_name}
-                            onSelect={() => {
-                              setSelectedProject(project.project_id);
-                              setProjectOpen(false);
-                            }}
-                          >
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                selectedProject === project.project_id ? "opacity-100" : "opacity-0"
-                              )}
-                            />
-                            {project.project_name}
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
+                      {isLoadingProjects ? (
+                        <div className="flex items-center justify-center py-6">
+                          <div className="animate-spin rounded-full h-6 w-6 border-b-2" style={{ borderColor: '#D61120' }}></div>
+                        </div>
+                      ) : (
+                        <>
+                          <CommandEmpty>No project found.</CommandEmpty>
+                          <CommandGroup>
+                            {projects.map((project) => (
+                              <CommandItem
+                                key={project.project_id}
+                                value={project.project_name}
+                                onSelect={() => {
+                                  setSelectedProject(project.project_id);
+                                  setProjectOpen(false);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    selectedProject === project.project_id ? "opacity-100" : "opacity-0"
+                                  )}
+                                />
+                                {project.project_name}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </>
+                      )}
                     </CommandList>
                   </Command>
                 </PopoverContent>
