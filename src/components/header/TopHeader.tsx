@@ -123,26 +123,6 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView, onProjectSelect,
       </div>
       
       <div className="flex items-center gap-2 sm:gap-4">
-        {isLoadingProjects ? (
-          <Skeleton className="w-32 sm:w-48 h-10" />
-        ) : projects.length > 0 && (
-          <Select onValueChange={handleProjectSelect}>
-            <SelectTrigger className="w-32 sm:w-48" style={{ backgroundColor: '#EDEDED' }}>
-              <SelectValue placeholder="Select Project" />
-            </SelectTrigger>
-            <SelectContent>
-              {projects.map((project) => (
-                <SelectItem key={project.project_id} value={project.project_id}>
-                  <div>
-                    <div className="font-medium">{project.project_name}</div>
-                    <div className="text-xs text-muted-foreground">{project.project_id}</div>
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        )}
-        
         {currentView === "brd" && (
           <Select onValueChange={handleBRDTemplateSelect}>
             <SelectTrigger className="w-32 sm:w-40 border-primary" style={{ backgroundColor: '#fff' }}>
@@ -177,8 +157,8 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView, onProjectSelect,
           className="bg-primary hover:bg-primary/90 text-primary-foreground text-sm px-3 sm:px-4"
           onClick={() => setIsCreateModalOpen(true)}
         >
-          <span className="hidden sm:inline">Create New Project</span>
-          <span className="sm:hidden">Create</span>
+          <span className="hidden sm:inline">Project Workspace</span>
+          <span className="sm:hidden">Workspace</span>
         </Button>
       </div>
     </div>

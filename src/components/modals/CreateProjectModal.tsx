@@ -1,31 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
+import { ChevronRight } from "lucide-react";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
 } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { createProject, type CreateProjectRequest } from "@/services/projectApi";
+import { createProject, type CreateProjectRequest, getBRDTemplates, type BRDTemplate } from "@/services/projectApi";
 
 const createProjectSchema = z.object({
   project_name: z.string().min(1, "Project name is required"),
-  description: z.string().min(1, "Description is required"),
+  brd_template: z.string().optional(),
 });
 
 type CreateProjectFormData = z.infer<typeof createProjectSchema>;
@@ -37,12 +41,14 @@ interface CreateProjectModalProps {
 
 export const CreateProjectModal = ({ open, onOpenChange }: CreateProjectModalProps) => {
   const { toast } = useToast();
+  const [activeTab, setActiveTab] = useState<"my-project" | "new-project">("new-project");
+  const [brdTemplates, setBrdTemplates] = useState<BRDTemplate[]>([]);
   
   const form = useForm<CreateProjectFormData>({
     resolver: zodResolver(createProjectSchema),
     defaultValues: {
       project_name: "",
-      description: "",
+      brd_template: "",
     },
   });
 
@@ -69,7 +75,7 @@ export const CreateProjectModal = ({ open, onOpenChange }: CreateProjectModalPro
   const onSubmit = (data: CreateProjectFormData) => {
     const projectData: CreateProjectRequest = {
       project_name: data.project_name,
-      description: data.description,
+      description: data.brd_template || "",
       jira_project_key: data.project_name.substring(0, 3).toUpperCase(),
       confluence_space_key: data.project_name.substring(0, 3).toUpperCase(),
     };
@@ -77,68 +83,108 @@ export const CreateProjectModal = ({ open, onOpenChange }: CreateProjectModalPro
     createProjectMutation.mutate(projectData);
   };
 
+  // Load BRD templates when modal opens
+  useEffect(() => {
+    if (open) {
+      getBRDTemplates().then(setBrdTemplates).catch(console.error);
+    }
+  }, [open]);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px] bg-card text-card-foreground">
-        <DialogHeader>
-          <DialogTitle className="text-lg font-semibold text-heading-primary">
-            Create New Project
-          </DialogTitle>
-        </DialogHeader>
-        
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="project_name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm font-medium text-foreground">
-                    Project Name *
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="Enter project name"
-                      className="bg-background border-input"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm font-medium text-foreground">
-                    Project Description *
-                  </FormLabel>
-                  <FormControl>
-                    <Textarea
-                      {...field}
-                      placeholder="Enter project description"
-                      className="min-h-[100px] bg-background border-input"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <div className="flex justify-end pt-4">
-              <Button
-                type="submit"
-                disabled={createProjectMutation.isPending}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground"
-              >
-                {createProjectMutation.isPending ? "Creating..." : "Submit"}
-              </Button>
-            </div>
-          </form>
-        </Form>
+      <DialogContent className="sm:max-w-[360px] bg-white border-0 p-0">
+        {/* Tabs Header */}
+        <div className="flex border-b">
+          <button
+            type="button"
+            onClick={() => setActiveTab("my-project")}
+            className={`flex-1 py-3 text-sm font-medium transition-colors ${
+              activeTab === "my-project"
+                ? "border-b-2 border-primary text-foreground"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+            style={activeTab === "my-project" ? { color: '#3B3B3B' } : { color: '#858585' }}
+          >
+            My Project
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("new-project")}
+            className={`flex-1 py-3 text-sm font-medium transition-colors ${
+              activeTab === "new-project"
+                ? "text-white"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+            style={activeTab === "new-project" ? { backgroundColor: '#D61120', color: '#fff' } : { color: '#858585' }}
+          >
+            New Project
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-6">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="project_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="Enter Project Name"
+                        className="bg-white border-border h-10"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="brd_template"
+                render={({ field }) => (
+                  <FormItem>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="bg-white border-border h-10">
+                          <SelectValue placeholder="Select BRD Template" />
+                          <ChevronRight className="h-4 w-4 opacity-50" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent className="bg-white">
+                        {brdTemplates.map((template) => (
+                          <SelectItem key={template.template_id} value={template.template_id}>
+                            {template.template_name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <div className="flex justify-end pt-8">
+                <Button
+                  type="submit"
+                  disabled={createProjectMutation.isPending}
+                  className="text-sm"
+                  style={{ 
+                    backgroundColor: 'rgba(214, 17, 32, 0.3)', 
+                    color: '#D61120',
+                    fontWeight: 'normal'
+                  }}
+                  variant="ghost"
+                >
+                  {createProjectMutation.isPending ? "Creating..." : "Create Project"}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </div>
       </DialogContent>
     </Dialog>
   );
