@@ -147,7 +147,15 @@ export const BRDProgress = ({ selectedSection, onSectionChange, completedSection
       'Glossary & Appendix': Database
     };
     
-    brdSections = dynamicSections.map(section => ({
+    // Deduplicate sections by title, keeping only the first occurrence
+    const uniqueSections = new Map<string, typeof dynamicSections[0]>();
+    dynamicSections.forEach(section => {
+      if (!uniqueSections.has(section.title)) {
+        uniqueSections.set(section.title, section);
+      }
+    });
+    
+    brdSections = Array.from(uniqueSections.values()).map(section => ({
       icon: iconMap[section.title] || CheckCircle,
       title: section.title,
       description: section.description || section.content.substring(0, 50) + '...',
