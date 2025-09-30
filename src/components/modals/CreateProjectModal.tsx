@@ -100,10 +100,10 @@ export const CreateProjectModal = ({ open, onOpenChange }: CreateProjectModalPro
             onClick={() => setActiveTab("my-project")}
             className={`flex-1 py-3 text-sm font-medium transition-colors ${
               activeTab === "my-project"
-                ? "border-b-2 border-primary text-foreground"
+                ? "text-white"
                 : "text-muted-foreground hover:text-foreground"
             }`}
-            style={activeTab === "my-project" ? { color: '#3B3B3B' } : { color: '#858585' }}
+            style={activeTab === "my-project" ? { backgroundColor: '#D61120', color: '#fff' } : { color: '#858585' }}
           >
             My Project
           </button>
@@ -123,67 +123,130 @@ export const CreateProjectModal = ({ open, onOpenChange }: CreateProjectModalPro
 
         {/* Content */}
         <div className="p-6">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="project_name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="Enter Project Name"
-                        className="bg-white border-border h-10"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="brd_template"
-                render={({ field }) => (
-                  <FormItem>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger className="bg-white border-border h-10">
-                          <SelectValue placeholder="Select BRD Template" />
-                          <ChevronRight className="h-4 w-4 opacity-50" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent className="bg-white">
-                        {brdTemplates.map((template) => (
-                          <SelectItem key={template.template_id} value={template.template_id}>
-                            {template.template_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <div className="flex justify-end pt-8">
+          {activeTab === "my-project" ? (
+            <div className="space-y-4">
+              <Select>
+                <SelectTrigger className="bg-white border-border h-10">
+                  <SelectValue placeholder="Select Project" />
+                  <ChevronRight className="h-4 w-4 opacity-50" />
+                </SelectTrigger>
+                <SelectContent className="bg-white">
+                  <SelectItem value="payment-gateway">Payment Gateway</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <div className="flex gap-2">
                 <Button
-                  type="submit"
-                  disabled={createProjectMutation.isPending}
-                  className="text-sm"
+                  type="button"
+                  variant="ghost"
+                  className="flex-1"
                   style={{ 
-                    backgroundColor: 'rgba(214, 17, 32, 0.3)', 
+                    backgroundColor: 'rgba(214, 17, 32, 0.15)', 
                     color: '#D61120',
                     fontWeight: 'normal'
                   }}
-                  variant="ghost"
                 >
-                  {createProjectMutation.isPending ? "Creating..." : "Create Project"}
+                  Existing BRD
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="flex-1 border-border"
+                  style={{ color: '#3B3B3B' }}
+                >
+                  Create new BRD
                 </Button>
               </div>
-            </form>
-          </Form>
+
+              <div className="space-y-2 mt-4">
+                <div className="px-3 py-2 bg-gray-50 rounded text-sm" style={{ color: '#3B3B3B' }}>
+                  BRD 1
+                </div>
+                <div className="px-3 py-2 bg-gray-50 rounded text-sm" style={{ color: '#3B3B3B' }}>
+                  BRD 2
+                </div>
+                <div className="px-3 py-2 bg-gray-50 rounded text-sm" style={{ color: '#3B3B3B' }}>
+                  Lorium Ipsum
+                </div>
+                <div className="px-3 py-2 bg-gray-50 rounded text-sm" style={{ color: '#3B3B3B' }}>
+                  Lorium Ipsum
+                </div>
+              </div>
+
+              <div className="flex justify-end pt-4">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="text-sm"
+                  style={{ color: '#D61120', fontWeight: 'normal' }}
+                >
+                  Open Project
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="project_name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="Enter Project Name"
+                          className="bg-white border-border h-10"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="brd_template"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="bg-white border-border h-10">
+                            <SelectValue placeholder="Select BRD Template" />
+                            <ChevronRight className="h-4 w-4 opacity-50" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="bg-white">
+                          {brdTemplates.map((template) => (
+                            <SelectItem key={template.template_id} value={template.template_id}>
+                              {template.template_name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <div className="flex justify-end pt-8">
+                  <Button
+                    type="submit"
+                    disabled={createProjectMutation.isPending}
+                    className="text-sm"
+                    style={{ 
+                      backgroundColor: 'rgba(214, 17, 32, 0.3)', 
+                      color: '#D61120',
+                      fontWeight: 'normal'
+                    }}
+                    variant="ghost"
+                  >
+                    {createProjectMutation.isPending ? "Creating..." : "Create Project"}
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          )}
         </div>
       </DialogContent>
     </Dialog>
