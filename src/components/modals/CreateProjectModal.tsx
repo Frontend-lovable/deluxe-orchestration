@@ -192,54 +192,58 @@ export const CreateProjectModal = ({ open, onOpenChange }: CreateProjectModalPro
                 </PopoverContent>
               </Popover>
 
-              <div className="flex gap-2">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  className="flex-1"
-                  style={{ 
-                    backgroundColor: 'rgba(214, 17, 32, 0.15)', 
-                    color: '#D61120',
-                    fontWeight: 'normal'
-                  }}
-                >
-                  Existing BRD
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="flex-1 border-border"
-                  style={{ color: '#3B3B3B' }}
-                >
-                  Create new BRD
-                </Button>
-              </div>
+              {selectedProject && (
+                <>
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      className="flex-1"
+                      style={{ 
+                        backgroundColor: 'rgba(214, 17, 32, 0.15)', 
+                        color: '#D61120',
+                        fontWeight: 'normal'
+                      }}
+                    >
+                      Existing BRD
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="flex-1 border-border"
+                      style={{ color: '#3B3B3B' }}
+                    >
+                      Create new BRD
+                    </Button>
+                  </div>
 
-              <div className="space-y-2 mt-4">
-                <div className="px-3 py-2 bg-gray-50 rounded text-sm" style={{ color: '#3B3B3B' }}>
-                  BRD 1
-                </div>
-                <div className="px-3 py-2 bg-gray-50 rounded text-sm" style={{ color: '#3B3B3B' }}>
-                  BRD 2
-                </div>
-                <div className="px-3 py-2 bg-gray-50 rounded text-sm" style={{ color: '#3B3B3B' }}>
-                  Lorium Ipsum
-                </div>
-                <div className="px-3 py-2 bg-gray-50 rounded text-sm" style={{ color: '#3B3B3B' }}>
-                  Lorium Ipsum
-                </div>
-              </div>
+                  <div className="space-y-2 mt-4">
+                    <div className="px-3 py-2 bg-gray-50 rounded text-sm" style={{ color: '#3B3B3B' }}>
+                      BRD 1
+                    </div>
+                    <div className="px-3 py-2 bg-gray-50 rounded text-sm" style={{ color: '#3B3B3B' }}>
+                      BRD 2
+                    </div>
+                    <div className="px-3 py-2 bg-gray-50 rounded text-sm" style={{ color: '#3B3B3B' }}>
+                      Lorium Ipsum
+                    </div>
+                    <div className="px-3 py-2 bg-gray-50 rounded text-sm" style={{ color: '#3B3B3B' }}>
+                      Lorium Ipsum
+                    </div>
+                  </div>
 
-              <div className="flex justify-end pt-4">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  className="text-sm"
-                  style={{ color: '#D61120', fontWeight: 'normal' }}
-                >
-                  Open Project
-                </Button>
-              </div>
+                  <div className="flex justify-end pt-4">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      className="text-sm"
+                      style={{ color: '#D61120', fontWeight: 'normal' }}
+                    >
+                      Open Project
+                    </Button>
+                  </div>
+                </>
+              )}
             </div>
           ) : (
             <Form {...form}>
