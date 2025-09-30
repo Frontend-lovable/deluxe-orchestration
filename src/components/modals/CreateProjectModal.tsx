@@ -188,13 +188,17 @@ export const CreateProjectModal = ({ open, onOpenChange, projects }: CreateProje
 
               {selectedProject && (
                 <>
-                  {brdTemplates.length > 0 && (
-                    <>
+                  <div className="mt-3 px-4 py-3 bg-gray-50 rounded" style={{ color: '#3B3B3B' }}>
+                    <div className="text-sm font-medium mb-3">
+                      {projects.find((project) => project.project_id === selectedProject)?.project_name}
+                    </div>
+                    
+                    {brdTemplates.length > 0 && (
                       <div className="flex gap-2">
                         <Button
                           type="button"
                           variant="ghost"
-                          className="flex-1"
+                          className="flex-1 text-xs"
                           style={{ 
                             backgroundColor: 'rgba(214, 17, 32, 0.15)', 
                             color: '#D61120',
@@ -206,18 +210,14 @@ export const CreateProjectModal = ({ open, onOpenChange, projects }: CreateProje
                         <Button
                           type="button"
                           variant="outline"
-                          className="flex-1 border-border"
+                          className="flex-1 text-xs border-border"
                           style={{ color: '#3B3B3B' }}
                         >
                           Create new BRD
                         </Button>
                       </div>
-
-                      <div className="mt-3 px-3 py-2 bg-gray-50 rounded text-sm font-medium" style={{ color: '#3B3B3B' }}>
-                        {projects.find((project) => project.project_id === selectedProject)?.project_name}
-                      </div>
-                    </>
-                  )}
+                    )}
+                  </div>
 
                   <div className="flex justify-end pt-4">
                     <Button
