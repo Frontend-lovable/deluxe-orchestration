@@ -119,10 +119,42 @@ interface BRDProgressProps {
   completedSections: string[];
   hasProjectAndTemplate?: boolean;
   useTemplateSections?: boolean;
+  dynamicSections?: Array<{title: string, content: string, description?: string}>;
 }
 
-export const BRDProgress = ({ selectedSection, onSectionChange, completedSections, hasProjectAndTemplate = false, useTemplateSections = false }: BRDProgressProps) => {
-  const brdSections = useTemplateSections ? templateBrdSections : defaultBrdSections;
+export const BRDProgress = ({ selectedSection, onSectionChange, completedSections, hasProjectAndTemplate = false, useTemplateSections = false, dynamicSections = [] }: BRDProgressProps) => {
+  // Use dynamic sections from API if available, otherwise use template sections
+  let brdSections = useTemplateSections ? templateBrdSections : defaultBrdSections;
+  
+  // If we have dynamic sections from API, transform them to match the display format
+  if (dynamicSections && dynamicSections.length > 0) {
+    const iconMap: Record<string, any> = {
+      'Document Overview': CheckCircle,
+      'Purpose': Target,
+      'Background / Context': List,
+      'Stakeholders': Users,
+      'Scope': Circle,
+      'Business Objectives & ROI': Target,
+      'Functional Requirements': List,
+      'Non-Functional Requirements': Shield,
+      'User Stories / Use Cases': Users,
+      'Assumptions': CheckCircle,
+      'Constraints': Circle,
+      'Acceptance Criteria / KPIs': Target,
+      'Timeline / Milestones': List,
+      'Risks and Dependencies': Shield,
+      'Approval & Review': CheckCircle,
+      'Glossary & Appendix': Database
+    };
+    
+    brdSections = dynamicSections.map(section => ({
+      icon: iconMap[section.title] || CheckCircle,
+      title: section.title,
+      description: section.description || section.content.substring(0, 50) + '...',
+      status: 'pending'
+    }));
+  }
+  
   const completedCount = completedSections.length;
   return <Card className="h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] flex flex-col">
       <CardHeader>
