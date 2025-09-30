@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useMutation } from "@tanstack/react-query";
-import { ChevronRight } from "lucide-react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { ChevronRight, Check, ChevronsUpDown } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -25,7 +25,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { createProject, type CreateProjectRequest, getBRDTemplates, type BRDTemplate } from "@/services/projectApi";
+import { createProject, type CreateProjectRequest, getBRDTemplates, type BRDTemplate, fetchProjects, type Project } from "@/services/projectApi";
+import { cn } from "@/lib/utils";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const createProjectSchema = z.object({
   project_name: z.string().min(1, "Project name is required"),
@@ -43,6 +57,15 @@ export const CreateProjectModal = ({ open, onOpenChange }: CreateProjectModalPro
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<"my-project" | "new-project">("new-project");
   const [brdTemplates, setBrdTemplates] = useState<BRDTemplate[]>([]);
+  const [selectedProject, setSelectedProject] = useState<string>("");
+  const [projectOpen, setProjectOpen] = useState(false);
+
+  // Fetch projects from API
+  const { data: projects = [] } = useQuery<Project[]>({
+    queryKey: ['projects'],
+    queryFn: fetchProjects,
+    enabled: open && activeTab === "my-project",
+  });
   
   const form = useForm<CreateProjectFormData>({
     resolver: zodResolver(createProjectSchema),
@@ -125,15 +148,49 @@ export const CreateProjectModal = ({ open, onOpenChange }: CreateProjectModalPro
         <div className="p-6">
           {activeTab === "my-project" ? (
             <div className="space-y-4">
-              <Select>
-                <SelectTrigger className="bg-white border-border h-10">
-                  <SelectValue placeholder="Select Project" />
-                  <ChevronRight className="h-4 w-4 opacity-50" />
-                </SelectTrigger>
-                <SelectContent className="bg-white">
-                  <SelectItem value="payment-gateway">Payment Gateway</SelectItem>
-                </SelectContent>
-              </Select>
+              <Popover open={projectOpen} onOpenChange={setProjectOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={projectOpen}
+                    className="w-full justify-between bg-white border-border h-10"
+                  >
+                    {selectedProject
+                      ? projects.find((project) => project.project_id === selectedProject)?.project_name
+                      : "Select Project"}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0 bg-white" align="start">
+                  <Command>
+                    <CommandInput placeholder="Search project..." />
+                    <CommandList>
+                      <CommandEmpty>No project found.</CommandEmpty>
+                      <CommandGroup>
+                        {projects.map((project) => (
+                          <CommandItem
+                            key={project.project_id}
+                            value={project.project_name}
+                            onSelect={() => {
+                              setSelectedProject(project.project_id);
+                              setProjectOpen(false);
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                selectedProject === project.project_id ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            {project.project_name}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
 
               <div className="flex gap-2">
                 <Button
@@ -235,7 +292,6 @@ export const CreateProjectModal = ({ open, onOpenChange }: CreateProjectModalPro
                     disabled={createProjectMutation.isPending}
                     className="text-sm"
                     style={{ 
-                      backgroundColor: 'rgba(214, 17, 32, 0.3)', 
                       color: '#D61120',
                       fontWeight: 'normal'
                     }}
