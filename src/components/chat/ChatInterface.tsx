@@ -106,17 +106,31 @@ export const ChatInterface = ({
         console.log('=== CHAT SUCCESS DEBUG ===');
         console.log('Full response object:', JSON.stringify(response, null, 2));
         console.log('Response type:', typeof response);
+        console.log('Response keys:', response ? Object.keys(response) : 'No keys');
         
-        // Try different possible response fields
+        // Extract response content with better handling
         const responseData = response as any;
-        const responseContent = responseData?.response || 
-                               responseData?.message || 
-                               responseData?.answer || 
-                               responseData?.text || 
-                               responseData?.content ||
-                               'No response received';
+        
+        // Check if response is the direct field (most common case)
+        let responseContent = responseData?.response;
+        
+        // If not found, try other common field names
+        if (!responseContent || responseContent === undefined || responseContent === null) {
+          responseContent = responseData?.message || 
+                           responseData?.answer || 
+                           responseData?.text || 
+                           responseData?.content ||
+                           responseData?.data?.response ||
+                           responseData?.data?.message;
+        }
+        
+        // Final fallback
+        if (!responseContent || responseContent === undefined || responseContent === null) {
+          responseContent = 'No response received';
+        }
         
         console.log('Extracted content:', responseContent);
+        console.log('Content type:', typeof responseContent);
         console.log('=== END CHAT DEBUG ===');
         
         // Remove loading message and add actual response with typing effect
