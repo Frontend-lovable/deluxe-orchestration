@@ -1,7 +1,21 @@
 import { ChatInterface } from "../chat/ChatInterface";
 import { FileUploadSection } from "../files/FileUploadSection";
 
-export const DesignDashboard = () => {
+interface ChatMessageType {
+  id: string;
+  content: string;
+  isBot: boolean;
+  timestamp: string;
+  isTyping?: boolean;
+  isLoading?: boolean;
+}
+
+interface DesignDashboardProps {
+  messages?: ChatMessageType[];
+  setMessages?: React.Dispatch<React.SetStateAction<ChatMessageType[]>>;
+}
+
+export const DesignDashboard = ({ messages, setMessages }: DesignDashboardProps) => {
   return (
     <div className="p-2 sm:p-4 md:p-6 lg:p-8" style={{ backgroundColor: '#fff' }}>
       <div className="mb-4 lg:mb-8">
@@ -19,6 +33,8 @@ export const DesignDashboard = () => {
 
 What design challenge would you like to tackle?"
               placeholder="Ask about architecture, design patterns, or system planning..."
+              messages={messages}
+              setMessages={setMessages}
             />
           </div>
         </div>

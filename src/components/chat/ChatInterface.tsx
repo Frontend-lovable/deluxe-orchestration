@@ -21,15 +21,19 @@ interface ChatInterfaceProps {
   initialMessage?: string;
   placeholder?: string;
   onReviewed?: () => void;
+  messages?: ChatMessageType[];
+  setMessages?: React.Dispatch<React.SetStateAction<ChatMessageType[]>>;
 }
 export const ChatInterface = ({
   title,
   subtitle,
   initialMessage,
   placeholder = "Type your message about business requirements...",
-  onReviewed
+  onReviewed,
+  messages: externalMessages,
+  setMessages: externalSetMessages
 }: ChatInterfaceProps) => {
-  const [messages, setMessages] = useState<ChatMessageType[]>([...(initialMessage ? [{
+  const [internalMessages, setInternalMessages] = useState<ChatMessageType[]>([...(initialMessage ? [{
     id: "1",
     content: initialMessage,
     isBot: true,
@@ -38,6 +42,10 @@ export const ChatInterface = ({
       minute: '2-digit'
     })
   }] : [])]);
+  
+  const messages = externalMessages ?? internalMessages;
+  const setMessages = externalSetMessages ?? setInternalMessages;
+  
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
