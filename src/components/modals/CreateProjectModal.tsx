@@ -115,7 +115,7 @@ export const CreateProjectModal = ({ open, onOpenChange, projects, isLoadingProj
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className={`sm:max-w-[360px] bg-white border-0 p-0 ${activeTab === "new-project" ? "[&>button]:text-white" : ""}`}>
+      <DialogContent className={`sm:max-w-[360px] bg-white border-0 p-0 ${activeTab === "new-project" ? "[&>button]:text-white [&>button]:z-10" : ""}`}>
         {/* Tabs Header */}
         <div className="flex border-b">
           <button
