@@ -87,11 +87,74 @@ export async function* streamChatMessage(message: string): AsyncGenerator<string
       if (done) {
         // Process any remaining buffer
         if (buffer.trim()) {
+          const lines = buffer.split('\n');
+          for (const line of lines) {
+            if (!line.trim() || line.startsWith(':')) continue;
+            
+            if (line.startsWith('data: ')) {
+              const dataStr = line.slice(6).trim();
+              if (dataStr === '[DONE]') break;
+              
+              try {
+                const data = JSON.parse(dataStr);
+                if (data.session_id) {
+                  SessionManager.setSessionId(data.session_id);
+                }
+                const content = String(
+                  data?.response || 
+                  data?.message || 
+                  data?.answer || 
+                  data?.text || 
+                  data?.content || 
+                  ''
+                ).trim();
+                
+                if (content) {
+                  yield content;
+                }
+              } catch (e) {
+                console.error('Failed to parse final SSE data:', e);
+              }
+            }
+          }
+        }
+        break;
+      }
+      
+      buffer += decoder.decode(value, { stream: true });
+      
+      // Process complete SSE events from the buffer
+      let newlineIndex;
+      while ((newlineIndex = buffer.indexOf('\n')) !== -1) {
+        let line = buffer.slice(0, newlineIndex);
+        buffer = buffer.slice(newlineIndex + 1);
+        
+        // Handle CRLF line endings
+        if (line.endsWith('\r')) {
+          line = line.slice(0, -1);
+        }
+        
+        // Skip empty lines and SSE comments
+        if (!line.trim() || line.startsWith(':')) continue;
+        
+        // Parse SSE data lines
+        if (line.startsWith('data: ')) {
+          const dataStr = line.slice(6).trim();
+          
+          // Check for stream end marker
+          if (dataStr === '[DONE]') {
+            break;
+          }
+          
           try {
-            const data = JSON.parse(buffer);
+            const data = JSON.parse(dataStr);
+            
+            // Store session ID
             if (data.session_id) {
               SessionManager.setSessionId(data.session_id);
             }
+            
+            // Extract content from various possible field names
             const content = String(
               data?.response || 
               data?.message || 
@@ -101,64 +164,27 @@ export async function* streamChatMessage(message: string): AsyncGenerator<string
               ''
             ).trim();
             
-            if (content) {
-              yield content;
+            // Clean up the content (remove outer quotes and unescape)
+            let cleanContent = content;
+            if (cleanContent.startsWith('"') && cleanContent.endsWith('"') && cleanContent.length > 1) {
+              cleanContent = cleanContent.slice(1, -1);
+            }
+            
+            if (cleanContent.includes('\\')) {
+              cleanContent = cleanContent
+                .replace(/\\"/g, '"')
+                .replace(/\\n/g, '\n')
+                .replace(/\\t/g, '\t')
+                .replace(/\\r/g, '\r')
+                .replace(/\\\\/g, '\\');
+            }
+            
+            if (cleanContent) {
+              yield cleanContent;
             }
           } catch (e) {
-            console.error('Failed to parse final buffer:', e);
+            console.error('Failed to parse SSE data:', dataStr, e);
           }
-        }
-        break;
-      }
-      
-      buffer += decoder.decode(value, { stream: true });
-      
-      // Process complete JSON objects from the buffer
-      let newlineIndex;
-      while ((newlineIndex = buffer.indexOf('\n')) !== -1) {
-        const line = buffer.slice(0, newlineIndex).trim();
-        buffer = buffer.slice(newlineIndex + 1);
-        
-        if (!line) continue;
-        
-        try {
-          const data = JSON.parse(line);
-          
-          // Store session ID
-          if (data.session_id) {
-            SessionManager.setSessionId(data.session_id);
-          }
-          
-          // Extract content from various possible field names
-          const content = String(
-            data?.response || 
-            data?.message || 
-            data?.answer || 
-            data?.text || 
-            data?.content || 
-            ''
-          ).trim();
-          
-          // Clean up the content (remove outer quotes and unescape)
-          let cleanContent = content;
-          if (cleanContent.startsWith('"') && cleanContent.endsWith('"') && cleanContent.length > 1) {
-            cleanContent = cleanContent.slice(1, -1);
-          }
-          
-          if (cleanContent.includes('\\')) {
-            cleanContent = cleanContent
-              .replace(/\\"/g, '"')
-              .replace(/\\n/g, '\n')
-              .replace(/\\t/g, '\t')
-              .replace(/\\r/g, '\r')
-              .replace(/\\\\/g, '\\');
-          }
-          
-          if (cleanContent) {
-            yield cleanContent;
-          }
-        } catch (e) {
-          console.error('Failed to parse line:', line, e);
         }
       }
     }
