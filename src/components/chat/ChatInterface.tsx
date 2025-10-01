@@ -21,15 +21,19 @@ interface ChatInterfaceProps {
   initialMessage?: string;
   placeholder?: string;
   onReviewed?: () => void;
+  messages?: ChatMessageType[];
+  setMessages?: (messages: ChatMessageType[] | ((prev: ChatMessageType[]) => ChatMessageType[])) => void;
 }
 export const ChatInterface = ({
   title,
   subtitle,
   initialMessage,
   placeholder = "Type your message about business requirements...",
-  onReviewed
+  onReviewed,
+  messages: externalMessages,
+  setMessages: externalSetMessages
 }: ChatInterfaceProps) => {
-  const [messages, setMessages] = useState<ChatMessageType[]>([...(initialMessage ? [{
+  const [internalMessages, setInternalMessages] = useState<ChatMessageType[]>([...(initialMessage ? [{
     id: "1",
     content: initialMessage,
     isBot: true,
@@ -41,6 +45,25 @@ export const ChatInterface = ({
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Use external messages if provided, otherwise use internal state
+  const messages = externalMessages || internalMessages;
+  const setMessages = externalSetMessages || setInternalMessages;
+
+  // Initialize with initial message if messages are empty and initialMessage is provided
+  useEffect(() => {
+    if (externalMessages && externalMessages.length === 0 && initialMessage) {
+      setMessages([{
+        id: "1",
+        content: initialMessage,
+        isBot: true,
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      }]);
+    }
+  }, [initialMessage, externalMessages, setMessages]);
 
   // Auto scroll to bottom when new messages arrive
   useEffect(() => {
