@@ -233,7 +233,11 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
             <div className={`text-sm break-words ${message.isBot ? 'text-foreground' : 'text-white [&_*]:text-white'}`}>
               {formatChatContent(contentToDisplay)}
               {message.isTyping && isTyping && (
-                <span className="inline-block w-1.5 h-4 bg-current animate-pulse ml-1 align-middle" />
+                <span className="inline-flex gap-1 ml-2 align-middle">
+                  <span className="inline-block w-1.5 h-1.5 bg-current rounded-full animate-pulse" style={{ animationDelay: '0ms', animationDuration: '1s' }} />
+                  <span className="inline-block w-1.5 h-1.5 bg-current rounded-full animate-pulse" style={{ animationDelay: '200ms', animationDuration: '1s' }} />
+                  <span className="inline-block w-1.5 h-1.5 bg-current rounded-full animate-pulse" style={{ animationDelay: '400ms', animationDuration: '1s' }} />
+                </span>
               )}
             </div>
           </div>
