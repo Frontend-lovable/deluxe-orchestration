@@ -230,7 +230,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
               : 'bg-primary text-white rounded-br-md'
             }
           `}>
-            <div className="text-sm break-words">
+            <div className={`text-sm break-words ${!message.isBot ? 'text-white' : ''}`}>
               {formatChatContent(contentToDisplay)}
               {message.isTyping && isTyping && (
                 <span className="inline-block w-1.5 h-4 bg-current animate-pulse ml-1 align-middle" />
