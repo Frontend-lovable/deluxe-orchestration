@@ -104,7 +104,21 @@ export const ChatInterface = ({
         
         // Ensure it's a string and clean it thoroughly
         if (responseContent !== null && responseContent !== undefined) {
-          responseContent = String(responseContent).trim();
+          responseContent = String(responseContent);
+          
+          // Unescape JSON strings (handle \" and other escape sequences)
+          try {
+            // Check if it looks like a JSON-escaped string
+            if (responseContent.includes('\\"') || responseContent.includes('\\n')) {
+              // Parse as JSON string to unescape properly
+              responseContent = JSON.parse(`"${responseContent.replace(/^"|"$/g, '')}"`);
+            }
+          } catch (e) {
+            // If parsing fails, keep the original content
+            console.log('Could not unescape content, using as-is');
+          }
+          
+          responseContent = responseContent.trim();
           
           // Remove "undefined" in all its forms (case insensitive, multiple passes)
           let previousContent = '';
@@ -122,8 +136,12 @@ export const ChatInterface = ({
           console.log('After cleaning:', responseContent);
         }
         
-        // Final validation
-        if (!responseContent || !responseContent.trim() || responseContent.toLowerCase() === 'undefined') {
+        // Final validation - check if we have actual content
+        const hasContent = responseContent && 
+                          responseContent.trim().length > 0 && 
+                          responseContent.toLowerCase() !== 'undefined';
+        
+        if (!hasContent) {
           console.warn('No valid content found, using fallback');
           responseContent = 'No response received from the server.';
         }
