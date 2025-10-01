@@ -53,9 +53,10 @@ interface CreateProjectModalProps {
   onOpenChange: (open: boolean) => void;
   projects: Project[];
   isLoadingProjects: boolean;
+  onProjectCreated?: () => void;
 }
 
-export const CreateProjectModal = ({ open, onOpenChange, projects, isLoadingProjects }: CreateProjectModalProps) => {
+export const CreateProjectModal = ({ open, onOpenChange, projects, isLoadingProjects, onProjectCreated }: CreateProjectModalProps) => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<"my-project" | "new-project">("my-project");
   const [brdTemplates, setBrdTemplates] = useState<BRDTemplate[]>([]);
@@ -80,6 +81,7 @@ export const CreateProjectModal = ({ open, onOpenChange, projects, isLoadingProj
       });
       form.reset();
       onOpenChange(false);
+      onProjectCreated?.();
     },
     onError: (error) => {
       toast({
