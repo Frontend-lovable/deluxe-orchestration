@@ -21,19 +21,15 @@ interface ChatInterfaceProps {
   initialMessage?: string;
   placeholder?: string;
   onReviewed?: () => void;
-  messages?: ChatMessageType[];
-  setMessages?: (messages: ChatMessageType[] | ((prev: ChatMessageType[]) => ChatMessageType[])) => void;
 }
 export const ChatInterface = ({
   title,
   subtitle,
   initialMessage,
   placeholder = "Type your message about business requirements...",
-  onReviewed,
-  messages: externalMessages,
-  setMessages: externalSetMessages
+  onReviewed
 }: ChatInterfaceProps) => {
-  const [internalMessages, setInternalMessages] = useState<ChatMessageType[]>([...(initialMessage ? [{
+  const [messages, setMessages] = useState<ChatMessageType[]>([...(initialMessage ? [{
     id: "1",
     content: initialMessage,
     isBot: true,
@@ -45,45 +41,6 @@ export const ChatInterface = ({
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const hasInitialized = useRef(false);
-
-  // Use external messages if provided, otherwise use internal state
-  const messages = externalMessages || internalMessages;
-  const setMessages = externalSetMessages || setInternalMessages;
-
-  // Debug logging
-  useEffect(() => {
-    console.log('ChatInterface mounted/updated:', {
-      hasExternalMessages: !!externalMessages,
-      externalMessagesLength: externalMessages?.length,
-      messagesLength: messages.length,
-      hasInitialized: hasInitialized.current
-    });
-  }, [externalMessages, messages]);
-
-  // Initialize with initial message ONCE when messages are empty and initialMessage is provided
-  useEffect(() => {
-    console.log('Init check:', {
-      hasExternalMessages: !!externalMessages,
-      externalMessagesLength: externalMessages?.length,
-      hasInitialMessage: !!initialMessage,
-      hasInitialized: hasInitialized.current
-    });
-    
-    if (externalMessages && externalMessages.length === 0 && initialMessage && !hasInitialized.current) {
-      console.log('Initializing with initial message');
-      setMessages([{
-        id: "1",
-        content: initialMessage,
-        isBot: true,
-        timestamp: new Date().toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit'
-        })
-      }]);
-      hasInitialized.current = true;
-    }
-  }, []);
 
   // Auto scroll to bottom when new messages arrive
   useEffect(() => {
