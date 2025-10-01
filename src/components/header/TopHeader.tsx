@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ChevronDown, Menu } from "lucide-react";
+import { ChevronDown, Menu, FolderKanban } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -158,9 +158,10 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView, onProjectSelect,
         )}
         
         <Button 
-          className="bg-primary hover:bg-primary/90 text-primary-foreground text-sm px-3 sm:px-4"
+          className="bg-primary hover:bg-primary/90 text-primary-foreground text-sm px-3 sm:px-4 flex items-center gap-2"
           onClick={() => setIsCreateModalOpen(true)}
         >
+          <FolderKanban size={16} />
           <span className="hidden sm:inline">{selectedProject?.project_name || "Project Workspace"}</span>
           <span className="sm:hidden">{selectedProject?.project_name || "Workspace"}</span>
         </Button>
