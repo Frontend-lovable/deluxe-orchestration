@@ -214,14 +214,6 @@ export const CreateProjectModal = ({ open, onOpenChange, projects, isLoadingProj
                   </Command>
                 </PopoverContent>
               </Popover>
-
-              {selectedProject && (
-                <div className="mt-3 px-4 py-3 bg-gray-50 rounded" style={{ color: '#3B3B3B' }}>
-                  <div className="text-sm font-medium">
-                    {projects.find((project) => project.project_id === selectedProject)?.project_name}
-                  </div>
-                </div>
-              )}
             </div>
           ) : (
             <Form {...form}>
