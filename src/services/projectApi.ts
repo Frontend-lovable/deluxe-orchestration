@@ -1,4 +1,5 @@
 // Project API Service
+import { API_CONFIG } from "@/config/api";
 
 export interface CreateProjectRequest {
   project_name: string;
@@ -18,9 +19,8 @@ export interface Project {
 
 interface CreateProjectResponse extends Project {}
 
-const API_BASE_URL = "http://Deluxe-Internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1";
-
 export const createProject = async (projectData: CreateProjectRequest): Promise<CreateProjectResponse> => {
+  const API_BASE_URL = API_CONFIG.BASE_URL;
   try {
     const response = await fetch(`${API_BASE_URL}/projects`, {
       method: "POST",
@@ -43,6 +43,7 @@ export const createProject = async (projectData: CreateProjectRequest): Promise<
 };
 
 export const fetchProjects = async (): Promise<Project[]> => {
+  const API_BASE_URL = API_CONFIG.BASE_URL;
   try {
     const response = await fetch(`${API_BASE_URL}/projects`, {
       method: "GET",
@@ -64,6 +65,7 @@ export const fetchProjects = async (): Promise<Project[]> => {
 };
 
 export const getProjectById = async (projectId: string): Promise<Project> => {
+  const API_BASE_URL = API_CONFIG.BASE_URL;
   try {
     const response = await fetch(`${API_BASE_URL}/projects/${projectId}`, {
       method: "GET",
@@ -103,6 +105,7 @@ export interface BRDTemplatesResponse {
 }
 
 export const getBRDTemplates = async (): Promise<BRDTemplate[]> => {
+  const API_BASE_URL = API_CONFIG.BASE_URL;
   try {
     const response = await fetch(`${API_BASE_URL}/templates/`, {
       method: "GET",
@@ -130,6 +133,7 @@ export interface FileUploadResponse {
 }
 
 export const uploadFiles = async (files: File[]): Promise<FileUploadResponse> => {
+  const API_BASE_URL = API_CONFIG.BASE_URL;
   try {
     const formData = new FormData();
     

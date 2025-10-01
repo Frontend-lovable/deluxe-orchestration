@@ -1,6 +1,9 @@
 // API Configuration
 // Direct API endpoint from curl command
 export const API_CONFIG = {
+  // Base URL for all API endpoints
+  BASE_URL: "http://Deluxe-Internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1",
+  
   // Using the exact URL from your curl command
   CHATBOT_API_URL: "http://Deluxe-Internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1/chat",
   
