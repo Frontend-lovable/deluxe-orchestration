@@ -275,7 +275,6 @@ export const CreateProjectModal = ({ open, onOpenChange, projects, isLoadingProj
                         <FormControl>
                           <SelectTrigger className="bg-white border-border h-10">
                             <SelectValue placeholder={isLoadingTemplates ? "Loading templates..." : "Select BRD Template"} />
-                            <ChevronRight className="h-4 w-4 opacity-50" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent className="bg-white">
