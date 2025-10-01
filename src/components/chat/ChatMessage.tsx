@@ -14,7 +14,13 @@ interface ChatMessageProps {
 
 // Enhanced function to format and render markdown-like text
 const formatChatContent = (text: string) => {
-  if (!text || text === 'undefined') return <p className="mb-3 last:mb-0 leading-relaxed">No content</p>;
+  // Safety check for undefined, null, or empty values
+  if (!text || text === 'undefined' || text.trim() === '' || text.trim().toLowerCase() === 'undefined') {
+    return <p className="mb-3 last:mb-0 leading-relaxed">No content</p>;
+  }
+  
+  // Extra safety: remove any "undefined" that might have slipped through
+  text = text.replace(/\s+undefined\s*$/gi, '').replace(/^\s*undefined\s+/gi, '').trim();
   
   const lines = text.split('\n');
   const elements: JSX.Element[] = [];

@@ -84,40 +84,51 @@ export const ChatInterface = ({
       onSuccess: (response) => {
         console.log('=== CHAT SUCCESS DEBUG ===');
         console.log('Full response object:', JSON.stringify(response, null, 2));
+        console.log('Response keys:', Object.keys(response || {}));
         
         const responseData = response as any;
         
         // Get the response field directly
         let responseContent = responseData?.response;
         
+        console.log('Initial responseContent:', responseContent, 'Type:', typeof responseContent);
+        
         // Only try other fields if response is truly missing
-        if (responseContent === undefined || responseContent === null) {
+        if (responseContent === undefined || responseContent === null || responseContent === '') {
           responseContent = responseData?.message || 
                            responseData?.answer || 
                            responseData?.text || 
                            responseData?.content;
+          console.log('Fallback responseContent:', responseContent);
         }
         
-        // Ensure it's a string and clean it
+        // Ensure it's a string and clean it thoroughly
         if (responseContent !== null && responseContent !== undefined) {
           responseContent = String(responseContent).trim();
           
-          // Remove any occurrence of " undefined" (with space) at the end
-          // This handles cases where undefined might be concatenated
-          while (responseContent.endsWith(' undefined') || responseContent.endsWith('\nundefined')) {
+          // Remove "undefined" in all its forms (case insensitive, multiple passes)
+          let previousContent = '';
+          while (previousContent !== responseContent) {
+            previousContent = responseContent;
             responseContent = responseContent
-              .replace(/\s+undefined$/, '')
-              .replace(/\nundefined$/, '')
+              .replace(/\s+undefined\s*$/gi, '')  // trailing " undefined"
+              .replace(/^\s*undefined\s+/gi, '')  // leading "undefined "
+              .replace(/\nundefined$/gi, '')       // trailing newline + undefined
+              .replace(/^undefined\n/gi, '')       // leading undefined + newline
+              .replace(/\sundefined$/gi, '')       // space + undefined at end
               .trim();
           }
+          
+          console.log('After cleaning:', responseContent);
         }
         
-        // Check if valid content exists
-        if (!responseContent || !responseContent.trim() || responseContent === 'undefined') {
+        // Final validation
+        if (!responseContent || !responseContent.trim() || responseContent.toLowerCase() === 'undefined') {
+          console.warn('No valid content found, using fallback');
           responseContent = 'No response received from the server.';
         }
         
-        console.log('Final extracted content:', responseContent);
+        console.log('Final extracted content:', responseContent.substring(0, 100));
         console.log('=== END CHAT DEBUG ===');
         
         // Remove loading message and add actual response with typing effect
