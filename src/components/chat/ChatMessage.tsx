@@ -226,11 +226,11 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
           <div className={`
             px-4 py-3 rounded-2xl max-w-full
             ${message.isBot 
-              ? 'bg-muted text-muted-foreground rounded-bl-md' 
+              ? 'bg-muted text-foreground rounded-bl-md' 
               : 'bg-primary text-white rounded-br-md'
             }
           `}>
-            <div className={`text-sm break-words ${!message.isBot ? 'text-white' : ''}`}>
+            <div className={`text-sm break-words ${message.isBot ? 'text-foreground' : 'text-white [&_*]:text-white'}`}>
               {formatChatContent(contentToDisplay)}
               {message.isTyping && isTyping && (
                 <span className="inline-block w-1.5 h-4 bg-current animate-pulse ml-1 align-middle" />
