@@ -45,14 +45,15 @@ export const ChatInterface = ({
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const hasInitialized = useRef(false);
 
   // Use external messages if provided, otherwise use internal state
   const messages = externalMessages || internalMessages;
   const setMessages = externalSetMessages || setInternalMessages;
 
-  // Initialize with initial message if messages are empty and initialMessage is provided
+  // Initialize with initial message ONCE when messages are empty and initialMessage is provided
   useEffect(() => {
-    if (externalMessages && externalMessages.length === 0 && initialMessage) {
+    if (externalMessages && externalMessages.length === 0 && initialMessage && !hasInitialized.current) {
       setMessages([{
         id: "1",
         content: initialMessage,
@@ -62,8 +63,9 @@ export const ChatInterface = ({
           minute: '2-digit'
         })
       }]);
+      hasInitialized.current = true;
     }
-  }, [initialMessage, externalMessages, setMessages]);
+  }, []);
 
   // Auto scroll to bottom when new messages arrive
   useEffect(() => {
