@@ -13,6 +13,7 @@ interface ChatMessageType {
   isBot: boolean;
   timestamp: string;
   isTyping?: boolean;
+  isLoading?: boolean;
 }
 interface ChatInterfaceProps {
   title: string;
@@ -68,12 +69,13 @@ export const ChatInterface = ({
     // Add loading message
     const loadingMessage: ChatMessageType = {
       id: `loading-${Date.now()}`,
-      content: "...",
+      content: "",
       isBot: true,
       timestamp: new Date().toLocaleTimeString([], {
         hour: '2-digit',
         minute: '2-digit'
-      })
+      }),
+      isLoading: true
     };
     setMessages(prev => [...prev, loadingMessage]);
 

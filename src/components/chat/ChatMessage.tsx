@@ -8,6 +8,7 @@ interface ChatMessageProps {
     isBot: boolean;
     timestamp: string;
     isTyping?: boolean;
+    isLoading?: boolean;
   };
 }
 
@@ -231,13 +232,23 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
             }
           `}>
             <div className={`text-sm break-words ${message.isBot ? 'text-foreground' : 'text-white [&_*]:text-white'}`}>
-              {formatChatContent(contentToDisplay)}
-              {message.isTyping && isTyping && (
-                <span className="inline-flex gap-1 ml-2 align-middle items-center h-4">
+              {message.isLoading ? (
+                <span className="inline-flex gap-1 align-middle items-center h-4">
                   <span className="inline-block w-2 h-2 bg-current rounded-full animate-thinking" style={{ animationDelay: '0s' }} />
                   <span className="inline-block w-2 h-2 bg-current rounded-full animate-thinking" style={{ animationDelay: '0.2s' }} />
                   <span className="inline-block w-2 h-2 bg-current rounded-full animate-thinking" style={{ animationDelay: '0.4s' }} />
                 </span>
+              ) : (
+                <>
+                  {formatChatContent(contentToDisplay)}
+                  {message.isTyping && isTyping && (
+                    <span className="inline-flex gap-1 ml-2 align-middle items-center h-4">
+                      <span className="inline-block w-2 h-2 bg-current rounded-full animate-thinking" style={{ animationDelay: '0s' }} />
+                      <span className="inline-block w-2 h-2 bg-current rounded-full animate-thinking" style={{ animationDelay: '0.2s' }} />
+                      <span className="inline-block w-2 h-2 bg-current rounded-full animate-thinking" style={{ animationDelay: '0.4s' }} />
+                    </span>
+                  )}
+                </>
               )}
             </div>
           </div>
