@@ -94,14 +94,23 @@ export const ChatInterface = ({
                              responseData?.text || 
                              responseData?.content;
         
-        // If all fields are undefined/null/empty or literal string "undefined", use fallback
-        if (!responseContent || responseContent === undefined || responseContent === 'undefined' || String(responseContent).trim() === 'undefined') {
-          responseContent = 'No response received from the server.';
+        // Convert to string and clean up thoroughly
+        if (responseContent !== null && responseContent !== undefined) {
+          responseContent = String(responseContent);
+          
+          // Remove "undefined" at the end (case-insensitive, with optional whitespace)
+          responseContent = responseContent.replace(/\s*undefined\s*$/i, '');
+          
+          // Also remove if it appears as literal word "undefined" concatenated
+          responseContent = responseContent.replace(/undefined$/i, '');
+          
+          // Trim whitespace
+          responseContent = responseContent.trim();
         }
         
-        // Clean up the response to remove any trailing "undefined"
-        if (typeof responseContent === 'string') {
-          responseContent = responseContent.replace(/\s*undefined\s*$/gi, '').trim();
+        // If all fields are undefined/null/empty or only contains "undefined", use fallback
+        if (!responseContent || responseContent === 'undefined' || responseContent.toLowerCase() === 'undefined') {
+          responseContent = 'No response received from the server.';
         }
         
         console.log('Extracted content:', responseContent);
