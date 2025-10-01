@@ -43,20 +43,14 @@ export async function sendChatMessage(message: string): Promise<ChatResponse> {
 
     console.log('Request body:', requestBody);
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT);
-
     const response = await fetch(API_BASE_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(requestBody),
-      signal: controller.signal,
       mode: 'cors',
     });
-
-    clearTimeout(timeoutId);
       
     console.log('Response status:', response.status);
     console.log('Response headers:', Object.fromEntries(response.headers.entries()));
@@ -126,9 +120,6 @@ export async function sendChatMessage(message: string): Promise<ChatResponse> {
     console.error('=== END ERROR DEBUG ===');
     
     if (error instanceof Error) {
-      if (error.name === 'AbortError') {
-        throw new Error('Request timeout. Please try again.');
-      }
       if (error.message.includes('Failed to fetch')) {
         throw new Error('CORS/Network error: Cannot connect to API. Check if the API allows browser requests and has proper CORS headers.');
       }
