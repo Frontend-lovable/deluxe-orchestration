@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
-import { ChevronRight, Check, ChevronsUpDown } from "lucide-react";
+import { ChevronRight, Check, ChevronsUpDown, Loader2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -57,8 +57,9 @@ interface CreateProjectModalProps {
 
 export const CreateProjectModal = ({ open, onOpenChange, projects, isLoadingProjects }: CreateProjectModalProps) => {
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<"my-project" | "new-project">("new-project");
+  const [activeTab, setActiveTab] = useState<"my-project" | "new-project">("my-project");
   const [brdTemplates, setBrdTemplates] = useState<BRDTemplate[]>([]);
+  const [isLoadingTemplates, setIsLoadingTemplates] = useState(false);
   const [selectedProject, setSelectedProject] = useState<string>("");
   const [projectOpen, setProjectOpen] = useState(false);
   
@@ -104,7 +105,11 @@ export const CreateProjectModal = ({ open, onOpenChange, projects, isLoadingProj
   // Load BRD templates when modal opens
   useEffect(() => {
     if (open) {
-      getBRDTemplates().then(setBrdTemplates).catch(console.error);
+      setIsLoadingTemplates(true);
+      getBRDTemplates()
+        .then(setBrdTemplates)
+        .catch(console.error)
+        .finally(() => setIsLoadingTemplates(false));
     }
   }, [open]);
 
@@ -266,19 +271,29 @@ export const CreateProjectModal = ({ open, onOpenChange, projects, isLoadingProj
                   name="brd_template"
                   render={({ field }) => (
                     <FormItem>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value} disabled={isLoadingTemplates}>
                         <FormControl>
                           <SelectTrigger className="bg-white border-border h-10">
-                            <SelectValue placeholder="Select BRD Template" />
+                            <SelectValue placeholder={isLoadingTemplates ? "Loading templates..." : "Select BRD Template"} />
                             <ChevronRight className="h-4 w-4 opacity-50" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent className="bg-white">
-                          {brdTemplates.map((template) => (
-                            <SelectItem key={template.template_id} value={template.template_id}>
-                              {template.template_name}
-                            </SelectItem>
-                          ))}
+                          {isLoadingTemplates ? (
+                            <div className="flex items-center justify-center py-6">
+                              <Loader2 className="h-5 w-5 animate-spin" style={{ color: '#D61120' }} />
+                            </div>
+                          ) : brdTemplates.length > 0 ? (
+                            brdTemplates.map((template) => (
+                              <SelectItem key={template.template_id} value={template.template_id}>
+                                {template.template_name}
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <div className="py-2 px-3 text-sm text-muted-foreground text-center">
+                              No templates available
+                            </div>
+                          )}
                         </SelectContent>
                       </Select>
                       <FormMessage />
