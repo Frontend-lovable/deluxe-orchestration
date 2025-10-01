@@ -133,62 +133,65 @@ const formatChatContent = (text: string) => {
 // Format inline content (bold, italic, code, links)
 const formatInlineContent = (text: string) => {
   const parts: (string | JSX.Element)[] = [];
-  let currentText = text;
+  const replacements: { type: string; content: string; url?: string }[] = [];
+  let processedText = text;
   let key = 0;
 
-  // Process inline code first
-  const codeRegex = /`([^`]+)`/g;
-  currentText = currentText.replace(codeRegex, (match, code) => {
-    return `{{CODE_${key++}_${code}}}`;
+  // Process inline code first (highest priority)
+  processedText = processedText.replace(/`([^`]+)`/g, (match, code) => {
+    const placeholder = `__PLACEHOLDER_${replacements.length}__`;
+    replacements.push({ type: 'code', content: code });
+    return placeholder;
   });
 
-  // Process bold
-  const boldRegex = /\*\*([^*]+)\*\*|__([^_]+)__/g;
-  currentText = currentText.replace(boldRegex, (match, bold1, bold2) => {
-    return `{{BOLD_${key++}_${bold1 || bold2}}}`;
+  // Process bold (before italic to handle ** before *)
+  processedText = processedText.replace(/\*\*(.+?)\*\*/g, (match, bold) => {
+    const placeholder = `__PLACEHOLDER_${replacements.length}__`;
+    replacements.push({ type: 'bold', content: bold });
+    return placeholder;
   });
 
   // Process italic
-  const italicRegex = /\*([^*]+)\*|_([^_]+)_/g;
-  currentText = currentText.replace(italicRegex, (match, italic1, italic2) => {
-    return `{{ITALIC_${key++}_${italic1 || italic2}}}`;
+  processedText = processedText.replace(/\*(.+?)\*/g, (match, italic) => {
+    const placeholder = `__PLACEHOLDER_${replacements.length}__`;
+    replacements.push({ type: 'italic', content: italic });
+    return placeholder;
   });
 
   // Process links
-  const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
-  currentText = currentText.replace(linkRegex, (match, text, url) => {
-    return `{{LINK_${key++}_${text}_${url}}}`;
+  processedText = processedText.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, linkText, url) => {
+    const placeholder = `__PLACEHOLDER_${replacements.length}__`;
+    replacements.push({ type: 'link', content: linkText, url });
+    return placeholder;
   });
 
-  // Split and render
-  const tokens = currentText.split(/({{[^}]+}})/g);
+  // Split by placeholders
+  const tokens = processedText.split(/(__PLACEHOLDER_\d+__)/g);
   
   tokens.forEach((token, index) => {
-    if (token.startsWith('{{CODE_')) {
-      const content = token.match(/{{CODE_\d+_(.+)}}/)?.[1];
-      parts.push(
-        <code key={`inline-${index}`} className="bg-muted/50 px-1.5 py-0.5 rounded text-xs font-mono">
-          {content}
-        </code>
-      );
-    } else if (token.startsWith('{{BOLD_')) {
-      const content = token.match(/{{BOLD_\d+_(.+)}}/)?.[1];
-      parts.push(<strong key={`inline-${index}`}>{content}</strong>);
-    } else if (token.startsWith('{{ITALIC_')) {
-      const content = token.match(/{{ITALIC_\d+_(.+)}}/)?.[1];
-      parts.push(<em key={`inline-${index}`}>{content}</em>);
-    } else if (token.startsWith('{{LINK_')) {
-      const match = token.match(/{{LINK_\d+_(.+)_(.+)}}/);
-      if (match) {
+    const match = token.match(/__PLACEHOLDER_(\d+)__/);
+    if (match) {
+      const replacement = replacements[parseInt(match[1])];
+      if (replacement.type === 'code') {
+        parts.push(
+          <code key={`inline-${index}`} className="bg-muted/50 px-1.5 py-0.5 rounded text-xs font-mono">
+            {replacement.content}
+          </code>
+        );
+      } else if (replacement.type === 'bold') {
+        parts.push(<strong key={`inline-${index}`} className="font-semibold">{replacement.content}</strong>);
+      } else if (replacement.type === 'italic') {
+        parts.push(<em key={`inline-${index}`}>{replacement.content}</em>);
+      } else if (replacement.type === 'link') {
         parts.push(
           <a
             key={`inline-${index}`}
-            href={match[2]}
+            href={replacement.url}
             target="_blank"
             rel="noopener noreferrer"
             className="text-primary underline hover:no-underline"
           >
-            {match[1]}
+            {replacement.content}
           </a>
         );
       }
