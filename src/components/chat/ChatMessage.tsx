@@ -14,15 +14,7 @@ interface ChatMessageProps {
 
 // Enhanced function to format and render markdown-like text
 const formatChatContent = (text: string) => {
-  // Safety check for invalid values
-  if (!text || typeof text !== 'string' || text.trim() === '') {
-    return <p className="mb-3 last:mb-0 leading-relaxed">No content</p>;
-  }
-  
-  text = text.trim();
-  
-  // Extra safety: remove any "undefined" that might have slipped through
-  text = text.replace(/\s+undefined\s*$/gi, '').replace(/^\s*undefined\s+/gi, '').trim();
+  if (!text) return null;
   
   const lines = text.split('\n');
   const elements: JSX.Element[] = [];
@@ -218,7 +210,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
     15
   );
 
-  const contentToDisplay = message.isTyping && displayedText ? displayedText : (message.content || '');
+  const contentToDisplay = message.isTyping && displayedText ? displayedText : message.content;
 
   return (
     <div className={`flex ${message.isBot ? 'justify-start' : 'justify-end'} mb-4`}>
@@ -248,7 +240,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
                 </span>
               ) : (
                 <>
-                  {formatChatContent(contentToDisplay)}
+                  {formatChatContent(message.content)}
                   {message.isTyping && isTyping && (
                     <span className="inline-flex gap-1 ml-2 align-middle items-center h-4">
                       <span className="inline-block w-2 h-2 bg-current rounded-full animate-thinking" style={{ animationDelay: '0s' }} />
