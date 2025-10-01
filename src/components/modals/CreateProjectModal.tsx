@@ -173,7 +173,11 @@ export const CreateProjectModal = ({ open, onOpenChange, projects, isLoadingProj
                 <PopoverContent className="w-full p-0 bg-white" align="start" style={{ maxHeight: '300px' }}>
                   <Command className="overflow-hidden">
                     <CommandInput placeholder="Search project..." />
-                    <CommandList className="max-h-[200px] overflow-y-auto overflow-x-hidden"  style={{ overscrollBehavior: 'contain' }}>
+                    <CommandList 
+                      className="max-h-[200px] overflow-y-auto overflow-x-hidden" 
+                      style={{ overscrollBehavior: 'contain' }}
+                      onWheel={(e) => e.stopPropagation()}
+                    >
                       {isLoadingProjects ? (
                         <div className="flex items-center justify-center py-6">
                           <div className="animate-spin rounded-full h-6 w-6 border-b-2" style={{ borderColor: '#D61120' }}></div>
