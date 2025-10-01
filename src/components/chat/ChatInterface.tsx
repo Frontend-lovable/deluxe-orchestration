@@ -95,6 +95,21 @@ export const ChatInterface = ({
         // Convert to string and basic cleanup
         responseContent = String(responseContent).trim();
         
+        // Handle JSON-escaped strings (e.g., "\"The Merchant of Venice\"")
+        if (responseContent.startsWith('\\"') || responseContent.startsWith('"')) {
+          try {
+            // Try to parse as JSON string to unescape
+            responseContent = JSON.parse('"' + responseContent.replace(/^"|"$/g, '') + '"');
+          } catch (e) {
+            // If parsing fails, manually unescape common sequences
+            responseContent = responseContent
+              .replace(/\\"/g, '"')
+              .replace(/\\n/g, '\n')
+              .replace(/\\t/g, '\t')
+              .replace(/\\\\/g, '\\');
+          }
+        }
+        
         // Validate we have content
         if (!responseContent || responseContent.length === 0) {
           responseContent = 'No response received from the server.';
