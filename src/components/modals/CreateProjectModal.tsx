@@ -123,7 +123,7 @@ export const CreateProjectModal = ({ open, onOpenChange, projects, isLoadingProj
             onClick={() => setActiveTab("my-project")}
             className={`flex-1 py-3 text-sm font-medium transition-colors ${
               activeTab === "my-project"
-                ? "text-white"
+                ? "text-white rounded-tl-lg"
                 : "text-muted-foreground hover:text-foreground"
             }`}
             style={activeTab === "my-project" ? { backgroundColor: '#D61120', color: '#fff' } : { color: '#858585' }}
@@ -135,7 +135,7 @@ export const CreateProjectModal = ({ open, onOpenChange, projects, isLoadingProj
             onClick={() => setActiveTab("new-project")}
             className={`flex-1 py-3 text-sm font-medium transition-colors ${
               activeTab === "new-project"
-                ? "text-white"
+                ? "text-white rounded-tr-lg"
                 : "text-muted-foreground hover:text-foreground"
             }`}
             style={activeTab === "new-project" ? { backgroundColor: '#D61120', color: '#fff' } : { color: '#858585' }}
