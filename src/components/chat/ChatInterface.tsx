@@ -92,6 +92,7 @@ export const ChatInterface = ({
         let responseContent = responseData?.response;
         
         console.log('Initial responseContent:', responseContent, 'Type:', typeof responseContent);
+        console.log('Raw responseContent value:', JSON.stringify(responseContent));
         
         // Only try other fields if response is truly missing
         if (responseContent === undefined || responseContent === null || responseContent === '') {
@@ -104,21 +105,8 @@ export const ChatInterface = ({
         
         // Ensure it's a string and clean it thoroughly
         if (responseContent !== null && responseContent !== undefined) {
-          responseContent = String(responseContent);
-          
-          // Unescape JSON strings (handle \" and other escape sequences)
-          try {
-            // Check if it looks like a JSON-escaped string
-            if (responseContent.includes('\\"') || responseContent.includes('\\n')) {
-              // Parse as JSON string to unescape properly
-              responseContent = JSON.parse(`"${responseContent.replace(/^"|"$/g, '')}"`);
-            }
-          } catch (e) {
-            // If parsing fails, keep the original content
-            console.log('Could not unescape content, using as-is');
-          }
-          
-          responseContent = responseContent.trim();
+          responseContent = String(responseContent).trim();
+          console.log('After String() and trim:', JSON.stringify(responseContent));
           
           // Remove "undefined" in all its forms (case insensitive, multiple passes)
           let previousContent = '';
@@ -133,7 +121,8 @@ export const ChatInterface = ({
               .trim();
           }
           
-          console.log('After cleaning:', responseContent);
+          console.log('After cleaning undefined:', JSON.stringify(responseContent));
+          console.log('Content length:', responseContent.length);
         }
         
         // Final validation - check if we have actual content
@@ -141,10 +130,14 @@ export const ChatInterface = ({
                           responseContent.trim().length > 0 && 
                           responseContent.toLowerCase() !== 'undefined';
         
+        console.log('Has content check:', hasContent);
+        
         if (!hasContent) {
           console.warn('No valid content found, using fallback');
           responseContent = 'No response received from the server.';
         }
+        
+        console.log('Final content being sent to message:', JSON.stringify(responseContent.substring(0, 200)))
         
         console.log('Final extracted content:', responseContent.substring(0, 100));
         console.log('=== END CHAT DEBUG ===');
