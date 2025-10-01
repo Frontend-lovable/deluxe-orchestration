@@ -59,8 +59,9 @@ const formatChatContent = (text: string) => {
       return;
     }
 
-    // Headers - strip ## symbols and treat as regular text
-    if (line.match(/^#{1,6}\s+/)) {
+    // Strip markdown headers (###, ##, #) and treat as regular text
+    if (line.match(/^#{1,6}\s/)) {
+      flushParagraph();
       const cleanedLine = line.replace(/^#{1,6}\s+/, '');
       currentParagraph.push(cleanedLine);
       return;
