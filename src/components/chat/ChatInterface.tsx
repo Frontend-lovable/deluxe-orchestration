@@ -84,21 +84,24 @@ export const ChatInterface = ({
       onSuccess: (response) => {
         const responseData = response as any;
         
-        // Get the response content from the API
-        let responseContent = responseData?.response || 
-                             responseData?.message || 
-                             responseData?.answer || 
-                             responseData?.text || 
-                             responseData?.content || 
-                             '';
+        // Get the response content from the API - ensure it's always a string
+        let responseContent = String(
+          responseData?.response || 
+          responseData?.message || 
+          responseData?.answer || 
+          responseData?.text || 
+          responseData?.content || 
+          ''
+        ).trim();
         
-        // Convert to string and basic cleanup
-        responseContent = String(responseContent).trim();
+        // Remove outer quotes if the response is wrapped in quotes
+        // e.g., "\"The Merchant of Venice\"..." becomes "The Merchant of Venice"...
+        if (responseContent.startsWith('"') && responseContent.endsWith('"') && responseContent.length > 1) {
+          responseContent = responseContent.slice(1, -1);
+        }
         
-        // Handle JSON-escaped strings (e.g., "\"The Merchant of Venice\"")
-        // Check if content has escaped quotes
-        if (responseContent.includes('\\"') || responseContent.includes('\\n')) {
-          // Manually unescape common JSON sequences
+        // Unescape any escaped characters
+        if (responseContent.includes('\\')) {
           responseContent = responseContent
             .replace(/\\"/g, '"')
             .replace(/\\n/g, '\n')
@@ -107,10 +110,10 @@ export const ChatInterface = ({
             .replace(/\\\\/g, '\\');
         }
         
-        // Validate we have content
-        if (!responseContent || responseContent.length === 0) {
-          responseContent = 'No response received from the server.';
-        }
+        // Final safety check - ensure content is never empty or undefined
+        responseContent = responseContent.trim() || 'No response received from the server.';
+        
+        console.log('Processed response content:', responseContent);
         
         // Remove loading message and add actual response with typing effect
         setMessages(prev => {
