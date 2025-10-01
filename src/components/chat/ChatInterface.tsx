@@ -51,9 +51,27 @@ export const ChatInterface = ({
   const messages = externalMessages || internalMessages;
   const setMessages = externalSetMessages || setInternalMessages;
 
+  // Debug logging
+  useEffect(() => {
+    console.log('ChatInterface mounted/updated:', {
+      hasExternalMessages: !!externalMessages,
+      externalMessagesLength: externalMessages?.length,
+      messagesLength: messages.length,
+      hasInitialized: hasInitialized.current
+    });
+  }, [externalMessages, messages]);
+
   // Initialize with initial message ONCE when messages are empty and initialMessage is provided
   useEffect(() => {
+    console.log('Init check:', {
+      hasExternalMessages: !!externalMessages,
+      externalMessagesLength: externalMessages?.length,
+      hasInitialMessage: !!initialMessage,
+      hasInitialized: hasInitialized.current
+    });
+    
     if (externalMessages && externalMessages.length === 0 && initialMessage && !hasInitialized.current) {
+      console.log('Initializing with initial message');
       setMessages([{
         id: "1",
         content: initialMessage,
