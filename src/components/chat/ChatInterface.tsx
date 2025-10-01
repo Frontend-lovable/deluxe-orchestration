@@ -96,18 +96,15 @@ export const ChatInterface = ({
         responseContent = String(responseContent).trim();
         
         // Handle JSON-escaped strings (e.g., "\"The Merchant of Venice\"")
-        if (responseContent.startsWith('\\"') || responseContent.startsWith('"')) {
-          try {
-            // Try to parse as JSON string to unescape
-            responseContent = JSON.parse('"' + responseContent.replace(/^"|"$/g, '') + '"');
-          } catch (e) {
-            // If parsing fails, manually unescape common sequences
-            responseContent = responseContent
-              .replace(/\\"/g, '"')
-              .replace(/\\n/g, '\n')
-              .replace(/\\t/g, '\t')
-              .replace(/\\\\/g, '\\');
-          }
+        // Check if content has escaped quotes
+        if (responseContent.includes('\\"') || responseContent.includes('\\n')) {
+          // Manually unescape common JSON sequences
+          responseContent = responseContent
+            .replace(/\\"/g, '"')
+            .replace(/\\n/g, '\n')
+            .replace(/\\t/g, '\t')
+            .replace(/\\r/g, '\r')
+            .replace(/\\\\/g, '\\');
         }
         
         // Validate we have content
