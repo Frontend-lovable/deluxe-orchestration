@@ -42,28 +42,15 @@ const sectionContent = {
     placeholder: "Describe security requirements..."
   }
 };
-interface ChatMessageType {
-  id: string;
-  content: string;
-  isBot: boolean;
-  timestamp: string;
-  isTyping?: boolean;
-  isLoading?: boolean;
-}
-
 interface BRDDashboardProps {
   onBack?: () => void;
   selectedProject?: any;
   selectedBRDTemplate?: string | null;
-  messages?: ChatMessageType[];
-  setMessages?: React.Dispatch<React.SetStateAction<ChatMessageType[]>>;
 }
 export const BRDDashboard = ({
   onBack,
   selectedProject,
-  selectedBRDTemplate,
-  messages,
-  setMessages
+  selectedBRDTemplate
 }: BRDDashboardProps) => {
   const [selectedSection, setSelectedSection] = useState<string>("Executive Summary");
   const [completedSections, setCompletedSections] = useState<string[]>([]);
@@ -101,7 +88,7 @@ export const BRDDashboard = ({
         
         <div className="lg:col-span-6 order-3 lg:order-2">
           <div className="h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px]">
-            <ChatInterface title={sectionContent[selectedSection as keyof typeof sectionContent]?.title || "BRD Assistant"} subtitle={sectionContent[selectedSection as keyof typeof sectionContent]?.subtitle || "Discuss your business requirements"} initialMessage={sectionContent[selectedSection as keyof typeof sectionContent]?.initialMessage || "Hello! 👋 I'm your BRD Assistant."} placeholder={sectionContent[selectedSection as keyof typeof sectionContent]?.placeholder || "Type your message..."} onReviewed={handleSectionReviewed} messages={messages} setMessages={setMessages} />
+            <ChatInterface title={sectionContent[selectedSection as keyof typeof sectionContent]?.title || "BRD Assistant"} subtitle={sectionContent[selectedSection as keyof typeof sectionContent]?.subtitle || "Discuss your business requirements"} initialMessage={sectionContent[selectedSection as keyof typeof sectionContent]?.initialMessage || "Hello! 👋 I'm your BRD Assistant."} placeholder={sectionContent[selectedSection as keyof typeof sectionContent]?.placeholder || "Type your message..."} onReviewed={handleSectionReviewed} />
           </div>
         </div>
         

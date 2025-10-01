@@ -7,20 +7,10 @@ import { JiraDashboard } from "@/components/dashboard/JiraDashboard";
 import { DesignDashboard } from "@/components/dashboard/DesignDashboard";
 import { type Project } from "@/services/projectApi";
 
-interface ChatMessageType {
-  id: string;
-  content: string;
-  isBot: boolean;
-  timestamp: string;
-  isTyping?: boolean;
-  isLoading?: boolean;
-}
-
 const Index = () => {
   const [currentView, setCurrentView] = useState<"overview" | "brd" | "confluence" | "jira" | "design">("overview");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [selectedBRDTemplate, setSelectedBRDTemplate] = useState<string | null>(null);
-  const [chatMessages, setChatMessages] = useState<ChatMessageType[]>([]);
 
   const handleNavigate = (view: string) => {
     setCurrentView(view as "overview" | "brd" | "confluence" | "jira" | "design");
@@ -33,13 +23,13 @@ const Index = () => {
   const renderContent = () => {
     switch (currentView) {
       case "brd":
-        return <BRDDashboard onBack={handleBack} selectedProject={selectedProject} selectedBRDTemplate={selectedBRDTemplate} messages={chatMessages} setMessages={setChatMessages} />;
+        return <BRDDashboard onBack={handleBack} selectedProject={selectedProject} selectedBRDTemplate={selectedBRDTemplate} />;
       case "confluence":
         return <ConfluenceDashboard />;
       case "jira":
         return <JiraDashboard />;
       case "design":
-        return <DesignDashboard messages={chatMessages} setMessages={setChatMessages} />;
+        return <DesignDashboard />;
       default:
         return <ProjectOverview />;
     }
