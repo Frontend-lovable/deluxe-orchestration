@@ -14,20 +14,12 @@ interface ChatMessageProps {
 
 // Enhanced function to format and render markdown-like text
 const formatChatContent = (text: string) => {
-  console.log('=== formatChatContent DEBUG ===');
-  console.log('Received text:', text);
-  console.log('Text type:', typeof text);
-  console.log('Text length:', text?.length);
-  console.log('First 100 chars:', text?.substring(0, 100));
-  
-  // Safety check for undefined, null, or empty values
-  if (!text || text === 'undefined' || text.trim() === '' || text.trim().toLowerCase() === 'undefined') {
-    console.log('FAILED validation check - returning No content');
+  // Safety check for invalid values
+  if (!text || typeof text !== 'string' || text.trim() === '') {
     return <p className="mb-3 last:mb-0 leading-relaxed">No content</p>;
   }
   
-  console.log('Passed validation check');
-
+  text = text.trim();
   
   // Extra safety: remove any "undefined" that might have slipped through
   text = text.replace(/\s+undefined\s*$/gi, '').replace(/^\s*undefined\s+/gi, '').trim();

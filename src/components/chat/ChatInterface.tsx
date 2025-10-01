@@ -82,65 +82,23 @@ export const ChatInterface = ({
     // Use TanStack Query mutation
     chatMutation.mutate(currentMessage, {
       onSuccess: (response) => {
-        console.log('=== CHAT SUCCESS DEBUG ===');
-        console.log('Full response object:', JSON.stringify(response, null, 2));
-        console.log('Response keys:', Object.keys(response || {}));
-        
         const responseData = response as any;
         
-        // Get the response field directly
-        let responseContent = responseData?.response;
+        // Get the response content from the API
+        let responseContent = responseData?.response || 
+                             responseData?.message || 
+                             responseData?.answer || 
+                             responseData?.text || 
+                             responseData?.content || 
+                             '';
         
-        console.log('Initial responseContent:', responseContent, 'Type:', typeof responseContent);
-        console.log('Raw responseContent value:', JSON.stringify(responseContent));
+        // Convert to string and basic cleanup
+        responseContent = String(responseContent).trim();
         
-        // Only try other fields if response is truly missing
-        if (responseContent === undefined || responseContent === null || responseContent === '') {
-          responseContent = responseData?.message || 
-                           responseData?.answer || 
-                           responseData?.text || 
-                           responseData?.content;
-          console.log('Fallback responseContent:', responseContent);
-        }
-        
-        // Ensure it's a string and clean it thoroughly
-        if (responseContent !== null && responseContent !== undefined) {
-          responseContent = String(responseContent).trim();
-          console.log('After String() and trim:', JSON.stringify(responseContent));
-          
-          // Remove "undefined" in all its forms (case insensitive, multiple passes)
-          let previousContent = '';
-          while (previousContent !== responseContent) {
-            previousContent = responseContent;
-            responseContent = responseContent
-              .replace(/\s+undefined\s*$/gi, '')  // trailing " undefined"
-              .replace(/^\s*undefined\s+/gi, '')  // leading "undefined "
-              .replace(/\nundefined$/gi, '')       // trailing newline + undefined
-              .replace(/^undefined\n/gi, '')       // leading undefined + newline
-              .replace(/\sundefined$/gi, '')       // space + undefined at end
-              .trim();
-          }
-          
-          console.log('After cleaning undefined:', JSON.stringify(responseContent));
-          console.log('Content length:', responseContent.length);
-        }
-        
-        // Final validation - check if we have actual content
-        const hasContent = responseContent && 
-                          responseContent.trim().length > 0 && 
-                          responseContent.toLowerCase() !== 'undefined';
-        
-        console.log('Has content check:', hasContent);
-        
-        if (!hasContent) {
-          console.warn('No valid content found, using fallback');
+        // Validate we have content
+        if (!responseContent || responseContent.length === 0) {
           responseContent = 'No response received from the server.';
         }
-        
-        console.log('Final content being sent to message:', JSON.stringify(responseContent.substring(0, 200)))
-        
-        console.log('Final extracted content:', responseContent.substring(0, 100));
-        console.log('=== END CHAT DEBUG ===');
         
         // Remove loading message and add actual response with typing effect
         setMessages(prev => {
