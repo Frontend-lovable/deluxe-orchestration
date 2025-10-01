@@ -59,32 +59,10 @@ const formatChatContent = (text: string) => {
       return;
     }
 
-    // Headers
-    if (line.startsWith('### ')) {
-      flushParagraph();
-      elements.push(
-        <h3 key={`h3-${key++}`} className="font-bold text-sm mb-2 mt-3 first:mt-0">
-          {formatInlineContent(line.substring(4))}
-        </h3>
-      );
-      return;
-    }
-    if (line.startsWith('## ')) {
-      flushParagraph();
-      elements.push(
-        <h2 key={`h2-${key++}`} className="font-bold text-base mb-2 mt-4 first:mt-0">
-          {formatInlineContent(line.substring(3))}
-        </h2>
-      );
-      return;
-    }
-    if (line.startsWith('# ')) {
-      flushParagraph();
-      elements.push(
-        <h1 key={`h1-${key++}`} className="font-bold text-lg mb-3 mt-4 first:mt-0">
-          {formatInlineContent(line.substring(2))}
-        </h1>
-      );
+    // Headers - strip ## symbols and treat as regular text
+    if (line.match(/^#{1,6}\s+/)) {
+      const cleanedLine = line.replace(/^#{1,6}\s+/, '');
+      currentParagraph.push(cleanedLine);
       return;
     }
 
