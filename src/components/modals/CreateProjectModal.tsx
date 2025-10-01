@@ -7,6 +7,8 @@ import { ChevronRight, Check, ChevronsUpDown, Loader2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
+  DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -118,6 +120,10 @@ export const CreateProjectModal = ({ open, onOpenChange, projects, isLoadingProj
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className={`sm:max-w-[360px] bg-white border-0 p-0 ${activeTab === "new-project" ? "[&>button]:text-white [&>button]:z-10" : ""}`}>
+        <DialogTitle className="sr-only">Project Workspace</DialogTitle>
+        <DialogDescription className="sr-only">
+          Select an existing project or create a new one
+        </DialogDescription>
         {/* Tabs Header */}
         <div className="flex border-b">
           <button
@@ -164,10 +170,10 @@ export const CreateProjectModal = ({ open, onOpenChange, projects, isLoadingProj
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-full p-0 bg-white" align="start">
-                  <Command>
+                <PopoverContent className="w-full p-0 bg-white" align="start" style={{ maxHeight: '300px' }}>
+                  <Command className="overflow-hidden">
                     <CommandInput placeholder="Search project..." />
-                    <CommandList className="max-h-[200px] overflow-y-auto">
+                    <CommandList className="max-h-[200px] overflow-y-auto overflow-x-hidden"  style={{ overscrollBehavior: 'contain' }}>
                       {isLoadingProjects ? (
                         <div className="flex items-center justify-center py-6">
                           <div className="animate-spin rounded-full h-6 w-6 border-b-2" style={{ borderColor: '#D61120' }}></div>
