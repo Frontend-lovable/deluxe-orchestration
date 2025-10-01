@@ -84,36 +84,40 @@ export const ChatInterface = ({
       onSuccess: (response) => {
         console.log('=== CHAT SUCCESS DEBUG ===');
         console.log('Full response object:', JSON.stringify(response, null, 2));
-        console.log('Response type:', typeof response);
         
-        // Try different possible response fields
         const responseData = response as any;
-        let responseContent = responseData?.response || 
-                             responseData?.message || 
-                             responseData?.answer || 
-                             responseData?.text || 
-                             responseData?.content;
         
-        // Convert to string and clean up thoroughly
-        if (responseContent !== null && responseContent !== undefined) {
-          responseContent = String(responseContent);
-          
-          // Remove "undefined" at the end (case-insensitive, with optional whitespace)
-          responseContent = responseContent.replace(/\s*undefined\s*$/i, '');
-          
-          // Also remove if it appears as literal word "undefined" concatenated
-          responseContent = responseContent.replace(/undefined$/i, '');
-          
-          // Trim whitespace
-          responseContent = responseContent.trim();
+        // Get the response field directly
+        let responseContent = responseData?.response;
+        
+        // Only try other fields if response is truly missing
+        if (responseContent === undefined || responseContent === null) {
+          responseContent = responseData?.message || 
+                           responseData?.answer || 
+                           responseData?.text || 
+                           responseData?.content;
         }
         
-        // If all fields are undefined/null/empty or only contains "undefined", use fallback
-        if (!responseContent || responseContent === 'undefined' || responseContent.toLowerCase() === 'undefined') {
+        // Ensure it's a string and clean it
+        if (responseContent !== null && responseContent !== undefined) {
+          responseContent = String(responseContent).trim();
+          
+          // Remove any occurrence of " undefined" (with space) at the end
+          // This handles cases where undefined might be concatenated
+          while (responseContent.endsWith(' undefined') || responseContent.endsWith('\nundefined')) {
+            responseContent = responseContent
+              .replace(/\s+undefined$/, '')
+              .replace(/\nundefined$/, '')
+              .trim();
+          }
+        }
+        
+        // Check if valid content exists
+        if (!responseContent || !responseContent.trim() || responseContent === 'undefined') {
           responseContent = 'No response received from the server.';
         }
         
-        console.log('Extracted content:', responseContent);
+        console.log('Final extracted content:', responseContent);
         console.log('=== END CHAT DEBUG ===');
         
         // Remove loading message and add actual response with typing effect
