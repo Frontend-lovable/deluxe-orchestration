@@ -89,7 +89,6 @@ export const BRDDashboard = ({
         <div className="lg:col-span-6 order-3 lg:order-2">
           <div className="h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px]">
             <ChatInterface 
-              key={selectedSection}
               title={sectionContent[selectedSection as keyof typeof sectionContent]?.title || "BRD Assistant"} 
               subtitle={sectionContent[selectedSection as keyof typeof sectionContent]?.subtitle || "Discuss your business requirements"} 
               initialMessage={sectionContent[selectedSection as keyof typeof sectionContent]?.initialMessage || "Hello! 👋 I'm your BRD Assistant."} 
