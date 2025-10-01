@@ -88,12 +88,16 @@ export const ChatInterface = ({
         
         // Try different possible response fields
         const responseData = response as any;
-        const responseContent = responseData?.response || 
-                               responseData?.message || 
-                               responseData?.answer || 
-                               responseData?.text || 
-                               responseData?.content ||
-                               'No response received';
+        let responseContent = responseData?.response || 
+                             responseData?.message || 
+                             responseData?.answer || 
+                             responseData?.text || 
+                             responseData?.content;
+        
+        // If all fields are undefined/null, use fallback
+        if (!responseContent || responseContent === undefined) {
+          responseContent = 'No response received from the server.';
+        }
         
         console.log('Extracted content:', responseContent);
         console.log('=== END CHAT DEBUG ===');

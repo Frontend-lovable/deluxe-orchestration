@@ -14,7 +14,7 @@ interface ChatMessageProps {
 
 // Enhanced function to format and render markdown-like text
 const formatChatContent = (text: string) => {
-  if (!text) return null;
+  if (!text || text === 'undefined') return <p className="mb-3 last:mb-0 leading-relaxed">No content</p>;
   
   const lines = text.split('\n');
   const elements: JSX.Element[] = [];
