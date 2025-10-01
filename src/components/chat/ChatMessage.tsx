@@ -218,7 +218,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
     15
   );
 
-  const contentToDisplay = message.isTyping && displayedText ? displayedText : message.content;
+  const contentToDisplay = message.isTyping && displayedText ? displayedText : (message.content || '');
 
   return (
     <div className={`flex ${message.isBot ? 'justify-start' : 'justify-end'} mb-4`}>
