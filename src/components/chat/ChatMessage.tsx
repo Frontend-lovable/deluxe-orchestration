@@ -11,21 +11,193 @@ interface ChatMessageProps {
   };
 }
 
-// Function to format text with proper spacing and structure
-const formatChatText = (text: string): string => {
-  if (!text) return '';
+// Enhanced function to format and render markdown-like text
+const formatChatContent = (text: string) => {
+  if (!text) return null;
   
-  return text
-    // Convert markdown headers to formatted text
-    .replace(/^## (.*$)/gm, '\n$1\n')
-    .replace(/^# (.*$)/gm, '\n$1\n')
-    // Add spacing around bullet points
-    .replace(/^- (.*$)/gm, '• $1')
-    .replace(/^\* (.*$)/gm, '• $1')
-    // Add proper paragraph spacing
-    .replace(/\n\n/g, '\n\n')
-    // Clean up extra newlines at start/end
-    .trim();
+  const lines = text.split('\n');
+  const elements: JSX.Element[] = [];
+  let inCodeBlock = false;
+  let codeBlockContent: string[] = [];
+  let currentParagraph: string[] = [];
+  let key = 0;
+
+  const flushParagraph = () => {
+    if (currentParagraph.length > 0) {
+      const content = currentParagraph.join('\n');
+      elements.push(
+        <p key={`p-${key++}`} className="mb-3 last:mb-0 leading-relaxed">
+          {formatInlineContent(content)}
+        </p>
+      );
+      currentParagraph = [];
+    }
+  };
+
+  lines.forEach((line, index) => {
+    // Code block detection
+    if (line.trim().startsWith('```')) {
+      if (inCodeBlock) {
+        flushParagraph();
+        elements.push(
+          <pre key={`code-${key++}`} className="bg-muted/50 rounded-md p-3 mb-3 overflow-x-auto">
+            <code className="text-xs font-mono">{codeBlockContent.join('\n')}</code>
+          </pre>
+        );
+        codeBlockContent = [];
+        inCodeBlock = false;
+      } else {
+        flushParagraph();
+        inCodeBlock = true;
+      }
+      return;
+    }
+
+    if (inCodeBlock) {
+      codeBlockContent.push(line);
+      return;
+    }
+
+    // Headers
+    if (line.startsWith('### ')) {
+      flushParagraph();
+      elements.push(
+        <h3 key={`h3-${key++}`} className="font-bold text-sm mb-2 mt-3 first:mt-0">
+          {formatInlineContent(line.substring(4))}
+        </h3>
+      );
+      return;
+    }
+    if (line.startsWith('## ')) {
+      flushParagraph();
+      elements.push(
+        <h2 key={`h2-${key++}`} className="font-bold text-base mb-2 mt-4 first:mt-0">
+          {formatInlineContent(line.substring(3))}
+        </h2>
+      );
+      return;
+    }
+    if (line.startsWith('# ')) {
+      flushParagraph();
+      elements.push(
+        <h1 key={`h1-${key++}`} className="font-bold text-lg mb-3 mt-4 first:mt-0">
+          {formatInlineContent(line.substring(2))}
+        </h1>
+      );
+      return;
+    }
+
+    // Bullet lists
+    if (line.match(/^[\s]*[-*]\s+/)) {
+      flushParagraph();
+      const content = line.replace(/^[\s]*[-*]\s+/, '');
+      elements.push(
+        <div key={`bullet-${key++}`} className="flex gap-2 mb-2 ml-2">
+          <span className="mt-1.5">•</span>
+          <span className="flex-1">{formatInlineContent(content)}</span>
+        </div>
+      );
+      return;
+    }
+
+    // Numbered lists
+    if (line.match(/^[\s]*\d+\.\s+/)) {
+      flushParagraph();
+      const match = line.match(/^[\s]*(\d+)\.\s+(.*)$/);
+      if (match) {
+        elements.push(
+          <div key={`num-${key++}`} className="flex gap-2 mb-2 ml-2">
+            <span className="font-medium">{match[1]}.</span>
+            <span className="flex-1">{formatInlineContent(match[2])}</span>
+          </div>
+        );
+      }
+      return;
+    }
+
+    // Empty lines
+    if (line.trim() === '') {
+      flushParagraph();
+      return;
+    }
+
+    // Regular text - accumulate into paragraph
+    currentParagraph.push(line);
+  });
+
+  flushParagraph();
+
+  return <div className="space-y-1">{elements}</div>;
+};
+
+// Format inline content (bold, italic, code, links)
+const formatInlineContent = (text: string) => {
+  const parts: (string | JSX.Element)[] = [];
+  let currentText = text;
+  let key = 0;
+
+  // Process inline code first
+  const codeRegex = /`([^`]+)`/g;
+  currentText = currentText.replace(codeRegex, (match, code) => {
+    return `{{CODE_${key++}_${code}}}`;
+  });
+
+  // Process bold
+  const boldRegex = /\*\*([^*]+)\*\*|__([^_]+)__/g;
+  currentText = currentText.replace(boldRegex, (match, bold1, bold2) => {
+    return `{{BOLD_${key++}_${bold1 || bold2}}}`;
+  });
+
+  // Process italic
+  const italicRegex = /\*([^*]+)\*|_([^_]+)_/g;
+  currentText = currentText.replace(italicRegex, (match, italic1, italic2) => {
+    return `{{ITALIC_${key++}_${italic1 || italic2}}}`;
+  });
+
+  // Process links
+  const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+  currentText = currentText.replace(linkRegex, (match, text, url) => {
+    return `{{LINK_${key++}_${text}_${url}}}`;
+  });
+
+  // Split and render
+  const tokens = currentText.split(/({{[^}]+}})/g);
+  
+  tokens.forEach((token, index) => {
+    if (token.startsWith('{{CODE_')) {
+      const content = token.match(/{{CODE_\d+_(.+)}}/)?.[1];
+      parts.push(
+        <code key={`inline-${index}`} className="bg-muted/50 px-1.5 py-0.5 rounded text-xs font-mono">
+          {content}
+        </code>
+      );
+    } else if (token.startsWith('{{BOLD_')) {
+      const content = token.match(/{{BOLD_\d+_(.+)}}/)?.[1];
+      parts.push(<strong key={`inline-${index}`}>{content}</strong>);
+    } else if (token.startsWith('{{ITALIC_')) {
+      const content = token.match(/{{ITALIC_\d+_(.+)}}/)?.[1];
+      parts.push(<em key={`inline-${index}`}>{content}</em>);
+    } else if (token.startsWith('{{LINK_')) {
+      const match = token.match(/{{LINK_\d+_(.+)_(.+)}}/);
+      if (match) {
+        parts.push(
+          <a
+            key={`inline-${index}`}
+            href={match[2]}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline hover:no-underline"
+          >
+            {match[1]}
+          </a>
+        );
+      }
+    } else if (token) {
+      parts.push(token);
+    }
+  });
+
+  return <>{parts}</>;
 };
 
 export const ChatMessage = ({ message }: ChatMessageProps) => {
@@ -34,18 +206,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
     15
   );
 
-  // Simplified logic: Always ensure we have content to display
-  let rawContent: string;
-  if (message.isTyping) {
-    // If we're typing and have displayedText, use it; otherwise use original content
-    rawContent = displayedText || message.content || '';
-  } else {
-    // Not typing, just use the message content
-    rawContent = message.content || '';
-  }
-  
-  const content = formatChatText(message.content);
-  console.log('ChatMessage DEBUG - isTyping:', message.isTyping, 'displayedText:', displayedText, 'message.content:', message.content, 'final rawContent:', rawContent);
+  const contentToDisplay = message.isTyping && displayedText ? displayedText : message.content;
 
   return (
     <div className={`flex ${message.isBot ? 'justify-start' : 'justify-end'} mb-4`}>
@@ -60,18 +221,18 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
         
         <div className="space-y-1">
           <div className={`
-            px-4 py-2 rounded-2xl max-w-full
+            px-4 py-3 rounded-2xl max-w-full
             ${message.isBot 
               ? 'bg-muted text-muted-foreground rounded-bl-md' 
-              : 'bg-primary rounded-br-md'
+              : 'bg-primary text-white rounded-br-md'
             }
           `}>
-            <p className={`text-sm whitespace-pre-wrap break-words ${!message.isBot ? 'text-white' : ''}`} style={!message.isBot ? { color: '#fff !important' } : {}}>
-              {content}
+            <div className="text-sm break-words">
+              {formatChatContent(contentToDisplay)}
               {message.isTyping && isTyping && (
-                <span className="inline-block w-2 h-4 bg-current animate-pulse ml-1" />
+                <span className="inline-block w-1.5 h-4 bg-current animate-pulse ml-1 align-middle" />
               )}
-            </p>
+            </div>
           </div>
           
           <div className={`text-xs text-muted-foreground px-2 ${
