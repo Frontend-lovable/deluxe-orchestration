@@ -99,6 +99,7 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView, onProjectSelect,
         projects={projects}
         isLoadingProjects={isLoadingProjects}
         onProjectCreated={loadProjects}
+        onProjectSelected={handleProjectSelect}
       />
     <div className="h-16 border-b border-border px-4 sm:px-6 lg:px-8 flex items-center justify-between" style={{ backgroundColor: '#fff' }}>
       <div className="flex items-center gap-4">
@@ -160,8 +161,8 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView, onProjectSelect,
           className="bg-primary hover:bg-primary/90 text-primary-foreground text-sm px-3 sm:px-4"
           onClick={() => setIsCreateModalOpen(true)}
         >
-          <span className="hidden sm:inline">Project Workspace</span>
-          <span className="sm:hidden">Workspace</span>
+          <span className="hidden sm:inline">{selectedProject?.project_name || "Project Workspace"}</span>
+          <span className="sm:hidden">{selectedProject?.project_name || "Workspace"}</span>
         </Button>
       </div>
     </div>
