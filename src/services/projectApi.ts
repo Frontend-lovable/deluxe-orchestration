@@ -22,7 +22,7 @@ interface CreateProjectResponse extends Project {}
 export const createProject = async (projectData: CreateProjectRequest): Promise<CreateProjectResponse> => {
   const API_BASE_URL = API_CONFIG.BASE_URL;
   try {
-    const response = await fetch(`${API_BASE_URL}/projects`, {
+    const response = await fetch(`${API_BASE_URL}/projects/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -45,7 +45,7 @@ export const createProject = async (projectData: CreateProjectRequest): Promise<
 export const fetchProjects = async (): Promise<Project[]> => {
   const API_BASE_URL = API_CONFIG.BASE_URL;
   try {
-    const response = await fetch(`${API_BASE_URL}/projects`, {
+    const response = await fetch(`${API_BASE_URL}/projects/`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
