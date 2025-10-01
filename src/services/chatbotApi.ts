@@ -5,6 +5,9 @@ import { useMutation } from "@tanstack/react-query";
 export interface ChatRequest {
   message: string;
   session_id: string | null;
+  include_context?: boolean;
+  max_tokens?: number;
+  temperature?: number;
 }
 
 export interface ChatResponse {
@@ -30,15 +33,165 @@ export class SessionManager {
   }
 }
 
-// API function for sending chat messages
+// API function for streaming chat messages
+export async function* streamChatMessage(message: string): AsyncGenerator<string, void, unknown> {
+  const API_BASE_URL = API_CONFIG.CHATBOT_API_URL;
+  console.log('Sending streaming request to:', API_BASE_URL);
+  
+  try {
+    const requestBody = {
+      message,
+      session_id: SessionManager.getSessionId(),
+      include_context: true,
+      max_tokens: 2000,
+      temperature: 0.7
+    };
+
+    console.log('Request body:', requestBody);
+
+    const response = await fetch(API_BASE_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
+      mode: 'cors',
+    });
+      
+    console.log('Response status:', response.status);
+
+    if (!response.ok) {
+      let errorText;
+      try {
+        errorText = await response.text();
+      } catch (e) {
+        errorText = 'Unable to read error response';
+      }
+      console.log('Error response body:', errorText);
+      
+      throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+    }
+
+    const reader = response.body?.getReader();
+    const decoder = new TextDecoder();
+    
+    if (!reader) {
+      throw new Error('Response body is not readable');
+    }
+
+    let buffer = '';
+    
+    while (true) {
+      const { done, value } = await reader.read();
+      
+      if (done) {
+        // Process any remaining buffer
+        if (buffer.trim()) {
+          try {
+            const data = JSON.parse(buffer);
+            if (data.session_id) {
+              SessionManager.setSessionId(data.session_id);
+            }
+            const content = String(
+              data?.response || 
+              data?.message || 
+              data?.answer || 
+              data?.text || 
+              data?.content || 
+              ''
+            ).trim();
+            
+            if (content) {
+              yield content;
+            }
+          } catch (e) {
+            console.error('Failed to parse final buffer:', e);
+          }
+        }
+        break;
+      }
+      
+      buffer += decoder.decode(value, { stream: true });
+      
+      // Process complete JSON objects from the buffer
+      let newlineIndex;
+      while ((newlineIndex = buffer.indexOf('\n')) !== -1) {
+        const line = buffer.slice(0, newlineIndex).trim();
+        buffer = buffer.slice(newlineIndex + 1);
+        
+        if (!line) continue;
+        
+        try {
+          const data = JSON.parse(line);
+          
+          // Store session ID
+          if (data.session_id) {
+            SessionManager.setSessionId(data.session_id);
+          }
+          
+          // Extract content from various possible field names
+          const content = String(
+            data?.response || 
+            data?.message || 
+            data?.answer || 
+            data?.text || 
+            data?.content || 
+            ''
+          ).trim();
+          
+          // Clean up the content (remove outer quotes and unescape)
+          let cleanContent = content;
+          if (cleanContent.startsWith('"') && cleanContent.endsWith('"') && cleanContent.length > 1) {
+            cleanContent = cleanContent.slice(1, -1);
+          }
+          
+          if (cleanContent.includes('\\')) {
+            cleanContent = cleanContent
+              .replace(/\\"/g, '"')
+              .replace(/\\n/g, '\n')
+              .replace(/\\t/g, '\t')
+              .replace(/\\r/g, '\r')
+              .replace(/\\\\/g, '\\');
+          }
+          
+          if (cleanContent) {
+            yield cleanContent;
+          }
+        } catch (e) {
+          console.error('Failed to parse line:', line, e);
+        }
+      }
+    }
+  } catch (error) {
+    console.error('=== API ERROR DEBUG ===');
+    console.error('Full error object:', error);
+    console.error('=== END ERROR DEBUG ===');
+    
+    if (error instanceof Error) {
+      if (error.message.includes('Failed to fetch')) {
+        throw new Error('CORS/Network error: Cannot connect to API. Check if the API allows browser requests and has proper CORS headers.');
+      }
+      if (error.message.includes('NetworkError')) {
+        throw new Error('Network error: Please check your internet connection and try again.');
+      }
+    }
+    
+    throw new Error(`API Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`);
+  }
+}
+
+// API function for sending chat messages (non-streaming fallback)
 export async function sendChatMessage(message: string): Promise<ChatResponse> {
   const API_BASE_URL = API_CONFIG.CHATBOT_API_URL;
   console.log('Sending request to:', API_BASE_URL);
   
   try {
-    const requestBody: ChatRequest = {
+    const requestBody = {
       message,
-      session_id: SessionManager.getSessionId()
+      session_id: SessionManager.getSessionId(),
+      include_context: true,
+      max_tokens: 2000,
+      temperature: 0.7
     };
 
     console.log('Request body:', requestBody);

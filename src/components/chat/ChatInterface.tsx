@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ChatMessage } from "./ChatMessage";
-import { useChatMessage } from "@/services/chatbotApi";
+import { streamChatMessage } from "@/services/chatbotApi";
 import { toast } from "sonner";
 interface ChatMessageType {
   id: string;
@@ -39,10 +39,8 @@ export const ChatInterface = ({
     })
   }] : [])]);
   const [inputValue, setInputValue] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  // TanStack Query mutation for sending chat messages
-  const chatMutation = useChatMessage();
 
   // Auto scroll to bottom when new messages arrive
   useEffect(() => {
@@ -50,7 +48,7 @@ export const ChatInterface = ({
   }, [messages]);
 
   const handleSend = async () => {
-    if (!inputValue.trim() || chatMutation.isPending) return;
+    if (!inputValue.trim() || isLoading) return;
     
     const userMessage: ChatMessageType = {
       id: Date.now().toString(),
@@ -65,10 +63,12 @@ export const ChatInterface = ({
     const currentMessage = inputValue;
     setMessages(prev => [...prev, userMessage]);
     setInputValue("");
+    setIsLoading(true);
 
-    // Add loading message
-    const loadingMessage: ChatMessageType = {
-      id: `loading-${Date.now()}`,
+    // Add bot message placeholder that will be updated with streaming content
+    const botMessageId = `bot-${Date.now()}`;
+    const botMessage: ChatMessageType = {
+      id: botMessageId,
       content: "",
       isBot: true,
       timestamp: new Date().toLocaleTimeString([], {
@@ -77,86 +77,52 @@ export const ChatInterface = ({
       }),
       isLoading: true
     };
-    setMessages(prev => [...prev, loadingMessage]);
+    setMessages(prev => [...prev, botMessage]);
 
-    // Use TanStack Query mutation
-    chatMutation.mutate(currentMessage, {
-      onSuccess: (response) => {
-        const responseData = response as any;
+    try {
+      let accumulatedContent = "";
+      
+      // Stream the response
+      for await (const chunk of streamChatMessage(currentMessage)) {
+        accumulatedContent += chunk;
         
-        // Get the response content from the API - ensure it's always a string
-        let responseContent = String(
-          responseData?.response || 
-          responseData?.message || 
-          responseData?.answer || 
-          responseData?.text || 
-          responseData?.content || 
-          ''
-        ).trim();
-        
-        // Remove outer quotes if the response is wrapped in quotes
-        // e.g., "\"The Merchant of Venice\"..." becomes "The Merchant of Venice"...
-        if (responseContent.startsWith('"') && responseContent.endsWith('"') && responseContent.length > 1) {
-          responseContent = responseContent.slice(1, -1);
-        }
-        
-        // Unescape any escaped characters
-        if (responseContent.includes('\\')) {
-          responseContent = responseContent
-            .replace(/\\"/g, '"')
-            .replace(/\\n/g, '\n')
-            .replace(/\\t/g, '\t')
-            .replace(/\\r/g, '\r')
-            .replace(/\\\\/g, '\\');
-        }
-        
-        // Final safety check - ensure content is never empty or undefined
-        responseContent = responseContent.trim() || 'No response received from the server.';
-        
-        console.log('Processed response content:', responseContent);
-        
-        // Remove loading message and add actual response with typing effect
-        setMessages(prev => {
-          const withoutLoading = prev.filter(msg => !msg.id.startsWith('loading-'));
-          const botMessage: ChatMessageType = {
-            id: `bot-${Date.now()}`,
-            content: responseContent,
-            isBot: true,
-            timestamp: new Date().toLocaleTimeString([], {
-              hour: '2-digit',
-              minute: '2-digit'
-            }),
-            isTyping: true
-          };
-          return [...withoutLoading, botMessage];
-        });
-
-        // Check if the message is "reviewed" and trigger the callback
-        if (currentMessage.trim().toLowerCase() === "reviewed" && onReviewed) {
-          onReviewed();
-        }
-      },
-      onError: (error) => {
-        console.error('Chat error:', error);
-        
-        // Remove loading message and add error message
-        setMessages(prev => {
-          const withoutLoading = prev.filter(msg => !msg.id.startsWith('loading-'));
-          const errorMessage: ChatMessageType = {
-            id: `error-${Date.now()}`,
-            content: "Sorry, I couldn't process your message right now. This might be due to network issues or the API not being publicly accessible. Please try again later.",
-            isBot: true,
-            timestamp: new Date().toLocaleTimeString([], {
-              hour: '2-digit',
-              minute: '2-digit'
-            })
-          };
-          return [...withoutLoading, errorMessage];
-        });
-        
-        toast.error("Failed to send message. Please check your connection and try again.");
+        // Update the bot message with accumulated content
+        setMessages(prev => 
+          prev.map(msg => 
+            msg.id === botMessageId 
+              ? { ...msg, content: accumulatedContent, isLoading: false, isTyping: false }
+              : msg
+          )
+        );
       }
-    });
+
+      setIsLoading(false);
+
+      // Check if the message is "reviewed" and trigger the callback
+      if (currentMessage.trim().toLowerCase() === "reviewed" && onReviewed) {
+        onReviewed();
+      }
+    } catch (error) {
+      console.error('Chat error:', error);
+      setIsLoading(false);
+      
+      // Remove loading message and add error message
+      setMessages(prev => {
+        const withoutLoading = prev.filter(msg => msg.id !== botMessageId);
+        const errorMessage: ChatMessageType = {
+          id: `error-${Date.now()}`,
+          content: "Sorry, I couldn't process your message right now. This might be due to network issues or the API not being publicly accessible. Please try again later.",
+          isBot: true,
+          timestamp: new Date().toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit'
+          })
+        };
+        return [...withoutLoading, errorMessage];
+      });
+      
+      toast.error("Failed to send message. Please check your connection and try again.");
+    }
   };
   return <Card className="h-full flex flex-col overflow-hidden">
       <CardHeader className="pb-4">
@@ -198,7 +164,7 @@ export const ChatInterface = ({
             onChange={e => setInputValue(e.target.value)} 
             placeholder={placeholder}
             onKeyPress={e => e.key === 'Enter' && !e.shiftKey && handleSend()}
-            disabled={chatMutation.isPending}
+            disabled={isLoading}
             className="flex-1" 
             style={{ backgroundColor: '#fff' }}
           />
@@ -206,9 +172,9 @@ export const ChatInterface = ({
             onClick={handleSend} 
             size="sm" 
             className="px-3"
-            disabled={chatMutation.isPending || !inputValue.trim()}
+            disabled={isLoading || !inputValue.trim()}
           >
-            {chatMutation.isPending ? (
+            {isLoading ? (
               <div className="w-4 h-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
             ) : (
               <Send className="w-4 h-4" />
