@@ -14,12 +14,13 @@ interface UploadedFile {
 }
 
 interface FileUploadSectionProps {
-  onUploadSuccess?: () => void;
+  onUploadSuccess?: (response?: any) => void;
 }
 
 export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) => {
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -103,12 +104,13 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
 
     setIsSubmitting(true);
     try {
-      await uploadFiles(filesToUpload);
+      const response = await uploadFiles(filesToUpload);
       toast({
         title: "Files submitted successfully",
         description: `${filesToUpload.length} file(s) have been uploaded to the server.`,
       });
-      onUploadSuccess?.();
+      setIsSubmitted(true);
+      onUploadSuccess?.(response);
     } catch (error) {
       toast({
         title: "Upload failed",
@@ -137,12 +139,14 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
               accept="*/*"
               onChange={handleFileUpload}
               className="hidden"
+              disabled={isSubmitted}
             />
             <Button 
               variant="outline" 
               size="sm" 
               onClick={triggerFileUpload}
               className="bg-white border border-[#3B3B3B] hover:bg-gray-50 w-full sm:w-auto"
+              disabled={isSubmitted}
             >
               <Upload className="w-4 h-4 text-[#3B3B3B] mr-2 sm:mr-0" />
               <span className="sm:hidden">Upload Files</span>
@@ -194,15 +198,20 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
         
         {uploadedFiles.length > 0 && (
           <div className="mt-6 space-y-4">
-            <div className="flex items-center gap-2 text-sm">
-              <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
-              <span className="text-sm">All files processed and draft ready for review</span>
-            </div>
-            <Button variant="outline" className="w-full justify-center gap-2 h-12 bg-white border border-[#8C8C8C] hover:bg-gray-50" onClick={handleSubmitFiles} disabled={uploadedFiles.length === 0 || isSubmitting}>
-              <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-              </svg>
-              <span>{isSubmitting ? "Submitting..." : "Submit Files"}</span>
+            <Button variant="outline" className="w-full justify-center gap-2 h-12 bg-white border border-[#8C8C8C] hover:bg-gray-50" onClick={handleSubmitFiles} disabled={uploadedFiles.length === 0 || isSubmitting || isSubmitted}>
+              {isSubmitting ? (
+                <>
+                  <div className="w-4 h-4 animate-spin rounded-full border-2 border-current border-t-transparent flex-shrink-0" />
+                  <span>Submitting...</span>
+                </>
+              ) : (
+                <>
+                  <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                  </svg>
+                  <span>Submit Files</span>
+                </>
+              )}
             </Button>
           </div>
         )}

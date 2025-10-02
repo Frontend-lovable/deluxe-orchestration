@@ -72,8 +72,24 @@ export const BRDDashboard = ({
     }
   };
 
-  const handleFileUploadSuccess = () => {
+  const handleFileUploadSuccess = (response?: any) => {
     setIsFilesUploaded(true);
+    
+    // Add the API response to the chat as a bot message
+    if (response && response.message) {
+      const botMessage = {
+        id: `bot-${Date.now()}`,
+        content: response.message,
+        isBot: true,
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      };
+      
+      const currentMessages = chatMessages.brd || [];
+      setChatMessages("brd", [...currentMessages, botMessage]);
+    }
   };
   return <div className="p-4 sm:p-6 lg:p-8 bg-white">
       <div className="mb-4 lg:mb-2">
