@@ -1,21 +1,7 @@
 import { ChatInterface } from "../chat/ChatInterface";
 import { FileUploadSection } from "../files/FileUploadSection";
 
-interface ChatMessageType {
-  id: string;
-  content: string;
-  isBot: boolean;
-  timestamp: string;
-  isTyping?: boolean;
-  isLoading?: boolean;
-}
-
-interface DesignDashboardProps {
-  messages?: ChatMessageType[];
-  onMessagesChange?: (messages: ChatMessageType[]) => void;
-}
-
-export const DesignDashboard = ({ messages, onMessagesChange }: DesignDashboardProps) => {
+export const DesignDashboard = () => {
   return (
     <div className="p-2 sm:p-4 md:p-6 lg:p-8" style={{ backgroundColor: '#fff' }}>
       <div className="mb-4 lg:mb-8">
@@ -33,8 +19,6 @@ export const DesignDashboard = ({ messages, onMessagesChange }: DesignDashboardP
 
 What design challenge would you like to tackle?"
               placeholder="Ask about architecture, design patterns, or system planning..."
-              externalMessages={messages}
-              onMessagesChange={onMessagesChange}
             />
           </div>
         </div>

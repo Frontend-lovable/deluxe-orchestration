@@ -6,20 +6,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useState } from "react";
 
-interface ChatMessageType {
-  id: string;
-  content: string;
-  isBot: boolean;
-  timestamp: string;
-  isTyping?: boolean;
-  isLoading?: boolean;
-}
-
-interface ConfluenceDashboardProps {
-  messages?: ChatMessageType[];
-  onMessagesChange?: (messages: ChatMessageType[]) => void;
-}
-
 const confluencePages = [
   {
     id: 1,
@@ -184,7 +170,7 @@ CI/CD pipeline with automated test execution on every commit.`,
   },
 ];
 
-export const ConfluenceDashboard = ({ messages, onMessagesChange }: ConfluenceDashboardProps) => {
+export const ConfluenceDashboard = () => {
   const [selectedPage, setSelectedPage] = useState("Architecture Overview");
   const [searchTerm, setSearchTerm] = useState("");
 

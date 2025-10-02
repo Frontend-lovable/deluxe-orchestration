@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { ChevronDown, Menu, FolderKanban } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -33,18 +33,9 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView, onProjectSelect,
   const [selectedBRDTemplate, setSelectedBRDTemplate] = useState<string | null>(null);
   const [isLoadingTemplates, setIsLoadingTemplates] = useState(false);
   const { toast } = useToast();
-  const hasLoadedProjects = useRef(false);
 
-  // Load projects only once on mount
   useEffect(() => {
-    if (!hasLoadedProjects.current) {
-      loadProjects();
-      hasLoadedProjects.current = true;
-    }
-  }, []);
-
-  // Load BRD templates when switching to BRD view
-  useEffect(() => {
+    loadProjects();
     if (currentView === "brd") {
       loadBRDTemplates();
     }
