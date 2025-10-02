@@ -1,7 +1,9 @@
 import { ChatInterface } from "../chat/ChatInterface";
 import { FileUploadSection } from "../files/FileUploadSection";
+import { useAppState } from "@/contexts/AppStateContext";
 
 export const DesignDashboard = () => {
+  const { chatMessages, setChatMessages } = useAppState();
   return (
     <div className="p-2 sm:p-4 md:p-6 lg:p-8" style={{ backgroundColor: '#fff' }}>
       <div className="mb-4 lg:mb-8">
@@ -19,6 +21,8 @@ export const DesignDashboard = () => {
 
 What design challenge would you like to tackle?"
               placeholder="Ask about architecture, design patterns, or system planning..."
+              externalMessages={chatMessages.design}
+              onMessagesChange={(messages) => setChatMessages("design", messages)}
             />
           </div>
         </div>

@@ -5,17 +5,12 @@ import { type Project } from "@/services/projectApi";
 
 interface MainLayoutProps {
   children: ReactNode;
-  onNavigate?: (view: string) => void;
   showBackButton?: boolean;
   onBack?: () => void;
   currentView?: string;
-  selectedProject?: Project | null;
-  selectedBRDTemplate?: string | null;
-  onProjectSelect?: (project: Project | null) => void;
-  onBRDTemplateSelect?: (template: string | null) => void;
 }
 
-export const MainLayout = ({ children, onNavigate, showBackButton, onBack, currentView, selectedProject, selectedBRDTemplate, onProjectSelect, onBRDTemplateSelect }: MainLayoutProps) => {
+export const MainLayout = ({ children, showBackButton, onBack, currentView }: MainLayoutProps) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -52,7 +47,6 @@ export const MainLayout = ({ children, onNavigate, showBackButton, onBack, curre
           : 'fixed left-0 top-0 bottom-0 z-40'
       }`}>
         <Sidebar 
-          onNavigate={onNavigate}
           showBackButton={showBackButton}
           onBack={onBack}
           collapsed={sidebarCollapsed}
@@ -75,8 +69,6 @@ export const MainLayout = ({ children, onNavigate, showBackButton, onBack, curre
             onMenuClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             isMobile={isMobile}
             currentView={currentView}
-            onProjectSelect={onProjectSelect}
-            onBRDTemplateSelect={onBRDTemplateSelect}
           />
         </div>
         

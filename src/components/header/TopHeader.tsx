@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ChevronDown, Menu, FolderKanban } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -15,27 +15,34 @@ import {
 import { CreateProjectModal } from "@/components/modals/CreateProjectModal";
 import { fetchProjects, getProjectById, getBRDTemplates, type Project, type BRDTemplate } from "@/services/projectApi";
 import { useToast } from "@/hooks/use-toast";
+import { useAppState } from "@/contexts/AppStateContext";
 
 interface TopHeaderProps {
   onMenuClick?: () => void;
   isMobile?: boolean;
   currentView?: string;
-  onProjectSelect?: (project: Project | null) => void;
-  onBRDTemplateSelect?: (template: string | null) => void;
 }
 
-export const TopHeader = ({ onMenuClick, isMobile, currentView, onProjectSelect, onBRDTemplateSelect }: TopHeaderProps) => {
+export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps) => {
+  const { selectedProject, setSelectedProject, selectedBRDTemplate, setSelectedBRDTemplate } = useAppState();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isLoadingProjects, setIsLoadingProjects] = useState(false);
   const [brdTemplates, setBrdTemplates] = useState<BRDTemplate[]>([]);
-  const [selectedBRDTemplate, setSelectedBRDTemplate] = useState<string | null>(null);
   const [isLoadingTemplates, setIsLoadingTemplates] = useState(false);
   const { toast } = useToast();
+  const hasLoadedProjects = useRef(false);
 
+  // Load projects only once on mount
   useEffect(() => {
-    loadProjects();
+    if (!hasLoadedProjects.current) {
+      loadProjects();
+      hasLoadedProjects.current = true;
+    }
+  }, []);
+
+  // Load BRD templates when view changes to BRD
+  useEffect(() => {
     if (currentView === "brd") {
       loadBRDTemplates();
     }
@@ -75,20 +82,18 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView, onProjectSelect,
     try {
       const project = await getProjectById(projectId);
       setSelectedProject(project);
-      onProjectSelect?.(project);
     } catch (error) {
       toast({
         title: "Error",
         description: "Project not found",
         variant: "destructive",
       });
-      onProjectSelect?.(null);
+      setSelectedProject(null);
     }
   };
 
   const handleBRDTemplateSelect = (value: string) => {
     setSelectedBRDTemplate(value);
-    onBRDTemplateSelect?.(value);
   };
 
   return (

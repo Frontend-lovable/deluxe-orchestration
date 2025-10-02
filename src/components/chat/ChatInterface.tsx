@@ -21,15 +21,19 @@ interface ChatInterfaceProps {
   initialMessage?: string;
   placeholder?: string;
   onReviewed?: () => void;
+  externalMessages?: ChatMessageType[];
+  onMessagesChange?: (messages: ChatMessageType[]) => void;
 }
 export const ChatInterface = ({
   title,
   subtitle,
   initialMessage,
   placeholder = "Type your message about business requirements...",
-  onReviewed
+  onReviewed,
+  externalMessages,
+  onMessagesChange
 }: ChatInterfaceProps) => {
-  const [messages, setMessages] = useState<ChatMessageType[]>([...(initialMessage ? [{
+  const [internalMessages, setInternalMessages] = useState<ChatMessageType[]>([...(initialMessage ? [{
     id: "1",
     content: initialMessage,
     isBot: true,
@@ -41,6 +45,10 @@ export const ChatInterface = ({
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Use external messages if provided, otherwise use internal state
+  const messages = externalMessages || internalMessages;
+  const setMessages = onMessagesChange || setInternalMessages;
 
   // Auto scroll to bottom when new messages arrive
   useEffect(() => {

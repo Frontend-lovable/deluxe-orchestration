@@ -1,7 +1,10 @@
 import { StatsCards } from "./StatsCards";
 import { ChatInterface } from "../chat/ChatInterface";
+import { useAppState } from "@/contexts/AppStateContext";
 
 export const ProjectOverview = () => {
+  const { chatMessages, setChatMessages } = useAppState();
+
   return (
     <div className="p-2 sm:p-4 md:p-6 lg:p-8" style={{ backgroundColor: '#fff' }}>
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-4 lg:mb-8">
@@ -22,6 +25,8 @@ export const ProjectOverview = () => {
 
 What would you like to work on today?"
                 placeholder="Type your message about business requirements..."
+                externalMessages={chatMessages.overview}
+                onMessagesChange={(messages) => setChatMessages("overview", messages)}
               />
             </div>
           </div>

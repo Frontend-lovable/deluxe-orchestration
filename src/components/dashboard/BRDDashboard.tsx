@@ -4,6 +4,7 @@ import { ChatInterface } from "../chat/ChatInterface";
 import { FileUploadSection } from "../files/FileUploadSection";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import { useAppState } from "@/contexts/AppStateContext";
 const sectionContent = {
   "Executive Summary": {
     title: "Executive Summary Assistant",
@@ -52,6 +53,7 @@ export const BRDDashboard = ({
   selectedProject,
   selectedBRDTemplate
 }: BRDDashboardProps) => {
+  const { chatMessages, setChatMessages, selectedProject: contextProject, selectedBRDTemplate: contextTemplate } = useAppState();
   const [selectedSection, setSelectedSection] = useState<string>("Executive Summary");
   const [completedSections, setCompletedSections] = useState<string[]>([]);
   const sectionOrder = ["Executive Summary", "Stakeholders", "Business Objectives", "Functional Requirements", "Data Requirements", "Security Requirements"];
@@ -83,12 +85,20 @@ export const BRDDashboard = ({
         scrollbarColor: '#E6E6E6 transparent'
       }}>
         <div className="lg:col-span-3 order-1 lg:order-1">
-          <BRDProgress selectedSection={selectedSection} onSectionChange={setSelectedSection} completedSections={completedSections} hasProjectAndTemplate={!!(selectedProject && selectedBRDTemplate)} />
+          <BRDProgress selectedSection={selectedSection} onSectionChange={setSelectedSection} completedSections={completedSections} hasProjectAndTemplate={!!(contextProject && contextTemplate)} />
         </div>
         
         <div className="lg:col-span-6 order-3 lg:order-2">
           <div className="h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px]">
-            <ChatInterface title={sectionContent[selectedSection as keyof typeof sectionContent]?.title || "BRD Assistant"} subtitle={sectionContent[selectedSection as keyof typeof sectionContent]?.subtitle || "Discuss your business requirements"} initialMessage={sectionContent[selectedSection as keyof typeof sectionContent]?.initialMessage || "Hello! 👋 I'm your BRD Assistant."} placeholder={sectionContent[selectedSection as keyof typeof sectionContent]?.placeholder || "Type your message..."} onReviewed={handleSectionReviewed} />
+            <ChatInterface 
+              title={sectionContent[selectedSection as keyof typeof sectionContent]?.title || "BRD Assistant"} 
+              subtitle={sectionContent[selectedSection as keyof typeof sectionContent]?.subtitle || "Discuss your business requirements"} 
+              initialMessage={sectionContent[selectedSection as keyof typeof sectionContent]?.initialMessage || "Hello! 👋 I'm your BRD Assistant."} 
+              placeholder={sectionContent[selectedSection as keyof typeof sectionContent]?.placeholder || "Type your message..."} 
+              onReviewed={handleSectionReviewed}
+              externalMessages={chatMessages.brd}
+              onMessagesChange={(messages) => setChatMessages("brd", messages)}
+            />
           </div>
         </div>
         

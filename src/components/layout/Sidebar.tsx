@@ -11,6 +11,7 @@ import {
   ChevronLeft,
   X
 } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import userAvatar from "@/assets/user-avatar.jpg";
@@ -21,24 +22,28 @@ const navigationItems = [
     label: "BRD Assistant",
     description: "Create & manage BRDs",
     id: "brd",
+    path: "/brd-assistant",
   },
   {
     icon: BookOpen,
     label: "Confluence",
     description: "Browse & integrate docs",
     id: "confluence",
+    path: "/confluence",
   },
   {
     icon: Ticket,
     label: "Jira",
     description: "Project tracking & issues",
     id: "jira",
+    path: "/jira",
   },
   {
     icon: Palette,
     label: "Design Assistant",
     description: "Technical architecture planning",
     id: "design",
+    path: "/design-assistant",
   },
 ];
 
@@ -49,7 +54,6 @@ const bottomItems = [
 ];
 
 interface SidebarProps {
-  onNavigate?: (view: string) => void;
   showBackButton?: boolean;
   onBack?: () => void;
   collapsed?: boolean;
@@ -59,13 +63,14 @@ interface SidebarProps {
   onMobileClose?: () => void;
 }
 
-export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggleCollapse, currentView, isMobile, onMobileClose }: SidebarProps) => {
+export const Sidebar = ({ showBackButton, onBack, collapsed, onToggleCollapse, currentView, isMobile, onMobileClose }: SidebarProps) => {
+  const navigate = useNavigate();
   return (
     <div className={`${isMobile ? 'w-60' : (collapsed ? 'w-16' : 'w-60')} h-full bg-sidebar-bg border-r border-sidebar-border flex flex-col transition-all duration-300 overflow-hidden`}>
       {/* Header */}
       <div className="py-0 border-b border-sidebar-border h-16 flex items-center justify-between flex-shrink-0" style={{ backgroundColor: 'rgba(230, 12, 35, 0.06)' }}>
-        <button 
-          onClick={() => onNavigate?.('overview')}
+        <Link 
+          to="/"
           className="flex items-center gap-2 px-4 hover:opacity-80 transition-opacity"
         >
           <img 
@@ -76,7 +81,7 @@ export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggl
           {(!collapsed || isMobile) && (
             <div className="text-sm text-muted-foreground hidden sm:block">SDLC Orchestration</div>
           )}
-        </button>
+        </Link>
         
         {isMobile && (
           <Button
@@ -134,23 +139,28 @@ export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggl
               {navigationItems.map((item) => {
                 const isActive = currentView === item.id;
                 return (
-                  <Button
+                  <Link
                     key={item.label}
-                    variant="ghost"
-                    onClick={() => onNavigate?.(item.id)}
-                    className={`w-full justify-start h-auto p-3 text-left hover:bg-accent`}
-                    style={isActive ? { backgroundColor: 'rgba(184, 218, 222, 0.34)' } : {}}
+                    to={item.path}
+                    onClick={isMobile ? onMobileClose : undefined}
+                    className="block"
                   >
-                    <div className="flex items-start gap-3 w-full">
-                      <item.icon className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <div style={{ color: '#3B3B3B', fontSize: '14px', fontWeight: 'normal' }}>{item.label}</div>
-                        <div style={{ fontSize: '12px', color: '#858585', fontWeight: 'normal' }}>
-                          {item.description}
+                    <Button
+                      variant="ghost"
+                      className={`w-full justify-start h-auto p-3 text-left hover:bg-accent`}
+                      style={isActive ? { backgroundColor: 'rgba(184, 218, 222, 0.34)' } : {}}
+                    >
+                      <div className="flex items-start gap-3 w-full">
+                        <item.icon className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <div style={{ color: '#3B3B3B', fontSize: '14px', fontWeight: 'normal' }}>{item.label}</div>
+                          <div style={{ fontSize: '12px', color: '#858585', fontWeight: 'normal' }}>
+                            {item.description}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </Button>
+                    </Button>
+                  </Link>
                 );
               })}
             </div>
@@ -160,16 +170,19 @@ export const Sidebar = ({ onNavigate, showBackButton, onBack, collapsed, onToggl
               {navigationItems.map((item) => {
                 const isActive = currentView === item.id;
                 return (
-                  <Button
+                  <Link
                     key={item.label}
-                    variant="ghost"
-                    onClick={() => onNavigate?.(item.id)}
-                    className={`w-full h-10 p-0 justify-center hover:bg-accent`}
-                    style={isActive ? { backgroundColor: 'rgba(184, 218, 222, 0.34)' } : {}}
-                    title={item.label}
+                    to={item.path}
                   >
-                    <item.icon className="w-4 h-4" />
-                  </Button>
+                    <Button
+                      variant="ghost"
+                      className={`w-full h-10 p-0 justify-center hover:bg-accent`}
+                      style={isActive ? { backgroundColor: 'rgba(184, 218, 222, 0.34)' } : {}}
+                      title={item.label}
+                    >
+                      <item.icon className="w-4 h-4" />
+                    </Button>
+                  </Link>
                 );
               })}
             </div>
