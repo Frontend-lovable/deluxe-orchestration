@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { BRDProgress } from "../brd/BRDProgress";
 import { ChatInterface } from "../chat/ChatInterface";
 import { FileUploadSection } from "../files/FileUploadSection";
+import { BRDSectionTabs } from "../brd/BRDSectionTabs";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useAppState } from "@/contexts/AppStateContext";
@@ -107,6 +108,20 @@ export const BRDDashboard = ({
   const handleFileUploadSuccess = (response?: any) => {
     // Response is already handled by global state and useEffect
   };
+
+  const handleSectionTabClick = (title: string, description: string) => {
+    const currentMessages = chatMessages.brd || [];
+    const newMessage = {
+      id: `section-${Date.now()}`,
+      content: `**${title}**\n\n${description}`,
+      isBot: true,
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit'
+      })
+    };
+    setChatMessages("brd", [...currentMessages, newMessage]);
+  };
   return <div className="p-4 sm:p-6 lg:p-8 bg-white">
       <div className="mb-4 lg:mb-2">
         <div className="flex items-center gap-3">
@@ -140,8 +155,12 @@ export const BRDDashboard = ({
           </div>
         </div>
         
-        <div className="lg:col-span-3 order-2 lg:order-3">
+        <div className="lg:col-span-3 order-2 lg:order-3 space-y-4">
           <FileUploadSection onUploadSuccess={handleFileUploadSuccess} />
+          
+          {uploadedFileBatches.length > 0 && (
+            <BRDSectionTabs onSectionClick={handleSectionTabClick} />
+          )}
         </div>
       </div>
     </div>;
