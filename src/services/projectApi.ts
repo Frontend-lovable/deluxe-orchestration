@@ -133,15 +133,16 @@ export interface FileUploadResponse {
 }
 
 export const uploadFiles = async (files: File[]): Promise<FileUploadResponse> => {
-  const API_BASE_URL = API_CONFIG.BASE_URL;
+  const FILE_UPLOAD_URL = "http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1/files/upload";
   try {
     const formData = new FormData();
     
+    // API expects 'file' field name (singular)
     files.forEach((file) => {
       formData.append('file', file);
     });
 
-    const response = await fetch(`${API_BASE_URL}/files/upload`, {
+    const response = await fetch(FILE_UPLOAD_URL, {
       method: "POST",
       body: formData,
     });

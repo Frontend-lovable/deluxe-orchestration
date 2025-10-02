@@ -56,6 +56,7 @@ export const BRDDashboard = ({
   const { chatMessages, setChatMessages, selectedProject: contextProject, selectedBRDTemplate: contextTemplate } = useAppState();
   const [selectedSection, setSelectedSection] = useState<string>("Executive Summary");
   const [completedSections, setCompletedSections] = useState<string[]>([]);
+  const [isFilesUploaded, setIsFilesUploaded] = useState(false);
   const sectionOrder = ["Executive Summary", "Stakeholders", "Business Objectives", "Functional Requirements", "Data Requirements", "Security Requirements"];
   const handleSectionReviewed = () => {
     // Mark current section as completed
@@ -69,6 +70,10 @@ export const BRDDashboard = ({
       const nextSection = sectionOrder[currentIndex + 1];
       setSelectedSection(nextSection);
     }
+  };
+
+  const handleFileUploadSuccess = () => {
+    setIsFilesUploaded(true);
   };
   return <div className="p-4 sm:p-6 lg:p-8 bg-white">
       <div className="mb-4 lg:mb-2">
@@ -85,7 +90,7 @@ export const BRDDashboard = ({
         scrollbarColor: '#E6E6E6 transparent'
       }}>
         <div className="lg:col-span-3 order-1 lg:order-1">
-          <BRDProgress selectedSection={selectedSection} onSectionChange={setSelectedSection} completedSections={completedSections} hasProjectAndTemplate={!!(contextProject && contextTemplate)} />
+          <BRDProgress selectedSection={selectedSection} onSectionChange={setSelectedSection} completedSections={completedSections} hasProjectAndTemplate={!!(contextProject && contextTemplate)} disabled={!isFilesUploaded} />
         </div>
         
         <div className="lg:col-span-6 order-3 lg:order-2">
@@ -98,12 +103,13 @@ export const BRDDashboard = ({
               onReviewed={handleSectionReviewed}
               externalMessages={chatMessages.brd}
               onMessagesChange={(messages) => setChatMessages("brd", messages)}
+              disabled={!isFilesUploaded}
             />
           </div>
         </div>
         
         <div className="lg:col-span-3 order-2 lg:order-3">
-          <FileUploadSection />
+          <FileUploadSection onUploadSuccess={handleFileUploadSuccess} />
         </div>
       </div>
     </div>;

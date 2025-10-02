@@ -13,7 +13,11 @@ interface UploadedFile {
   originalFile?: File;
 }
 
-export const FileUploadSection = () => {
+interface FileUploadSectionProps {
+  onUploadSuccess?: () => void;
+}
+
+export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) => {
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -104,6 +108,7 @@ export const FileUploadSection = () => {
         title: "Files submitted successfully",
         description: `${filesToUpload.length} file(s) have been uploaded to the server.`,
       });
+      onUploadSuccess?.();
     } catch (error) {
       toast({
         title: "Upload failed",

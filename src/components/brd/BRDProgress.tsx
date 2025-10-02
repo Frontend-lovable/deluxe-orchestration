@@ -36,9 +36,10 @@ interface BRDProgressProps {
   onSectionChange: (section: string) => void;
   completedSections: string[];
   hasProjectAndTemplate?: boolean;
+  disabled?: boolean;
 }
 
-export const BRDProgress = ({ selectedSection, onSectionChange, completedSections, hasProjectAndTemplate = false }: BRDProgressProps) => {
+export const BRDProgress = ({ selectedSection, onSectionChange, completedSections, hasProjectAndTemplate = false, disabled = false }: BRDProgressProps) => {
   const completedCount = completedSections.length;
   return <Card className="h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] flex flex-col">
       <CardHeader>
@@ -60,6 +61,13 @@ export const BRDProgress = ({ selectedSection, onSectionChange, completedSection
             <div className="text-center text-muted-foreground">
               <div className="text-sm mb-2">Please select a project and BRD template to begin</div>
               <div className="text-xs">Use the dropdowns in the header to get started</div>
+            </div>
+          </div>
+        ) : disabled ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center text-muted-foreground">
+              <div className="text-sm mb-2">Please upload files to enable BRD Progress</div>
+              <div className="text-xs">Upload and submit files to get started</div>
             </div>
           </div>
         ) : (

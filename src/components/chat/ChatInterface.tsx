@@ -23,6 +23,7 @@ interface ChatInterfaceProps {
   onReviewed?: () => void;
   externalMessages?: ChatMessageType[];
   onMessagesChange?: (messages: ChatMessageType[]) => void;
+  disabled?: boolean;
 }
 export const ChatInterface = ({
   title,
@@ -31,7 +32,8 @@ export const ChatInterface = ({
   placeholder = "Type your message about business requirements...",
   onReviewed,
   externalMessages,
-  onMessagesChange
+  onMessagesChange,
+  disabled = false
 }: ChatInterfaceProps) => {
   const [internalMessages, setInternalMessages] = useState<ChatMessageType[]>([...(initialMessage ? [{
     id: "1",
@@ -169,7 +171,11 @@ export const ChatInterface = ({
           scrollbarWidth: 'thin',
           scrollbarColor: '#cbd5e1 transparent'
         }}>
-          {messages.length === 0 ? (
+          {disabled ? (
+            <div className="flex items-center justify-center h-full text-muted-foreground">
+              <p className="text-sm">Please upload and submit files to enable chat</p>
+            </div>
+          ) : messages.length === 0 ? (
             <div className="flex items-center justify-center h-full text-muted-foreground">
               <p className="text-sm">Start a conversation...</p>
             </div>
@@ -187,9 +193,9 @@ export const ChatInterface = ({
           <Input 
             value={inputValue} 
             onChange={e => setInputValue(e.target.value)} 
-            placeholder={placeholder}
+            placeholder={disabled ? "Upload files to enable chat..." : placeholder}
             onKeyPress={e => e.key === 'Enter' && !e.shiftKey && handleSend()}
-            disabled={isLoading}
+            disabled={isLoading || disabled}
             className="flex-1" 
             style={{ backgroundColor: '#fff' }}
           />
@@ -197,7 +203,7 @@ export const ChatInterface = ({
             onClick={handleSend} 
             size="sm" 
             className="px-3"
-            disabled={isLoading || !inputValue.trim()}
+            disabled={isLoading || !inputValue.trim() || disabled}
           >
             {isLoading ? (
               <div className="w-4 h-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
