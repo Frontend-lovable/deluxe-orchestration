@@ -104,33 +104,49 @@ export const BRDDashboard = ({
   const parseBRDSections = (content: string) => {
     const sections = [];
     
-    // Try to parse structured content
-    // Looking for patterns like "Executive Summary:", "Stakeholders:", etc.
-    const sectionPatterns = [
-      { title: "Executive Summary", pattern: /Executive Summary[:\n](.*?)(?=\n\n|Stakeholders|$)/is },
-      { title: "Stakeholders", pattern: /Stakeholders[:\n](.*?)(?=\n\n|Business Objectives|$)/is },
-      { title: "Business Objectives", pattern: /Business Objectives[:\n](.*?)(?=\n\n|Functional Requirements|$)/is },
-      { title: "Functional Requirements", pattern: /Functional Requirements[:\n](.*?)(?=\n\n|Data Requirements|$)/is },
-      { title: "Data Requirements", pattern: /Data Requirements[:\n](.*?)(?=\n\n|Security Requirements|$)/is },
-      { title: "Security Requirements", pattern: /Security Requirements[:\n](.*?)$/is }
-    ];
-
-    for (const { title, pattern } of sectionPatterns) {
-      const match = content.match(pattern);
-      if (match) {
-        const sectionContent = match[1]?.trim();
-        const description = sectionContent ? 
-          sectionContent.split('\n')[0].substring(0, 100) + (sectionContent.length > 100 ? '...' : '') :
-          `Details about ${title}`;
+    // Split content by markdown headers (##)
+    const lines = content.split('\n');
+    let currentSection: { title: string; description: string; content: string } | null = null;
+    let currentContent: string[] = [];
+    
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+      
+      // Check for markdown section headers (## Section Title)
+      if (line.startsWith('## ')) {
+        // Save previous section if it exists
+        if (currentSection) {
+          currentSection.content = currentContent.join('\n').trim();
+          sections.push(currentSection);
+        }
         
-        sections.push({
+        // Start new section
+        const title = line.replace(/^##\s*\d*\.?\s*/, '').trim(); // Remove ## and numbers
+        currentSection = {
           title,
-          description,
-          content: sectionContent || ''
-        });
+          description: '',
+          content: ''
+        };
+        currentContent = [];
+      } else if (currentSection && line) {
+        // Add content to current section
+        currentContent.push(line);
+        
+        // Use first non-empty line as description if not set
+        if (!currentSection.description && line.length > 0 && !line.startsWith('#')) {
+          currentSection.description = line.length > 80 ? line.substring(0, 80) + '...' : line;
+        }
       }
     }
-
+    
+    // Don't forget to add the last section
+    if (currentSection) {
+      currentSection.content = currentContent.join('\n').trim();
+      sections.push(currentSection);
+    }
+    
+    // If no sections found in markdown format, return empty array
+    // (Document Overview will still show as it's independent)
     return sections;
   };
   const handleSectionReviewed = () => {
