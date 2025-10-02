@@ -68,11 +68,7 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps
       setBrdTemplates(templates);
     } catch (error) {
       console.error("Failed to load BRD templates:", error);
-      toast({
-        title: "Error",
-        description: "Failed to load BRD templates",
-        variant: "destructive",
-      });
+      // Silently handle the error - don't show error toast
     } finally {
       setIsLoadingTemplates(false);
     }
