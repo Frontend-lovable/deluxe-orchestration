@@ -116,7 +116,7 @@ export const BRDProgress = ({ selectedSection, onSectionChange, completedSection
               <div className="text-xs">Upload and submit files to get started</div>
             </div>
           </div>
-        ) : !hasProjectAndTemplate ? (
+        ) : !hasProjectAndTemplate && (!dynamicSections || dynamicSections.length === 0) ? (
           <div className="space-y-2">
             {documentOverviewSections.map((section) => {
               const IconComponent = section.icon;
@@ -129,6 +129,32 @@ export const BRDProgress = ({ selectedSection, onSectionChange, completedSection
                   <div className="flex items-start gap-3">
                     <div className="text-muted-foreground group-hover:text-foreground mt-0.5">
                       <IconComponent className="w-4 h-4" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-sm font-semibold text-foreground mb-0.5">
+                        {section.title}
+                      </h4>
+                      <p className="text-xs text-muted-foreground">
+                        {section.description}
+                      </p>
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        ) : dynamicSections && dynamicSections.length > 0 ? (
+          <div className="space-y-2">
+            {dynamicSections.map((section) => {
+              return (
+                <button
+                  key={section.title}
+                  onClick={() => onSectionClick?.(section.title, section.description)}
+                  className="w-full text-left p-3 rounded-lg border border-border hover:bg-accent transition-colors group"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="text-muted-foreground group-hover:text-foreground mt-0.5">
+                      <FileText className="w-4 h-4" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="text-sm font-semibold text-foreground mb-0.5">
