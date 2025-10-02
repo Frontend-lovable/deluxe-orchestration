@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { BRDProgress } from "../brd/BRDProgress";
 import { ChatInterface } from "../chat/ChatInterface";
 import { FileUploadSection } from "../files/FileUploadSection";
-import { BRDSectionTabs } from "../brd/BRDSectionTabs";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useAppState } from "@/contexts/AppStateContext";
@@ -136,12 +135,16 @@ export const BRDDashboard = ({
         scrollbarWidth: 'thin',
         scrollbarColor: '#E6E6E6 transparent'
       }}>
-        <div className="lg:col-span-3 order-1 lg:order-1 space-y-4">
-          <BRDProgress selectedSection={selectedSection} onSectionChange={setSelectedSection} completedSections={completedSections} hasProjectAndTemplate={!!(contextProject && contextTemplate)} disabled={uploadedFileBatches.length === 0} />
-          
-          {uploadedFileBatches.length > 0 && (
-            <BRDSectionTabs onSectionClick={handleSectionTabClick} />
-          )}
+        <div className="lg:col-span-3 order-1 lg:order-1">
+          <BRDProgress 
+            selectedSection={selectedSection} 
+            onSectionChange={setSelectedSection} 
+            completedSections={completedSections} 
+            hasProjectAndTemplate={!!(contextProject && contextTemplate)} 
+            disabled={uploadedFileBatches.length === 0}
+            onSectionClick={handleSectionTabClick}
+            showDocumentOverview={uploadedFileBatches.length > 0}
+          />
         </div>
         
         <div className="lg:col-span-6 order-3 lg:order-2">

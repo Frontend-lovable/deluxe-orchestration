@@ -1,4 +1,4 @@
-import { CheckCircle, Circle, Users, Target, List, Database, Shield } from "lucide-react";
+import { CheckCircle, Circle, Users, Target, List, Database, Shield, FileText, Settings } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 const brdSections = [{
   icon: CheckCircle,
@@ -37,24 +37,67 @@ interface BRDProgressProps {
   completedSections: string[];
   hasProjectAndTemplate?: boolean;
   disabled?: boolean;
+  onSectionClick?: (title: string, description: string) => void;
+  showDocumentOverview?: boolean;
 }
 
-export const BRDProgress = ({ selectedSection, onSectionChange, completedSections, hasProjectAndTemplate = false, disabled = false }: BRDProgressProps) => {
+const documentOverviewSections = [
+  {
+    id: "executive-summary",
+    title: "Executive Summary",
+    description: "High level overview of the project",
+    icon: FileText
+  },
+  {
+    id: "stakeholders",
+    title: "Stakeholders",
+    description: "Key people and roles involved",
+    icon: Users
+  },
+  {
+    id: "business-objectives",
+    title: "Business Objectives",
+    description: "Goals and success criteria",
+    icon: Target
+  },
+  {
+    id: "functional-requirements",
+    title: "Functional Requirements",
+    description: "What the system must do",
+    icon: Settings
+  },
+  {
+    id: "data-requirements",
+    title: "Data Requirements",
+    description: "Data storage and processing needs",
+    icon: Database
+  },
+  {
+    id: "security-requirements",
+    title: "Security Requirements",
+    description: "Security and compliance needs",
+    icon: Shield
+  }
+];
+
+export const BRDProgress = ({ selectedSection, onSectionChange, completedSections, hasProjectAndTemplate = false, disabled = false, onSectionClick, showDocumentOverview = false }: BRDProgressProps) => {
   const completedCount = completedSections.length;
-  return <Card className="h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] flex flex-col">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-base font-bold text-[hsl(var(--heading-primary))]">
-            BRD Progress
-            <div className="w-8 h-1 bg-primary rounded"></div>
-          </CardTitle>
-          {hasProjectAndTemplate && (
-            <div className="text-sm text-muted-foreground">
-              {completedCount}/{brdSections.length} sections
-            </div>
-          )}
-        </div>
-      </CardHeader>
+  return (
+    <div className="space-y-4">
+      <Card className="h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] flex flex-col">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2 text-base font-bold text-[hsl(var(--heading-primary))]">
+              BRD Progress
+              <div className="w-8 h-1 bg-primary rounded"></div>
+            </CardTitle>
+            {hasProjectAndTemplate && (
+              <div className="text-sm text-muted-foreground">
+                {completedCount}/{brdSections.length} sections
+              </div>
+            )}
+          </div>
+        </CardHeader>
       <CardContent className="flex-1 overflow-y-auto pr-3">
         {!hasProjectAndTemplate ? (
           <div className="flex items-center justify-center h-full">
@@ -102,5 +145,39 @@ export const BRDProgress = ({ selectedSection, onSectionChange, completedSection
           </div>
         )}
       </CardContent>
-    </Card>;
+    </Card>
+    
+    {showDocumentOverview && onSectionClick && (
+      <Card className="p-4 bg-white border border-border">
+        <h3 className="text-sm font-semibold text-foreground mb-3">Document Overview</h3>
+        <div className="space-y-2">
+          {documentOverviewSections.map((section) => {
+            const IconComponent = section.icon;
+            return (
+              <button
+                key={section.id}
+                onClick={() => onSectionClick(section.title, section.description)}
+                className="w-full text-left p-3 rounded-lg border border-border hover:bg-accent transition-colors group"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="text-muted-foreground group-hover:text-foreground mt-0.5">
+                    <IconComponent className="w-4 h-4" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-sm font-semibold text-foreground mb-0.5">
+                      {section.title}
+                    </h4>
+                    <p className="text-xs text-muted-foreground">
+                      {section.description}
+                    </p>
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </Card>
+    )}
+  </div>
+  );
 };
