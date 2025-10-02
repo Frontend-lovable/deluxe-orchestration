@@ -23,6 +23,12 @@ interface AppStateContextType {
     design: ChatMessageType[];
   };
   setChatMessages: (view: keyof AppStateContextType["chatMessages"], messages: ChatMessageType[]) => void;
+  isFileUploading: boolean;
+  setIsFileUploading: (uploading: boolean) => void;
+  pendingUploadResponse: any | null;
+  setPendingUploadResponse: (response: any | null) => void;
+  isFilesUploaded: boolean;
+  setIsFilesUploaded: (uploaded: boolean) => void;
 }
 
 const AppStateContext = createContext<AppStateContextType | undefined>(undefined);
@@ -37,6 +43,9 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
     jira: [],
     design: [],
   });
+  const [isFileUploading, setIsFileUploading] = useState(false);
+  const [pendingUploadResponse, setPendingUploadResponse] = useState<any | null>(null);
+  const [isFilesUploaded, setIsFilesUploaded] = useState(false);
 
   const setChatMessages = (view: keyof AppStateContextType["chatMessages"], messages: ChatMessageType[]) => {
     setChatMessagesState(prev => ({
@@ -54,6 +63,12 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
         setSelectedBRDTemplate,
         chatMessages,
         setChatMessages,
+        isFileUploading,
+        setIsFileUploading,
+        pendingUploadResponse,
+        setPendingUploadResponse,
+        isFilesUploaded,
+        setIsFilesUploaded,
       }}
     >
       {children}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BRDProgress } from "../brd/BRDProgress";
 import { ChatInterface } from "../chat/ChatInterface";
 import { FileUploadSection } from "../files/FileUploadSection";
@@ -53,11 +53,42 @@ export const BRDDashboard = ({
   selectedProject,
   selectedBRDTemplate
 }: BRDDashboardProps) => {
-  const { chatMessages, setChatMessages, selectedProject: contextProject, selectedBRDTemplate: contextTemplate } = useAppState();
+  const { 
+    chatMessages, 
+    setChatMessages, 
+    selectedProject: contextProject, 
+    selectedBRDTemplate: contextTemplate,
+    pendingUploadResponse,
+    setPendingUploadResponse,
+    isFilesUploaded
+  } = useAppState();
   const [selectedSection, setSelectedSection] = useState<string>("Executive Summary");
   const [completedSections, setCompletedSections] = useState<string[]>([]);
-  const [isFilesUploaded, setIsFilesUploaded] = useState(false);
   const sectionOrder = ["Executive Summary", "Stakeholders", "Business Objectives", "Functional Requirements", "Data Requirements", "Security Requirements"];
+
+  // Check for pending upload response on mount and add to chat
+  useEffect(() => {
+    if (pendingUploadResponse && pendingUploadResponse.message) {
+      const botMessage = {
+        id: `bot-${Date.now()}`,
+        content: pendingUploadResponse.message,
+        isBot: true,
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      };
+      
+      const currentMessages = chatMessages.brd || [];
+      // Only add if not already in messages
+      const messageExists = currentMessages.some(msg => msg.content === botMessage.content);
+      if (!messageExists) {
+        setChatMessages("brd", [...currentMessages, botMessage]);
+      }
+      // Clear the pending response after adding to chat
+      setPendingUploadResponse(null);
+    }
+  }, [pendingUploadResponse, chatMessages.brd, setChatMessages, setPendingUploadResponse]);
   const handleSectionReviewed = () => {
     // Mark current section as completed
     if (!completedSections.includes(selectedSection)) {
@@ -73,23 +104,7 @@ export const BRDDashboard = ({
   };
 
   const handleFileUploadSuccess = (response?: any) => {
-    setIsFilesUploaded(true);
-    
-    // Add the API response to the chat as a bot message
-    if (response && response.message) {
-      const botMessage = {
-        id: `bot-${Date.now()}`,
-        content: response.message,
-        isBot: true,
-        timestamp: new Date().toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit'
-        })
-      };
-      
-      const currentMessages = chatMessages.brd || [];
-      setChatMessages("brd", [...currentMessages, botMessage]);
-    }
+    // Response is already handled by global state and useEffect
   };
   return <div className="p-4 sm:p-6 lg:p-8 bg-white">
       <div className="mb-4 lg:mb-2">

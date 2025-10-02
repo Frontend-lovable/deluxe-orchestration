@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { uploadFiles } from "@/services/projectApi";
+import { useAppState } from "@/contexts/AppStateContext";
 
 interface UploadedFile {
   id: string;
@@ -19,10 +20,15 @@ interface FileUploadSectionProps {
 
 export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) => {
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const { 
+    isFileUploading, 
+    setIsFileUploading, 
+    setPendingUploadResponse,
+    isFilesUploaded,
+    setIsFilesUploaded 
+  } = useAppState();
 
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';
@@ -102,14 +108,15 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
       return;
     }
 
-    setIsSubmitting(true);
+    setIsFileUploading(true);
     try {
       const response = await uploadFiles(filesToUpload);
       toast({
         title: "Files submitted successfully",
         description: `${filesToUpload.length} file(s) have been uploaded to the server.`,
       });
-      setIsSubmitted(true);
+      setIsFilesUploaded(true);
+      setPendingUploadResponse(response);
       onUploadSuccess?.(response);
     } catch (error) {
       toast({
@@ -118,7 +125,7 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
         variant: "destructive",
       });
     } finally {
-      setIsSubmitting(false);
+      setIsFileUploading(false);
     }
   };
   return (
@@ -139,14 +146,14 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
               accept="*/*"
               onChange={handleFileUpload}
               className="hidden"
-              disabled={isSubmitted}
+              disabled={isFilesUploaded}
             />
             <Button 
               variant="outline" 
               size="sm" 
               onClick={triggerFileUpload}
               className="bg-white border border-[#3B3B3B] hover:bg-gray-50 w-full sm:w-auto"
-              disabled={isSubmitted}
+              disabled={isFilesUploaded}
             >
               <Upload className="w-4 h-4 text-[#3B3B3B] mr-2 sm:mr-0" />
               <span className="sm:hidden">Upload Files</span>
@@ -198,8 +205,8 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
         
         {uploadedFiles.length > 0 && (
           <div className="mt-6 space-y-4">
-            <Button variant="outline" className="w-full justify-center gap-2 h-12 bg-white border border-[#8C8C8C] hover:bg-gray-50" onClick={handleSubmitFiles} disabled={uploadedFiles.length === 0 || isSubmitting || isSubmitted}>
-              {isSubmitting ? (
+            <Button variant="outline" className="w-full justify-center gap-2 h-12 bg-white border border-[#8C8C8C] hover:bg-gray-50" onClick={handleSubmitFiles} disabled={uploadedFiles.length === 0 || isFileUploading || isFilesUploaded}>
+              {isFileUploading ? (
                 <>
                   <div className="w-4 h-4 animate-spin rounded-full border-2 border-current border-t-transparent flex-shrink-0" />
                   <span>Submitting...</span>
