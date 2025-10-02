@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { CreateProjectModal } from "@/components/modals/CreateProjectModal";
-import { fetchProjects, getProjectById, getBRDTemplates, type Project, type BRDTemplate } from "@/services/projectApi";
+import { fetchProjects, getProjectById, type Project } from "@/services/projectApi";
 import { useToast } from "@/hooks/use-toast";
 import { useAppState } from "@/contexts/AppStateContext";
 
@@ -24,12 +24,10 @@ interface TopHeaderProps {
 }
 
 export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps) => {
-  const { selectedProject, setSelectedProject, selectedBRDTemplate, setSelectedBRDTemplate } = useAppState();
+  const { selectedProject, setSelectedProject } = useAppState();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoadingProjects, setIsLoadingProjects] = useState(false);
-  const [brdTemplates, setBrdTemplates] = useState<BRDTemplate[]>([]);
-  const [isLoadingTemplates, setIsLoadingTemplates] = useState(false);
   const { toast } = useToast();
   const hasLoadedProjects = useRef(false);
 
@@ -41,13 +39,6 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps
     }
   }, []);
 
-  // Load BRD templates when view changes to BRD
-  useEffect(() => {
-    if (currentView === "brd") {
-      loadBRDTemplates();
-    }
-  }, [currentView]);
-
   const loadProjects = async () => {
     setIsLoadingProjects(true);
     try {
@@ -58,19 +49,6 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps
       console.error("Failed to load projects:", error);
     } finally {
       setIsLoadingProjects(false);
-    }
-  };
-
-  const loadBRDTemplates = async () => {
-    setIsLoadingTemplates(true);
-    try {
-      const templates = await getBRDTemplates();
-      setBrdTemplates(templates);
-    } catch (error) {
-      console.error("Failed to load BRD templates:", error);
-      // Silently handle the error - don't show error toast
-    } finally {
-      setIsLoadingTemplates(false);
     }
   };
 
@@ -86,10 +64,6 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps
       });
       setSelectedProject(null);
     }
-  };
-
-  const handleBRDTemplateSelect = (value: string) => {
-    setSelectedBRDTemplate(value);
   };
 
   return (
@@ -128,37 +102,7 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps
       </div>
       
       <div className="flex items-center gap-2 sm:gap-4">
-        {currentView === "brd" && (
-          <Select onValueChange={handleBRDTemplateSelect}>
-            <SelectTrigger className="w-32 sm:w-40 border-primary" style={{ backgroundColor: '#fff' }}>
-              <SelectValue placeholder={isLoadingTemplates ? "Loading..." : "Create / Update"} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Existing BRD</SelectLabel>
-                <SelectItem value="upi">UPI</SelectItem>
-                <SelectItem value="lorem-ipsum">Lorem Ipsum</SelectItem>
-              </SelectGroup>
-              <SelectSeparator />
-              <SelectGroup>
-                <SelectLabel>Create new BRD</SelectLabel>
-                {brdTemplates.length > 0 ? (
-                  brdTemplates.map((template) => (
-                    <SelectItem key={template.template_id} value={template.template_id}>
-                      {template.template_name}
-                    </SelectItem>
-                  ))
-                ) : (
-                  <SelectItem value="no-templates" disabled>
-                    {isLoadingTemplates ? "Loading templates..." : "No templates available"}
-                  </SelectItem>
-                )}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        )}
-        
-        <Button 
+        <Button
           className="bg-primary hover:bg-primary/90 text-primary-foreground text-sm px-3 sm:px-4 flex items-center gap-2"
           onClick={() => setIsCreateModalOpen(true)}
         >
