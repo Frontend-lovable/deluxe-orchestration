@@ -99,7 +99,14 @@ export const BRDProgress = ({ selectedSection, onSectionChange, completedSection
           </div>
         </CardHeader>
       <CardContent className="flex-1 overflow-y-auto pr-3">
-        {!hasProjectAndTemplate ? (
+        {disabled ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center text-muted-foreground">
+              <div className="text-sm mb-2">Please upload files to begin</div>
+              <div className="text-xs">Upload and submit files to get started</div>
+            </div>
+          </div>
+        ) : !hasProjectAndTemplate ? (
           <div className="space-y-2">
             {documentOverviewSections.map((section) => {
               const IconComponent = section.icon;
@@ -125,13 +132,6 @@ export const BRDProgress = ({ selectedSection, onSectionChange, completedSection
                 </button>
               );
             })}
-          </div>
-        ) : disabled ? (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-center text-muted-foreground">
-              <div className="text-sm mb-2">Please upload files to enable BRD Progress</div>
-              <div className="text-xs">Upload and submit files to get started</div>
-            </div>
           </div>
         ) : (
           <div className="space-y-3 pr-2">
