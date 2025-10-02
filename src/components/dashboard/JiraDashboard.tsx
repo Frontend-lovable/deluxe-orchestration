@@ -4,6 +4,20 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+interface ChatMessageType {
+  id: string;
+  content: string;
+  isBot: boolean;
+  timestamp: string;
+  isTyping?: boolean;
+  isLoading?: boolean;
+}
+
+interface JiraDashboardProps {
+  messages?: ChatMessageType[];
+  onMessagesChange?: (messages: ChatMessageType[]) => void;
+}
 const jiraIssues = [{
   id: "PAYEX-123",
   title: "Implement payment gateway integration",
@@ -75,7 +89,7 @@ const jiraIssues = [{
   sprint: "Sprint 24.1",
   labels: ["Authentication", "Security", "Frontend"]
 }];
-export const JiraDashboard = () => {
+export const JiraDashboard = ({ messages, onMessagesChange }: JiraDashboardProps) => {
   const [selectedIssue, setSelectedIssue] = useState(jiraIssues[0]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all-status");

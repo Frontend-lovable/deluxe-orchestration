@@ -1,7 +1,21 @@
 import { StatsCards } from "./StatsCards";
 import { ChatInterface } from "../chat/ChatInterface";
 
-export const ProjectOverview = () => {
+interface ChatMessageType {
+  id: string;
+  content: string;
+  isBot: boolean;
+  timestamp: string;
+  isTyping?: boolean;
+  isLoading?: boolean;
+}
+
+interface ProjectOverviewProps {
+  messages?: ChatMessageType[];
+  onMessagesChange?: (messages: ChatMessageType[]) => void;
+}
+
+export const ProjectOverview = ({ messages, onMessagesChange }: ProjectOverviewProps) => {
   return (
     <div className="p-2 sm:p-4 md:p-6 lg:p-8" style={{ backgroundColor: '#fff' }}>
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-4 lg:mb-8">
@@ -22,6 +36,8 @@ export const ProjectOverview = () => {
 
 What would you like to work on today?"
                 placeholder="Type your message about business requirements..."
+                externalMessages={messages}
+                onMessagesChange={onMessagesChange}
               />
             </div>
           </div>
