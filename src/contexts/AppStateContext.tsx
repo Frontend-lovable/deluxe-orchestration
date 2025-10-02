@@ -10,6 +10,13 @@ interface ChatMessageType {
   isLoading?: boolean;
 }
 
+interface UploadedFileBatch {
+  id: string;
+  files: Array<{ name: string; size: string }>;
+  contentPreview: string;
+  timestamp: string;
+}
+
 interface AppStateContextType {
   selectedProject: Project | null;
   setSelectedProject: (project: Project | null) => void;
@@ -27,8 +34,8 @@ interface AppStateContextType {
   setIsFileUploading: (uploading: boolean) => void;
   pendingUploadResponse: any | null;
   setPendingUploadResponse: (response: any | null) => void;
-  isFilesUploaded: boolean;
-  setIsFilesUploaded: (uploaded: boolean) => void;
+  uploadedFileBatches: UploadedFileBatch[];
+  addUploadedFileBatch: (batch: UploadedFileBatch) => void;
 }
 
 const AppStateContext = createContext<AppStateContextType | undefined>(undefined);
@@ -45,13 +52,17 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
   });
   const [isFileUploading, setIsFileUploading] = useState(false);
   const [pendingUploadResponse, setPendingUploadResponse] = useState<any | null>(null);
-  const [isFilesUploaded, setIsFilesUploaded] = useState(false);
+  const [uploadedFileBatches, setUploadedFileBatches] = useState<UploadedFileBatch[]>([]);
 
   const setChatMessages = (view: keyof AppStateContextType["chatMessages"], messages: ChatMessageType[]) => {
     setChatMessagesState(prev => ({
       ...prev,
       [view]: messages,
     }));
+  };
+
+  const addUploadedFileBatch = (batch: UploadedFileBatch) => {
+    setUploadedFileBatches(prev => [...prev, batch]);
   };
 
   return (
@@ -67,8 +78,8 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
         setIsFileUploading,
         pendingUploadResponse,
         setPendingUploadResponse,
-        isFilesUploaded,
-        setIsFilesUploaded,
+        uploadedFileBatches,
+        addUploadedFileBatch,
       }}
     >
       {children}

@@ -129,6 +129,7 @@ export const getBRDTemplates = async (): Promise<BRDTemplate[]> => {
 export interface FileUploadResponse {
   success: boolean;
   message: string;
+  content_preview?: string;
   data?: any;
 }
 

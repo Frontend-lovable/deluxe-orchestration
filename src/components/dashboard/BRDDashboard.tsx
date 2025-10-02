@@ -60,7 +60,7 @@ export const BRDDashboard = ({
     selectedBRDTemplate: contextTemplate,
     pendingUploadResponse,
     setPendingUploadResponse,
-    isFilesUploaded
+    uploadedFileBatches
   } = useAppState();
   const [selectedSection, setSelectedSection] = useState<string>("Executive Summary");
   const [completedSections, setCompletedSections] = useState<string[]>([]);
@@ -121,7 +121,7 @@ export const BRDDashboard = ({
         scrollbarColor: '#E6E6E6 transparent'
       }}>
         <div className="lg:col-span-3 order-1 lg:order-1">
-          <BRDProgress selectedSection={selectedSection} onSectionChange={setSelectedSection} completedSections={completedSections} hasProjectAndTemplate={!!(contextProject && contextTemplate)} disabled={!isFilesUploaded} />
+          <BRDProgress selectedSection={selectedSection} onSectionChange={setSelectedSection} completedSections={completedSections} hasProjectAndTemplate={!!(contextProject && contextTemplate)} disabled={uploadedFileBatches.length === 0} />
         </div>
         
         <div className="lg:col-span-6 order-3 lg:order-2">
@@ -134,7 +134,7 @@ export const BRDDashboard = ({
               onReviewed={handleSectionReviewed}
               externalMessages={chatMessages.brd}
               onMessagesChange={(messages) => setChatMessages("brd", messages)}
-              disabled={!isFilesUploaded}
+              disabled={uploadedFileBatches.length === 0}
             />
           </div>
         </div>
