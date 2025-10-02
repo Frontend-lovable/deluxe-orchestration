@@ -172,7 +172,7 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
           {/* Previously uploaded batches */}
           {uploadedFileBatches.map((batch) => (
             <div key={batch.id} className="border border-border rounded-lg p-3 bg-muted/30">
-              <div className="space-y-2 mb-3">
+              <div className="space-y-2">
                 {batch.files.map((file, idx) => (
                   <div key={idx} className="flex items-center gap-2 opacity-60">
                     <FileText className="w-4 h-4 text-muted-foreground flex-shrink-0" />
@@ -184,9 +184,6 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
                     </div>
                   </div>
                 ))}
-              </div>
-              <div className="text-sm bg-background/50 p-2 rounded border border-border/50">
-                <p className="text-muted-foreground whitespace-pre-wrap">{batch.contentPreview}</p>
               </div>
             </div>
           ))}

@@ -25,9 +25,9 @@ const formatChatContent = (text: string) => {
 
   const flushParagraph = () => {
     if (currentParagraph.length > 0) {
-      const content = currentParagraph.join('\n');
+      const content = currentParagraph.join(' ');
       elements.push(
-        <p key={`p-${key++}`} className="mb-3 last:mb-0 leading-relaxed">
+        <p key={`p-${key++}`} className="mb-3 last:mb-0 leading-relaxed whitespace-pre-wrap">
           {formatInlineContent(content)}
         </p>
       );
