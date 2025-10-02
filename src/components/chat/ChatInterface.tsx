@@ -45,10 +45,12 @@ export const ChatInterface = ({
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const hasInitialized = useRef(false);
 
   // Initialize external messages with initial message if they're empty
   useEffect(() => {
-    if (externalMessages !== undefined && externalMessages.length === 0 && initialMessage && onMessagesChange) {
+    if (!hasInitialized.current && externalMessages !== undefined && externalMessages.length === 0 && initialMessage && onMessagesChange) {
+      hasInitialized.current = true;
       onMessagesChange([{
         id: "1",
         content: initialMessage,
@@ -59,7 +61,7 @@ export const ChatInterface = ({
         })
       }]);
     }
-  }, []);
+  }, [externalMessages, initialMessage, onMessagesChange]);
 
   // Use external messages if provided, otherwise use internal state
   const messages = externalMessages || internalMessages;
@@ -84,7 +86,8 @@ export const ChatInterface = ({
     };
     
     const currentMessage = inputValue;
-    setMessages(prev => [...prev, userMessage]);
+    const currentMessages = messages;
+    setMessages([...currentMessages, userMessage]);
     setInputValue("");
     setIsLoading(true);
 
@@ -100,8 +103,10 @@ export const ChatInterface = ({
       }),
       isLoading: true
     };
-    setMessages(prev => [...prev, botMessage]);
+    setMessages([...currentMessages, userMessage, botMessage]);
 
+    let updatedMessages = [...currentMessages, userMessage, botMessage];
+    
     try {
       let accumulatedContent = "";
       
@@ -110,13 +115,12 @@ export const ChatInterface = ({
         accumulatedContent += chunk;
         
         // Update the bot message with accumulated content
-        setMessages(prev => 
-          prev.map(msg => 
-            msg.id === botMessageId 
-              ? { ...msg, content: accumulatedContent, isLoading: false, isTyping: false }
-              : msg
-          )
+        updatedMessages = updatedMessages.map(msg => 
+          msg.id === botMessageId 
+            ? { ...msg, content: accumulatedContent, isLoading: false, isTyping: false }
+            : msg
         );
+        setMessages(updatedMessages);
       }
 
       setIsLoading(false);
@@ -130,19 +134,17 @@ export const ChatInterface = ({
       setIsLoading(false);
       
       // Remove loading message and add error message
-      setMessages(prev => {
-        const withoutLoading = prev.filter(msg => msg.id !== botMessageId);
-        const errorMessage: ChatMessageType = {
-          id: `error-${Date.now()}`,
-          content: "Sorry, I couldn't process your message right now. This might be due to network issues or the API not being publicly accessible. Please try again later.",
-          isBot: true,
-          timestamp: new Date().toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit'
-          })
-        };
-        return [...withoutLoading, errorMessage];
-      });
+      const withoutLoading = updatedMessages.filter(msg => msg.id !== botMessageId);
+      const errorMessage: ChatMessageType = {
+        id: `error-${Date.now()}`,
+        content: "Sorry, I couldn't process your message right now. This might be due to network issues or the API not being publicly accessible. Please try again later.",
+        isBot: true,
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      };
+      setMessages([...withoutLoading, errorMessage]);
       
       toast.error("Failed to send message. Please check your connection and try again.");
     }
