@@ -102,8 +102,9 @@ export const TopHeader = ({ onMenuClick, isMobile, currentView }: TopHeaderProps
       </div>
       
       <div className="flex items-center gap-2 sm:gap-4">
-        <Button
-          className="bg-primary hover:bg-primary/90 text-primary-foreground text-sm px-3 sm:px-4 flex items-center gap-2"
+        <Button 
+          className="text-sm px-3 sm:px-4 flex items-center gap-2 hover:opacity-90"
+          style={{ backgroundColor: '#E7E7E7', color: '#222' }}
           onClick={() => setIsCreateModalOpen(true)}
         >
           <FolderKanban size={16} />
