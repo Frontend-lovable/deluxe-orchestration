@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useRef } from "react";
 import { Download, Upload, FileText, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,7 +19,6 @@ interface FileUploadSectionProps {
 }
 
 export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) => {
-  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const { 
@@ -27,7 +26,9 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
     setIsFileUploading, 
     setPendingUploadResponse,
     uploadedFileBatches,
-    addUploadedFileBatch
+    addUploadedFileBatch,
+    uploadedFiles,
+    setUploadedFiles
   } = useAppState();
 
   const formatFileSize = (bytes: number) => {
