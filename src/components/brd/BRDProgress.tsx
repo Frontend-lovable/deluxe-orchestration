@@ -146,11 +146,17 @@ export const BRDProgress = ({ selectedSection, onSectionChange, completedSection
         ) : dynamicSections && dynamicSections.length > 0 ? (
           <div className="space-y-2">
             {dynamicSections.map((section) => {
+              const isActive = selectedSection === section.title;
               return (
                 <button
                   key={section.title}
-                  onClick={() => onSectionClick?.(section.title, section.description)}
-                  className="w-full text-left p-3 rounded-lg border border-border hover:bg-accent transition-colors group"
+                  onClick={() => {
+                    onSectionClick?.(section.title, section.description);
+                    onSectionChange(section.title);
+                  }}
+                  className={`w-full text-left p-3 rounded-lg border transition-colors group ${
+                    isActive ? 'bg-accent border-2 border-primary' : 'border-border hover:bg-accent'
+                  }`}
                 >
                   <div className="flex items-start gap-3">
                     <div className="text-muted-foreground group-hover:text-foreground mt-0.5">

@@ -64,9 +64,15 @@ export const BRDDashboard = ({
     brdSections,
     setBrdSections
   } = useAppState();
-  const [selectedSection, setSelectedSection] = useState<string>("Executive Summary");
+  const [selectedSection, setSelectedSection] = useState<string>("");
   const [completedSections, setCompletedSections] = useState<string[]>([]);
-  const sectionOrder = ["Executive Summary", "Stakeholders", "Business Objectives", "Functional Requirements", "Data Requirements", "Security Requirements"];
+  
+  // Auto-select first section when brdSections are loaded
+  useEffect(() => {
+    if (brdSections.length > 0 && !selectedSection) {
+      setSelectedSection(brdSections[0].title);
+    }
+  }, [brdSections, selectedSection]);
 
   // Check for pending upload response on mount and add to chat
   useEffect(() => {
@@ -156,10 +162,10 @@ export const BRDDashboard = ({
     }
 
     // Move to next section
-    const currentIndex = sectionOrder.indexOf(selectedSection);
-    if (currentIndex < sectionOrder.length - 1) {
-      const nextSection = sectionOrder[currentIndex + 1];
-      setSelectedSection(nextSection);
+    const currentIndex = brdSections.findIndex(s => s.title === selectedSection);
+    if (currentIndex < brdSections.length - 1) {
+      const nextSection = brdSections[currentIndex + 1];
+      setSelectedSection(nextSection.title);
     }
   };
 
@@ -168,6 +174,9 @@ export const BRDDashboard = ({
   };
 
   const handleSectionTabClick = (title: string, description: string) => {
+    // Update selected section when clicking a tab
+    setSelectedSection(title);
+    
     const currentMessages = chatMessages.brd || [];
     const newMessage = {
       id: `section-${Date.now()}`,
