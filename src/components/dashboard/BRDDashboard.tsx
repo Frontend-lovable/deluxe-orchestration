@@ -65,6 +65,7 @@ export const BRDDashboard = ({
   } = useAppState();
   const [selectedSection, setSelectedSection] = useState<string>("Executive Summary");
   const [completedSections, setCompletedSections] = useState<string[]>([]);
+  const [brdSections, setBrdSections] = useState<any[]>([]);
   const sectionOrder = ["Executive Summary", "Stakeholders", "Business Objectives", "Functional Requirements", "Data Requirements", "Security Requirements"];
 
   // Check for pending upload response on mount and add to chat
@@ -87,6 +88,12 @@ export const BRDDashboard = ({
       if (!messageExists) {
         setChatMessages("brd", [...currentMessages, botMessage]);
       }
+      
+      // Extract sections from response
+      if (pendingUploadResponse.brd_auto_generated?.sections) {
+        setBrdSections(pendingUploadResponse.brd_auto_generated.sections);
+      }
+      
       // Clear the pending response after adding to chat
       setPendingUploadResponse(null);
     }
@@ -108,20 +115,6 @@ export const BRDDashboard = ({
   const handleFileUploadSuccess = (response?: any) => {
     // Response is already handled by global state and useEffect
   };
-
-  const handleSectionTabClick = (title: string, description: string) => {
-    const currentMessages = chatMessages.brd || [];
-    const newMessage = {
-      id: `section-${Date.now()}`,
-      content: `**${title}**\n\n${description}`,
-      isBot: true,
-      timestamp: new Date().toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit'
-      })
-    };
-    setChatMessages("brd", [...currentMessages, newMessage]);
-  };
   return <div className="p-4 sm:p-6 lg:p-8 bg-white">
       <div className="mb-4 lg:mb-2">
         <div className="flex items-center gap-3">
@@ -137,7 +130,14 @@ export const BRDDashboard = ({
         scrollbarColor: '#E6E6E6 transparent'
       }}>
         <div className="lg:col-span-3 order-1 lg:order-1">
-          <BRDProgress selectedSection={selectedSection} onSectionChange={setSelectedSection} completedSections={completedSections} hasProjectAndTemplate={!!(contextProject && contextTemplate)} disabled={uploadedFileBatches.length === 0} />
+          <BRDProgress 
+            selectedSection={selectedSection} 
+            onSectionChange={setSelectedSection} 
+            completedSections={completedSections} 
+            hasProjectAndTemplate={!!(contextProject && contextTemplate)} 
+            disabled={uploadedFileBatches.length === 0}
+            sections={brdSections}
+          />
         </div>
         
         <div className="lg:col-span-6 order-3 lg:order-2">
@@ -157,10 +157,6 @@ export const BRDDashboard = ({
         
         <div className="lg:col-span-3 order-2 lg:order-3 space-y-4">
           <FileUploadSection onUploadSuccess={handleFileUploadSuccess} />
-          
-          {uploadedFileBatches.length > 0 && (
-            <BRDSectionTabs onSectionClick={handleSectionTabClick} />
-          )}
         </div>
       </div>
     </div>;
