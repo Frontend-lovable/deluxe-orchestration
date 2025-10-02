@@ -143,7 +143,7 @@ export const BRDDashboard = ({
             hasProjectAndTemplate={!!(contextProject && contextTemplate)} 
             disabled={uploadedFileBatches.length === 0}
             onSectionClick={handleSectionTabClick}
-            showDocumentOverview={!!(contextProject && contextTemplate)}
+            showDocumentOverview={uploadedFileBatches.length > 0}
           />
         </div>
         
