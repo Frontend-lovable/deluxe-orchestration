@@ -68,10 +68,11 @@ export const BRDDashboard = ({
 
   // Check for pending upload response on mount and add to chat
   useEffect(() => {
-    if (pendingUploadResponse && pendingUploadResponse.message) {
+    if (pendingUploadResponse) {
+      const content = pendingUploadResponse.brd_auto_generated?.content_preview || pendingUploadResponse.message || 'File uploaded successfully';
       const botMessage = {
         id: `bot-${Date.now()}`,
-        content: pendingUploadResponse.message,
+        content: content,
         isBot: true,
         timestamp: new Date().toLocaleTimeString([], {
           hour: '2-digit',

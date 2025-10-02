@@ -127,10 +127,19 @@ export const getBRDTemplates = async (): Promise<BRDTemplate[]> => {
 };
 
 export interface FileUploadResponse {
-  success: boolean;
   message: string;
-  content_preview?: string;
-  data?: any;
+  filename: string;
+  size: number;
+  type: string;
+  processed_for_querying: boolean;
+  s3_uploaded: boolean;
+  brd_auto_generated?: {
+    success: boolean;
+    brd_id: string;
+    content_preview: string;
+    file_path: string;
+    frontend_url: string;
+  };
 }
 
 export const uploadFiles = async (files: File[]): Promise<FileUploadResponse> => {

@@ -116,7 +116,7 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
       const batch = {
         id: `batch-${Date.now()}`,
         files: uploadedFiles.map(f => ({ name: f.name, size: f.size })),
-        contentPreview: response.content_preview || "Files processed successfully",
+        contentPreview: response.brd_auto_generated?.content_preview || response.message || "Files processed successfully",
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
       addUploadedFileBatch(batch);
