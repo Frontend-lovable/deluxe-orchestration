@@ -65,6 +65,7 @@ export const BRDDashboard = ({
   } = useAppState();
   const [selectedSection, setSelectedSection] = useState<string>("Executive Summary");
   const [completedSections, setCompletedSections] = useState<string[]>([]);
+  const [brdSections, setBrdSections] = useState<Array<{title: string; description: string}>>([]);
   const sectionOrder = ["Executive Summary", "Stakeholders", "Business Objectives", "Functional Requirements", "Data Requirements", "Security Requirements"];
 
   // Check for pending upload response on mount and add to chat
@@ -87,6 +88,12 @@ export const BRDDashboard = ({
       if (!messageExists) {
         setChatMessages("brd", [...currentMessages, botMessage]);
       }
+
+      // Extract sections from response
+      if (pendingUploadResponse.brd_auto_generated?.sections) {
+        setBrdSections(pendingUploadResponse.brd_auto_generated.sections);
+      }
+      
       // Clear the pending response after adding to chat
       setPendingUploadResponse(null);
     }
@@ -138,6 +145,10 @@ export const BRDDashboard = ({
       }}>
         <div className="lg:col-span-3 order-1 lg:order-1">
           <BRDProgress selectedSection={selectedSection} onSectionChange={setSelectedSection} completedSections={completedSections} hasProjectAndTemplate={!!(contextProject && contextTemplate)} disabled={uploadedFileBatches.length === 0} />
+          
+          {uploadedFileBatches.length > 0 && brdSections.length > 0 && (
+            <BRDSectionTabs sections={brdSections} onSectionClick={handleSectionTabClick} />
+          )}
         </div>
         
         <div className="lg:col-span-6 order-3 lg:order-2">
@@ -155,12 +166,8 @@ export const BRDDashboard = ({
           </div>
         </div>
         
-        <div className="lg:col-span-3 order-2 lg:order-3 space-y-4">
+        <div className="lg:col-span-3 order-2 lg:order-3">
           <FileUploadSection onUploadSuccess={handleFileUploadSuccess} />
-          
-          {uploadedFileBatches.length > 0 && (
-            <BRDSectionTabs onSectionClick={handleSectionTabClick} />
-          )}
         </div>
       </div>
     </div>;
