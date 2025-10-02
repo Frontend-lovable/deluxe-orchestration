@@ -60,7 +60,9 @@ export const BRDDashboard = ({
     selectedBRDTemplate: contextTemplate,
     pendingUploadResponse,
     setPendingUploadResponse,
-    uploadedFileBatches
+    uploadedFileBatches,
+    brdSections,
+    setBrdSections
   } = useAppState();
   const [selectedSection, setSelectedSection] = useState<string>("Executive Summary");
   const [completedSections, setCompletedSections] = useState<string[]>([]);
@@ -70,6 +72,13 @@ export const BRDDashboard = ({
   useEffect(() => {
     if (pendingUploadResponse) {
       const content = pendingUploadResponse.brd_auto_generated?.content_preview || pendingUploadResponse.message || 'File uploaded successfully';
+      
+      // Parse the content to extract dynamic sections
+      const parsedSections = parseBRDSections(content);
+      if (parsedSections.length > 0) {
+        setBrdSections(parsedSections);
+      }
+      
       const botMessage = {
         id: `bot-${Date.now()}`,
         content: content,
@@ -89,7 +98,41 @@ export const BRDDashboard = ({
       // Clear the pending response after adding to chat
       setPendingUploadResponse(null);
     }
-  }, [pendingUploadResponse, chatMessages.brd, setChatMessages, setPendingUploadResponse]);
+  }, [pendingUploadResponse, chatMessages.brd, setChatMessages, setPendingUploadResponse, setBrdSections]);
+
+  // Function to parse BRD sections from API response
+  const parseBRDSections = (content: string) => {
+    const sections = [];
+    
+    // Try to parse structured content
+    // Looking for patterns like "Executive Summary:", "Stakeholders:", etc.
+    const sectionPatterns = [
+      { title: "Executive Summary", pattern: /Executive Summary[:\n](.*?)(?=\n\n|Stakeholders|$)/is },
+      { title: "Stakeholders", pattern: /Stakeholders[:\n](.*?)(?=\n\n|Business Objectives|$)/is },
+      { title: "Business Objectives", pattern: /Business Objectives[:\n](.*?)(?=\n\n|Functional Requirements|$)/is },
+      { title: "Functional Requirements", pattern: /Functional Requirements[:\n](.*?)(?=\n\n|Data Requirements|$)/is },
+      { title: "Data Requirements", pattern: /Data Requirements[:\n](.*?)(?=\n\n|Security Requirements|$)/is },
+      { title: "Security Requirements", pattern: /Security Requirements[:\n](.*?)$/is }
+    ];
+
+    for (const { title, pattern } of sectionPatterns) {
+      const match = content.match(pattern);
+      if (match) {
+        const sectionContent = match[1]?.trim();
+        const description = sectionContent ? 
+          sectionContent.split('\n')[0].substring(0, 100) + (sectionContent.length > 100 ? '...' : '') :
+          `Details about ${title}`;
+        
+        sections.push({
+          title,
+          description,
+          content: sectionContent || ''
+        });
+      }
+    }
+
+    return sections;
+  };
   const handleSectionReviewed = () => {
     // Mark current section as completed
     if (!completedSections.includes(selectedSection)) {
@@ -144,6 +187,7 @@ export const BRDDashboard = ({
             disabled={uploadedFileBatches.length === 0}
             onSectionClick={handleSectionTabClick}
             showDocumentOverview={uploadedFileBatches.length > 0}
+            dynamicSections={brdSections}
           />
         </div>
         

@@ -25,6 +25,12 @@ interface UploadedFileBatch {
   timestamp: string;
 }
 
+interface BRDSection {
+  title: string;
+  description: string;
+  content?: string;
+}
+
 interface AppStateContextType {
   selectedProject: Project | null;
   setSelectedProject: (project: Project | null) => void;
@@ -46,6 +52,8 @@ interface AppStateContextType {
   addUploadedFileBatch: (batch: UploadedFileBatch) => void;
   uploadedFiles: UploadedFile[];
   setUploadedFiles: (files: UploadedFile[] | ((prev: UploadedFile[]) => UploadedFile[])) => void;
+  brdSections: BRDSection[];
+  setBrdSections: (sections: BRDSection[]) => void;
 }
 
 const AppStateContext = createContext<AppStateContextType | undefined>(undefined);
@@ -64,6 +72,7 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
   const [pendingUploadResponse, setPendingUploadResponse] = useState<any | null>(null);
   const [uploadedFileBatches, setUploadedFileBatches] = useState<UploadedFileBatch[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+  const [brdSections, setBrdSections] = useState<BRDSection[]>([]);
 
   const setChatMessages = (view: keyof AppStateContextType["chatMessages"], messages: ChatMessageType[]) => {
     setChatMessagesState(prev => ({
@@ -93,6 +102,8 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
         addUploadedFileBatch,
         uploadedFiles,
         setUploadedFiles,
+        brdSections,
+        setBrdSections,
       }}
     >
       {children}

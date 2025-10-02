@@ -31,6 +31,12 @@ const brdSections = [{
   description: "Security and compliance needs",
   status: "pending"
 }];
+interface BRDSection {
+  title: string;
+  description: string;
+  content?: string;
+}
+
 interface BRDProgressProps {
   selectedSection: string;
   onSectionChange: (section: string) => void;
@@ -39,6 +45,7 @@ interface BRDProgressProps {
   disabled?: boolean;
   onSectionClick?: (title: string, description: string) => void;
   showDocumentOverview?: boolean;
+  dynamicSections?: BRDSection[];
 }
 
 const documentOverviewSections = [
@@ -80,8 +87,11 @@ const documentOverviewSections = [
   }
 ];
 
-export const BRDProgress = ({ selectedSection, onSectionChange, completedSections, hasProjectAndTemplate = false, disabled = false, onSectionClick, showDocumentOverview = false }: BRDProgressProps) => {
+export const BRDProgress = ({ selectedSection, onSectionChange, completedSections, hasProjectAndTemplate = false, disabled = false, onSectionClick, showDocumentOverview = false, dynamicSections }: BRDProgressProps) => {
   const completedCount = completedSections.length;
+  
+  // Use dynamic sections if available, otherwise fall back to static sections for progress tracking
+  const sectionsToDisplay = dynamicSections && dynamicSections.length > 0 ? dynamicSections : brdSections;
   return (
     <div className="space-y-4">
       <Card className="h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] flex flex-col">
@@ -93,7 +103,7 @@ export const BRDProgress = ({ selectedSection, onSectionChange, completedSection
             </CardTitle>
             {hasProjectAndTemplate && (
               <div className="text-sm text-muted-foreground">
-                {completedCount}/{brdSections.length} sections
+                {completedCount}/{sectionsToDisplay.length} sections
               </div>
             )}
           </div>
@@ -135,7 +145,7 @@ export const BRDProgress = ({ selectedSection, onSectionChange, completedSection
           </div>
         ) : (
           <div className="space-y-3 pr-2">
-            {brdSections.map(section => <div 
+            {sectionsToDisplay.map(section => <div 
                 key={section.title} 
                 onClick={() => onSectionChange(section.title)}
                 className={`flex items-start gap-3 p-3 rounded-lg hover:bg-accent transition-colors cursor-pointer ${
