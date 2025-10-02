@@ -1,50 +1,71 @@
 import { Card } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { FileText, Users, Target, Settings, Database, Shield } from "lucide-react";
 
 interface BRDSection {
+  id: string;
   title: string;
   description: string;
+  icon: React.ReactNode;
 }
 
 interface BRDSectionTabsProps {
-  sections: BRDSection[];
   onSectionClick: (title: string, description: string) => void;
 }
 
-const getIconForSection = (title: string) => {
-  const lowerTitle = title.toLowerCase();
-  if (lowerTitle.includes("executive") || lowerTitle.includes("summary")) {
-    return <FileText className="w-4 h-4" />;
-  } else if (lowerTitle.includes("stakeholder")) {
-    return <Users className="w-4 h-4" />;
-  } else if (lowerTitle.includes("business") || lowerTitle.includes("objective")) {
-    return <Target className="w-4 h-4" />;
-  } else if (lowerTitle.includes("functional")) {
-    return <Settings className="w-4 h-4" />;
-  } else if (lowerTitle.includes("data")) {
-    return <Database className="w-4 h-4" />;
-  } else if (lowerTitle.includes("security")) {
-    return <Shield className="w-4 h-4" />;
+const sections: BRDSection[] = [
+  {
+    id: "executive-summary",
+    title: "Executive Summary",
+    description: "High level overview of the project",
+    icon: <FileText className="w-4 h-4" />
+  },
+  {
+    id: "stakeholders",
+    title: "Stakeholders",
+    description: "Key people and roles involved",
+    icon: <Users className="w-4 h-4" />
+  },
+  {
+    id: "business-objectives",
+    title: "Business Objectives",
+    description: "Goals and success criteria",
+    icon: <Target className="w-4 h-4" />
+  },
+  {
+    id: "functional-requirements",
+    title: "Functional Requirements",
+    description: "What the system must do",
+    icon: <Settings className="w-4 h-4" />
+  },
+  {
+    id: "data-requirements",
+    title: "Data Requirements",
+    description: "Data storage and processing needs",
+    icon: <Database className="w-4 h-4" />
+  },
+  {
+    id: "security-requirements",
+    title: "Security Requirements",
+    description: "Security and compliance needs",
+    icon: <Shield className="w-4 h-4" />
   }
-  return <FileText className="w-4 h-4" />;
-};
+];
 
-export const BRDSectionTabs = ({ sections, onSectionClick }: BRDSectionTabsProps) => {
-  if (!sections || sections.length === 0) return null;
-
+export const BRDSectionTabs = ({ onSectionClick }: BRDSectionTabsProps) => {
   return (
-    <Card className="p-4 bg-white border border-border mt-4">
+    <Card className="p-4 bg-white border border-border">
       <h3 className="text-sm font-semibold text-foreground mb-3">Document Overview</h3>
       <div className="space-y-2">
-        {sections.map((section, index) => (
+        {sections.map((section) => (
           <button
-            key={index}
+            key={section.id}
             onClick={() => onSectionClick(section.title, section.description)}
             className="w-full text-left p-3 rounded-lg border border-border hover:bg-accent transition-colors group"
           >
             <div className="flex items-start gap-3">
               <div className="text-muted-foreground group-hover:text-foreground mt-0.5">
-                {getIconForSection(section.title)}
+                {section.icon}
               </div>
               <div className="flex-1 min-w-0">
                 <h4 className="text-sm font-semibold text-foreground mb-0.5">
