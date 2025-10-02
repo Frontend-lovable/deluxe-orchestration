@@ -46,6 +46,21 @@ export const ChatInterface = ({
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Initialize external messages with initial message if they're empty
+  useEffect(() => {
+    if (externalMessages !== undefined && externalMessages.length === 0 && initialMessage && onMessagesChange) {
+      onMessagesChange([{
+        id: "1",
+        content: initialMessage,
+        isBot: true,
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      }]);
+    }
+  }, []);
+
   // Use external messages if provided, otherwise use internal state
   const messages = externalMessages || internalMessages;
   const setMessages = onMessagesChange || setInternalMessages;
