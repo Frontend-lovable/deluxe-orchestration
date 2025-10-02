@@ -136,8 +136,12 @@ export const BRDDashboard = ({
         scrollbarWidth: 'thin',
         scrollbarColor: '#E6E6E6 transparent'
       }}>
-        <div className="lg:col-span-3 order-1 lg:order-1">
+        <div className="lg:col-span-3 order-1 lg:order-1 space-y-4">
           <BRDProgress selectedSection={selectedSection} onSectionChange={setSelectedSection} completedSections={completedSections} hasProjectAndTemplate={!!(contextProject && contextTemplate)} disabled={uploadedFileBatches.length === 0} />
+          
+          {uploadedFileBatches.length > 0 && (
+            <BRDSectionTabs onSectionClick={handleSectionTabClick} />
+          )}
         </div>
         
         <div className="lg:col-span-6 order-3 lg:order-2">
@@ -155,12 +159,8 @@ export const BRDDashboard = ({
           </div>
         </div>
         
-        <div className="lg:col-span-3 order-2 lg:order-3 space-y-4">
+        <div className="lg:col-span-3 order-2 lg:order-3">
           <FileUploadSection onUploadSuccess={handleFileUploadSuccess} />
-          
-          {uploadedFileBatches.length > 0 && (
-            <BRDSectionTabs onSectionClick={handleSectionTabClick} />
-          )}
         </div>
       </div>
     </div>;
