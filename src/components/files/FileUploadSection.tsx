@@ -29,7 +29,8 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
     addUploadedFileBatch,
     uploadedFiles,
     setUploadedFiles,
-    isBRDApproved
+    isBRDApproved,
+    selectedProject
   } = useAppState();
 
   const formatFileSize = (bytes: number) => {
@@ -91,6 +92,14 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
   };
 
   const triggerFileUpload = () => {
+    if (!selectedProject) {
+      toast({
+        title: "No project selected",
+        description: "Please select a project first from the Project Workspace",
+        variant: "destructive",
+      });
+      return;
+    }
     fileInputRef.current?.click();
   };
 
@@ -162,6 +171,7 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
               size="sm" 
               onClick={triggerFileUpload}
               className="bg-white border border-[#3B3B3B] hover:bg-gray-50 w-full sm:w-auto"
+              disabled={!selectedProject}
             >
               <Upload className="w-4 h-4 text-[#3B3B3B] mr-2 sm:mr-0" />
               <span className="sm:hidden">Upload Files</span>
@@ -170,6 +180,14 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
         </div>
       </CardHeader>
       <CardContent className="flex-1 overflow-y-auto pr-2">
+        {!selectedProject ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center text-muted-foreground">
+              <div className="text-sm mb-2">No project selected</div>
+              <div className="text-xs">Please select a project first from Project Workspace</div>
+            </div>
+          </div>
+        ) : (
         <div className="space-y-4">
           {/* Previously uploaded batches */}
           {uploadedFileBatches.map((batch) => (
@@ -269,6 +287,7 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
           </Button>
         </div>
         </div>
+        )}
       </CardContent>
     </Card>
   );
