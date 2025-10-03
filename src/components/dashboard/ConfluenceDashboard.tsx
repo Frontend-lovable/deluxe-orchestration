@@ -235,8 +235,9 @@ export const ConfluenceDashboard = () => {
                         [&_table]:mb-6 [&_table]:w-full [&_table]:border-collapse [&_table]:border [&_table]:border-[#DEDCDC]
                         [&_th]:border [&_th]:border-[#DEDCDC] [&_th]:bg-gray-50 [&_th]:px-4 [&_th]:py-2 [&_th]:text-left [&_th]:font-semibold [&_th]:text-[#3B3B3B]
                         [&_td]:border [&_td]:border-[#DEDCDC] [&_td]:px-4 [&_td]:py-2 [&_td]:text-[#747474]
-                        [&_tr]:border-b [&_tr]:border-[#DEDCDC]"
-                        dangerouslySetInnerHTML={{ __html: pageDetails.body.storage.value }}
+                        [&_tr]:border-b [&_tr]:border-[#DEDCDC]
+                        [&_ac-structured-macro]:hidden [&_ac-adf-extension]:hidden"
+                        dangerouslySetInnerHTML={{ __html: pageDetails.body.storage.value.replace(/true%7B%22[^<]*/g, '').replace(/<ac:structured-macro[^>]*>[\s\S]*?<\/ac:structured-macro>/g, '').replace(/<ac:adf-extension[^>]*>[\s\S]*?<\/ac:adf-extension>/g, '') }}
                       />
                       
                       {pageDetails.ancestors && pageDetails.ancestors.length > 0 && (
