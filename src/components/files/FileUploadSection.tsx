@@ -126,18 +126,46 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
 
     setIsFileUploading(true);
     try {
-      const response = await uploadFiles(filesToUpload);
+      let accumulatedContent = '';
+      let lastResponse: any = null;
       
-      // Store brdId from response
-      if (response.brd_auto_generated?.brd_id) {
-        setBrdId(response.brd_auto_generated.brd_id);
+      for await (const chunk of uploadFiles(filesToUpload)) {
+        lastResponse = chunk;
+        
+        if (chunk.type === 'content') {
+          accumulatedContent += chunk.content || '';
+          // Stream content to chat and BRD Progress
+          setPendingUploadResponse({
+            ...lastResponse,
+            brd_auto_generated: {
+              ...lastResponse.brd_auto_generated,
+              content_preview: accumulatedContent
+            }
+          });
+        } else if (chunk.type === 'sections') {
+          // Update BRD sections
+          setPendingUploadResponse({
+            ...lastResponse,
+            brd_auto_generated: {
+              ...lastResponse.brd_auto_generated,
+              sections: chunk.sections
+            }
+          });
+        } else if (chunk.type === 'complete') {
+          lastResponse = chunk;
+        }
+      }
+      
+      // Store brdId from final response
+      if (lastResponse?.brd_auto_generated?.brd_id) {
+        setBrdId(lastResponse.brd_auto_generated.brd_id);
       }
       
       // Add batch with content preview
       const batch = {
         id: `batch-${Date.now()}`,
         files: uploadedFiles.map(f => ({ name: f.name, size: f.size })),
-        contentPreview: response.brd_auto_generated?.content_preview || response.message || "Files processed successfully",
+        contentPreview: accumulatedContent || lastResponse?.brd_auto_generated?.content_preview || lastResponse?.message || "Files processed successfully",
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
       addUploadedFileBatch(batch);
@@ -148,8 +176,7 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
       // Remove "Done" badges from BRD Progress
       setIsBRDApproved(false);
       
-      setPendingUploadResponse(response);
-      onUploadSuccess?.(response);
+      onUploadSuccess?.(lastResponse);
     } catch (error) {
       // Keep files in the list and maintain download/delete options on failure
       toast({

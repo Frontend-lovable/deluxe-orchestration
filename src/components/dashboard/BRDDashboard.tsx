@@ -76,8 +76,8 @@ export const BRDDashboard = ({
 
   // Check for pending upload response on mount and add to chat
   useEffect(() => {
-    if (pendingUploadResponse) {
-      const content = pendingUploadResponse.brd_auto_generated?.content_preview || pendingUploadResponse.message || 'File uploaded successfully';
+    if (pendingUploadResponse?.brd_auto_generated?.content_preview) {
+      const content = pendingUploadResponse.brd_auto_generated.content_preview;
       
       // Parse the content to extract dynamic sections
       const parsedSections = parseBRDSections(content);
@@ -85,24 +85,45 @@ export const BRDDashboard = ({
         setBrdSections(parsedSections);
       }
       
-      const botMessage = {
-        id: `bot-${Date.now()}`,
-        content: content,
-        isBot: true,
-        timestamp: new Date().toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit'
-        })
-      };
-      
       const currentMessages = chatMessages.brd || [];
-      // Only add if not already in messages
-      const messageExists = currentMessages.some(msg => msg.content === botMessage.content);
-      if (!messageExists) {
+      const lastMessage = currentMessages[currentMessages.length - 1];
+      
+      // Check if we have sections data (indicates completion)
+      const isComplete = !!pendingUploadResponse.brd_auto_generated.sections;
+      
+      // Update or create streaming message
+      if (lastMessage && lastMessage.isBot && !isComplete) {
+        // Update existing streaming message
+        const updatedMessages = [
+          ...currentMessages.slice(0, -1),
+          {
+            ...lastMessage,
+            content: content,
+            timestamp: new Date().toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit'
+            })
+          }
+        ];
+        setChatMessages("brd", updatedMessages);
+      } else if (!lastMessage || lastMessage.content !== content) {
+        // Add new message if no existing streaming message or content is different
+        const botMessage = {
+          id: `bot-${Date.now()}`,
+          content: content,
+          isBot: true,
+          timestamp: new Date().toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit'
+          })
+        };
         setChatMessages("brd", [...currentMessages, botMessage]);
       }
-      // Clear the pending response after adding to chat
-      setPendingUploadResponse(null);
+      
+      // Clear the pending response when complete
+      if (isComplete) {
+        setPendingUploadResponse(null);
+      }
     }
   }, [pendingUploadResponse, chatMessages.brd, setChatMessages, setPendingUploadResponse, setBrdSections]);
 

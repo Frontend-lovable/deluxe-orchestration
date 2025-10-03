@@ -142,7 +142,7 @@ export interface FileUploadResponse {
   };
 }
 
-export const uploadFiles = async (files: File[]): Promise<FileUploadResponse> => {
+export const uploadFiles = async function* (files: File[]): AsyncGenerator<{ type: string; content?: string; sections?: any[] }, void, unknown> {
   const FILE_UPLOAD_URL = "/api/v1/files/upload";
   try {
     const formData = new FormData();
@@ -152,7 +152,7 @@ export const uploadFiles = async (files: File[]): Promise<FileUploadResponse> =>
       formData.append('file', file);
     });
     
-    formData.append('stream', 'false');
+    formData.append('stream', 'true');
 
     const response = await fetch(FILE_UPLOAD_URL, {
       method: "POST",
@@ -163,8 +163,46 @@ export const uploadFiles = async (files: File[]): Promise<FileUploadResponse> =>
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const data = await response.json();
-    return data;
+    const reader = response.body?.getReader();
+    if (!reader) {
+      throw new Error("No response body");
+    }
+
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      
+      if (done) break;
+      
+      buffer += decoder.decode(value, { stream: true });
+      
+      // Process complete lines
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || ''; // Keep incomplete line in buffer
+      
+      for (const line of lines) {
+        if (line.trim() === '') continue;
+        
+        try {
+          const data = JSON.parse(line);
+          yield data;
+        } catch (e) {
+          console.error('Error parsing JSON:', e, line);
+        }
+      }
+    }
+
+    // Process any remaining data in buffer
+    if (buffer.trim()) {
+      try {
+        const data = JSON.parse(buffer);
+        yield data;
+      } catch (e) {
+        console.error('Error parsing final JSON:', e, buffer);
+      }
+    }
   } catch (error) {
     console.error("Error uploading files:", error);
     throw error;
