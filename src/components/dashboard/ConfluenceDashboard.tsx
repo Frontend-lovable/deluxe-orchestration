@@ -153,7 +153,7 @@ export const ConfluenceDashboard = () => {
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                   <Button 
                     variant="outline" 
-                    className="bg-white border border-[#8C8C8C] text-sm flex items-center gap-2 hover:bg-white hover:text-[#D31222] hover:border-[#D31222] transition-colors"
+                    className="bg-white border border-[#8C8C8C] text-sm flex items-center gap-2 hover:bg-[#D31222] hover:text-white hover:border-[#D31222] transition-colors"
                     style={{
                       color: '#151515',
                       fontSize: '14px',
