@@ -143,7 +143,7 @@ export interface FileUploadResponse {
 }
 
 export const uploadFiles = async (files: File[]): Promise<FileUploadResponse> => {
-  const FILE_UPLOAD_URL = "http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1/files/upload";
+  const FILE_UPLOAD_URL = "/api/v1/files/upload";
   try {
     const formData = new FormData();
     
