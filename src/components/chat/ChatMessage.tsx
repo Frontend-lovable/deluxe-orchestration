@@ -146,7 +146,7 @@ const formatInlineContent = (text: string) => {
     return placeholder;
   });
 
-  // Split by placeholders
+  // Split by placeholders and maintain proper spacing
   const tokens = processedText.split(/(__PLACEHOLDER_\d+__)/g);
   
   tokens.forEach((token, index) => {
@@ -177,7 +177,13 @@ const formatInlineContent = (text: string) => {
         );
       }
     } else if (token) {
-      parts.push(token);
+      // Split token by spaces and add each word separately to preserve spacing
+      const words = token.split(/(\s+)/);
+      words.forEach((word, wordIndex) => {
+        if (word) {
+          parts.push(word);
+        }
+      });
     }
   });
 
