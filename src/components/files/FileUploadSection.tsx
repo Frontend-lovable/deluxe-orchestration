@@ -163,7 +163,7 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
   };
 
   const handleDownloadBRD = async () => {
-    if (!brdId) {
+    if (uploadedFileBatches.length === 0) {
       toast({
         title: "No BRD available",
         description: "Please upload files and generate a BRD first.",
@@ -172,13 +172,19 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
       return;
     }
 
+    // Get the most recent batch's content preview
+    const latestBatch = uploadedFileBatches[uploadedFileBatches.length - 1];
+    const contentPreview = latestBatch.contentPreview;
+    const projectName = selectedProject?.project_name || "project";
+    const filename = `${projectName}_brd`;
+
     setIsBRDDownloading(true);
     try {
-      const blob = await downloadBRD(brdId);
+      const blob = await downloadBRD(contentPreview, filename);
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `BRD_${brdId}.docx`;
+      a.download = `${filename}.docx`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);

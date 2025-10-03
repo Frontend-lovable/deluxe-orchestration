@@ -171,11 +171,18 @@ export const uploadFiles = async (files: File[]): Promise<FileUploadResponse> =>
   }
 };
 
-export const downloadBRD = async (brdId: string): Promise<Blob> => {
+export const downloadBRD = async (text: string, filename: string): Promise<Blob> => {
   const API_BASE_URL = API_CONFIG.BASE_URL;
   try {
-    const response = await fetch(`${API_BASE_URL}/files/brd/${brdId}/download`, {
-      method: "GET",
+    const response = await fetch(`${API_BASE_URL}/files/brd/download`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        text,
+        filename
+      }),
     });
 
     if (!response.ok) {
