@@ -116,7 +116,6 @@ const formatInlineContent = (text: string) => {
   const parts: (string | JSX.Element)[] = [];
   const replacements: { type: string; content: string; url?: string }[] = [];
   let processedText = text;
-  let key = 0;
 
   // Process inline code first (highest priority)
   processedText = processedText.replace(/`([^`]+)`/g, (match, code) => {
@@ -177,7 +176,8 @@ const formatInlineContent = (text: string) => {
         );
       }
     } else if (token) {
-      parts.push(token);
+      // Wrap text in span to preserve spaces when adjacent to JSX elements
+      parts.push(<span key={`text-${index}`}>{token}</span>);
     }
   });
 
