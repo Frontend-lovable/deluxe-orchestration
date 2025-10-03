@@ -140,10 +140,12 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
       let lastResponse: any = null;
       
       for await (const chunk of uploadFiles(filesToUpload)) {
+        console.log('📦 Received chunk:', chunk.type);
         lastResponse = chunk;
         
         if (chunk.type === 'content') {
           accumulatedContent += chunk.content || '';
+          console.log('📄 Accumulated content length:', accumulatedContent.length);
           // Stream content to chat and BRD Progress
           setPendingUploadResponse({
             ...lastResponse,
@@ -153,6 +155,7 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
             }
           });
         } else if (chunk.type === 'sections') {
+          console.log('📋 Received sections');
           // Update BRD sections
           setPendingUploadResponse({
             ...lastResponse,
@@ -162,6 +165,7 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
             }
           });
         } else if (chunk.type === 'complete') {
+          console.log('✅ Upload complete');
           lastResponse = chunk;
         }
       }

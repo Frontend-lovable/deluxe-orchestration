@@ -79,20 +79,24 @@ export const BRDDashboard = ({
     if (pendingUploadResponse?.brd_auto_generated?.content_preview) {
       const content = pendingUploadResponse.brd_auto_generated.content_preview;
       
+      console.log('📝 Streaming content update:', content.substring(0, 100) + '...');
+      
       // Parse the content to extract dynamic sections
       const parsedSections = parseBRDSections(content);
       if (parsedSections.length > 0) {
         setBrdSections(parsedSections);
       }
       
-      const currentMessages = chatMessages.brd || [];
-      const lastMessage = currentMessages[currentMessages.length - 1];
-      
       // Check if we have sections data (indicates completion)
       const isComplete = !!pendingUploadResponse.brd_auto_generated.sections;
       
+      const currentMessages = chatMessages.brd || [];
+      const lastMessage = currentMessages[currentMessages.length - 1];
+      const streamingId = 'streaming-bot-message';
+      
       // Update or create streaming message
-      if (lastMessage && lastMessage.isBot && !isComplete) {
+      if (lastMessage && lastMessage.id === streamingId && !isComplete) {
+        console.log('✏️ Updating streaming message');
         // Update existing streaming message
         const updatedMessages = [
           ...currentMessages.slice(0, -1),
@@ -106,22 +110,27 @@ export const BRDDashboard = ({
           }
         ];
         setChatMessages("brd", updatedMessages);
-      } else if (!lastMessage || lastMessage.content !== content) {
-        // Add new message if no existing streaming message or content is different
-        const botMessage = {
-          id: `bot-${Date.now()}`,
-          content: content,
-          isBot: true,
-          timestamp: new Date().toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit'
-          })
-        };
-        setChatMessages("brd", [...currentMessages, botMessage]);
+      } else if (!lastMessage || lastMessage.id !== streamingId) {
+        console.log('➕ Creating new streaming message');
+        // Add new streaming message
+        const newMessages = [
+          ...currentMessages,
+          {
+            id: streamingId,
+            content: content,
+            isBot: true,
+            timestamp: new Date().toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit'
+            })
+          }
+        ];
+        setChatMessages("brd", newMessages);
       }
       
       // Clear the pending response when complete
       if (isComplete) {
+        console.log('✅ Streaming complete');
         setPendingUploadResponse(null);
       }
     }
