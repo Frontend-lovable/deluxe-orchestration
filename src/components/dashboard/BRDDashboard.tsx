@@ -182,10 +182,14 @@ export const BRDDashboard = ({
     // Update selected section when clicking a tab
     setSelectedSection(title);
     
+    // Find the full section content from brdSections
+    const section = brdSections.find(s => s.title === title);
+    const fullContent = section?.content || description;
+    
     const currentMessages = chatMessages.brd || [];
     const newMessage = {
       id: `section-${Date.now()}`,
-      content: `**${title}**\n\n${description}`,
+      content: `**${title}**\n\n${fullContent}`,
       isBot: true,
       timestamp: new Date().toLocaleTimeString([], {
         hour: '2-digit',
