@@ -126,18 +126,45 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
 
     setIsFileUploading(true);
     try {
-      const response = await uploadFiles(filesToUpload);
+      const { streamUploadFiles } = await import("@/services/projectApi");
+      let accumulatedContent = '';
+      let extractedBrdId = '';
       
-      // Store brdId from response
-      if (response.brd_auto_generated?.brd_id) {
-        setBrdId(response.brd_auto_generated.brd_id);
+      for await (const chunk of streamUploadFiles(filesToUpload)) {
+        accumulatedContent += chunk;
+        
+        // Try to extract brd_id from accumulated content
+        if (!extractedBrdId) {
+          const brdIdMatch = accumulatedContent.match(/"brd_id":\s*"([^"]+)"/);
+          if (brdIdMatch) {
+            extractedBrdId = brdIdMatch[1];
+            setBrdId(extractedBrdId);
+          }
+        }
+        
+        // Update pending response with streaming content
+        setPendingUploadResponse({
+          message: accumulatedContent,
+          filename: '',
+          size: 0,
+          type: '',
+          processed_for_querying: true,
+          s3_uploaded: true,
+          brd_auto_generated: {
+            success: true,
+            brd_id: extractedBrdId,
+            content_preview: accumulatedContent,
+            file_path: '',
+            frontend_url: ''
+          }
+        });
       }
       
-      // Add batch with content preview
+      // Add batch after streaming completes
       const batch = {
         id: `batch-${Date.now()}`,
         files: uploadedFiles.map(f => ({ name: f.name, size: f.size })),
-        contentPreview: response.brd_auto_generated?.content_preview || response.message || "Files processed successfully",
+        contentPreview: accumulatedContent || "Files processed successfully",
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
       addUploadedFileBatch(batch);
@@ -148,8 +175,7 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
       // Remove "Done" badges from BRD Progress
       setIsBRDApproved(false);
       
-      setPendingUploadResponse(response);
-      onUploadSuccess?.(response);
+      onUploadSuccess?.();
     } catch (error) {
       // Keep files in the list and maintain download/delete options on failure
       toast({
