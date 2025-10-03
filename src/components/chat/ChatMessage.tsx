@@ -176,8 +176,8 @@ const formatInlineContent = (text: string) => {
         );
       }
     } else if (token) {
-      // Wrap text in span to preserve spaces when adjacent to JSX elements
-      parts.push(<span key={`text-${index}`}>{token}</span>);
+      // Push text directly as string - React handles it correctly
+      parts.push(token);
     }
   });
 
