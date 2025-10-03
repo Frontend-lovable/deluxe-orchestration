@@ -174,6 +174,11 @@ export const BRDDashboard = ({
   };
 
   const handleSectionTabClick = (title: string, description: string) => {
+    // Only update and add message if it's a different section
+    if (selectedSection === title) {
+      return;
+    }
+    
     // Update selected section when clicking a tab
     setSelectedSection(title);
     
