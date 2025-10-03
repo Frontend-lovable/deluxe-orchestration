@@ -152,7 +152,7 @@ export const uploadFiles = async (files: File[]): Promise<FileUploadResponse> =>
       formData.append('file', file);
     });
     
-    formData.append('stream', 'false');
+    formData.append('stream', 'true');
 
     const response = await fetch(FILE_UPLOAD_URL, {
       method: "POST",
