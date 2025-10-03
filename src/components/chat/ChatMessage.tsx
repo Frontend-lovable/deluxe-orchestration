@@ -211,7 +211,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
               : 'bg-primary text-white rounded-br-md'
             }
           `}>
-            <div className={`text-sm break-words ${message.isBot ? 'text-foreground' : 'text-white [&_*]:text-white'}`}>
+            <div className={`text-sm break-words whitespace-pre-wrap ${message.isBot ? 'text-foreground' : 'text-white [&_*]:text-white'}`}>
               {message.isLoading ? (
                 <span className="inline-flex gap-1 align-middle items-center h-4">
                   <span className="inline-block w-2 h-2 bg-current rounded-full animate-thinking" style={{ animationDelay: '0s' }} />
