@@ -224,8 +224,7 @@ export const ConfluenceDashboard = () => {
 
                     <div className="space-y-4">
                       <div 
-                        className="text-sm text-foreground leading-relaxed prose prose-sm max-w-none"
-                        style={{color: '#747474'}}
+                        className="text-sm leading-relaxed prose prose-sm max-w-none [&_*]:text-[#747474] [&_h1]:text-[#3B3B3B] [&_h2]:text-[#3B3B3B] [&_h3]:text-[#3B3B3B] [&_h4]:text-[#3B3B3B] [&_h5]:text-[#3B3B3B] [&_h6]:text-[#3B3B3B] [&_strong]:text-[#3B3B3B]"
                         dangerouslySetInnerHTML={{ __html: pageDetails.body.storage.value }}
                       />
                       
