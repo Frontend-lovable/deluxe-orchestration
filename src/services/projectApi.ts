@@ -243,14 +243,25 @@ export async function* streamUploadFiles(files: File[]): AsyncGenerator<string, 
           if (data && data !== '[DONE]') {
             try {
               const parsed = JSON.parse(data);
-              console.log('Parsed JSON:', parsed);
+              console.log('Parsed JSON structure:', Object.keys(parsed));
               
-              // Try to extract content from various possible field names
+              // Skip metadata-only objects (type, id, paragraph, etc.)
+              const metadataFields = ['type', 'id', 'paragraph', 'index', 'timestamp', 'status'];
+              const hasOnlyMetadata = Object.keys(parsed).every(key => metadataFields.includes(key));
+              
+              if (hasOnlyMetadata) {
+                console.log('Skipping metadata-only object');
+                continue;
+              }
+              
+              // Try to extract actual content from various possible field names
               const content = parsed.content || 
                             parsed.message || 
                             parsed.text || 
                             parsed.response || 
                             parsed.chunk ||
+                            parsed.output ||
+                            parsed.data ||
                             parsed.delta?.content ||
                             '';
               
@@ -262,13 +273,12 @@ export async function* streamUploadFiles(files: File[]): AsyncGenerator<string, 
                 console.log('Yielding string content:', parsed.substring(0, 100));
                 yield parsed;
               } else {
-                console.log('Could not extract content from JSON, structure:', Object.keys(parsed));
-                // Don't yield the entire JSON object, just skip it
+                console.log('No text content found in:', parsed);
               }
             } catch (e) {
               console.log('JSON parse failed, treating as plain text:', data.substring(0, 100));
-              // If it's not valid JSON, it might be plain text - yield it
-              if (data && !data.startsWith('{')) {
+              // If it's not valid JSON and doesn't look like metadata, yield it
+              if (data && !data.startsWith('{') && !data.includes('"type"')) {
                 yield data;
               }
             }
