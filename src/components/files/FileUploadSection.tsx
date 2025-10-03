@@ -30,7 +30,8 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
     uploadedFiles,
     setUploadedFiles,
     isBRDApproved,
-    selectedProject
+    selectedProject,
+    setIsBRDApproved
   } = useAppState();
 
   const formatFileSize = (bytes: number) => {
@@ -135,9 +136,13 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
       // Clear current files to allow new upload
       setUploadedFiles([]);
       
+      // Remove "Done" badges from BRD Progress
+      setIsBRDApproved(false);
+      
       setPendingUploadResponse(response);
       onUploadSuccess?.(response);
     } catch (error) {
+      // Keep files in the list and maintain download/delete options on failure
       toast({
         title: "Upload failed",
         description: "Failed to upload files. Please try again.",
