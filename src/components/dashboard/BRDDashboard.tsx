@@ -200,7 +200,7 @@ export const BRDDashboard = ({
           <Button variant="ghost" size="sm" onClick={onBack} className="p-2 hover:bg-accent">
             <ArrowLeft className="w-4 h-4" />
           </Button>
-          <h1 className="text-xl font-bold sm:text-base">Payment Gateway</h1>
+          <h1 className="text-xl font-bold sm:text-base">{contextProject?.project_name || "No Project Selected"}</h1>
         </div>
       </div>
       
