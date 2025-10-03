@@ -151,6 +151,8 @@ export const uploadFiles = async (files: File[]): Promise<FileUploadResponse> =>
     files.forEach((file) => {
       formData.append('file', file);
     });
+    
+    formData.append('stream', 'false');
 
     const response = await fetch(FILE_UPLOAD_URL, {
       method: "POST",
