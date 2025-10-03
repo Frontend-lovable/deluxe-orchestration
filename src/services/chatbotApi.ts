@@ -42,7 +42,7 @@ export async function* streamChatMessage(message: string, sectionContext?: strin
     // Build enhanced message with context if provided
     let enhancedMessage = message;
     if (sectionContext) {
-      enhancedMessage = `${sectionContext}\n\n${message}\n\n(Refer to the above subcontent of the Business Requirement Document and user query, then modify the subcontent as per the user's requirement).`;
+      enhancedMessage = `BRD Section Content:\n${sectionContext}\n\nUser Query:\n${message}\n\n(Refer to the above subcontent of the Business Requirement Document and user query, then modify the subcontent as per the user's requirement).`;
     }
     
     const requestBody = {
