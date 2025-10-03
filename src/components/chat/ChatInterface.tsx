@@ -25,6 +25,7 @@ interface ChatInterfaceProps {
   externalMessages?: ChatMessageType[];
   onMessagesChange?: (messages: ChatMessageType[]) => void;
   disabled?: boolean;
+  sectionContext?: string;
 }
 export const ChatInterface = ({
   title,
@@ -34,7 +35,8 @@ export const ChatInterface = ({
   onReviewed,
   externalMessages,
   onMessagesChange,
-  disabled = false
+  disabled = false,
+  sectionContext
 }: ChatInterfaceProps) => {
   const { setIsBRDApproved, brdSections } = useAppState();
   const [internalMessages, setInternalMessages] = useState<ChatMessageType[]>([...(initialMessage ? [{
@@ -132,7 +134,7 @@ export const ChatInterface = ({
       let accumulatedContent = "";
       
       // Stream the response
-      for await (const chunk of streamChatMessage(currentMessage)) {
+      for await (const chunk of streamChatMessage(currentMessage, sectionContext)) {
         accumulatedContent += chunk;
         
         // Update the bot message with accumulated content
