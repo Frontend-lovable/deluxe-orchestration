@@ -126,6 +126,7 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
 
     setIsFileUploading(true);
     try {
+      console.log('=== FILE UPLOAD START ===');
       const { streamUploadFiles } = await import("@/services/projectApi");
       
       // Add temporary batch immediately to enable chatbox (200 status received)
@@ -136,13 +137,19 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
       addUploadedFileBatch(tempBatch);
+      console.log('Added temp batch to enable chatbox');
       
       let accumulatedContent = '';
       let extractedBrdId = '';
+      let chunkCount = 0;
       
       // Start streaming into chatbox
+      console.log('Starting stream iteration...');
       for await (const chunk of streamUploadFiles(filesToUpload)) {
+        chunkCount++;
+        console.log(`Chunk ${chunkCount} received:`, chunk.substring(0, 100));
         accumulatedContent += chunk;
+        console.log(`Accumulated content length: ${accumulatedContent.length}`);
         
         // Try to extract brd_id from accumulated content
         if (!extractedBrdId) {
@@ -150,11 +157,12 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
           if (brdIdMatch) {
             extractedBrdId = brdIdMatch[1];
             setBrdId(extractedBrdId);
+            console.log('Extracted brd_id:', extractedBrdId);
           }
         }
         
         // Update pending response with streaming content - this triggers chatbox update
-        setPendingUploadResponse({
+        const updatePayload = {
           message: accumulatedContent,
           filename: '',
           size: 0,
@@ -168,8 +176,11 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
             file_path: '',
             frontend_url: ''
           }
-        });
+        };
+        console.log('Updating pendingUploadResponse with content length:', accumulatedContent.length);
+        setPendingUploadResponse(updatePayload);
       }
+      console.log(`Stream complete. Total chunks: ${chunkCount}, Total content length: ${accumulatedContent.length}`);
       
       // Clear current files to allow new upload
       setUploadedFiles([]);

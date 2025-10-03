@@ -175,6 +175,9 @@ export async function* streamUploadFiles(files: File[]): AsyncGenerator<string, 
   const FILE_UPLOAD_URL = "/api/v1/files/upload";
   const formData = new FormData();
   
+  console.log('=== STREAM UPLOAD FILES START ===');
+  console.log('Files to upload:', files.map(f => f.name));
+  
   // API expects 'file' field name (singular)
   files.forEach((file) => {
     formData.append('file', file);
@@ -187,6 +190,9 @@ export async function* streamUploadFiles(files: File[]): AsyncGenerator<string, 
     body: formData,
   });
 
+  console.log('Response status:', response.status);
+  console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
@@ -198,32 +204,69 @@ export async function* streamUploadFiles(files: File[]): AsyncGenerator<string, 
     throw new Error('Response body is not readable');
   }
 
+  let buffer = '';
+  
   try {
     while (true) {
       const { done, value } = await reader.read();
       
-      if (done) break;
+      if (done) {
+        console.log('Stream ended, remaining buffer:', buffer);
+        break;
+      }
       
       const chunk = decoder.decode(value, { stream: true });
-      const lines = chunk.split('\n');
+      console.log('Raw chunk received:', chunk);
       
-      for (const line of lines) {
+      buffer += chunk;
+      
+      // Process complete lines
+      let newlineIndex;
+      while ((newlineIndex = buffer.indexOf('\n')) !== -1) {
+        let line = buffer.slice(0, newlineIndex);
+        buffer = buffer.slice(newlineIndex + 1);
+        
+        // Handle CRLF
+        if (line.endsWith('\r')) {
+          line = line.slice(0, -1);
+        }
+        
+        console.log('Processing line:', line);
+        
+        // Skip empty lines and comments
+        if (!line.trim() || line.startsWith(':')) continue;
+        
         if (line.startsWith('data: ')) {
           const data = line.slice(6).trim();
+          console.log('Data extracted:', data);
+          
           if (data && data !== '[DONE]') {
             try {
               const parsed = JSON.parse(data);
+              console.log('Parsed JSON:', parsed);
+              
               if (parsed.content) {
+                console.log('Yielding content:', parsed.content);
                 yield parsed.content;
+              } else if (parsed.message) {
+                console.log('Yielding message:', parsed.message);
+                yield parsed.message;
+              } else {
+                console.log('No content/message field, yielding raw data:', data);
+                yield data;
               }
             } catch (e) {
-              // If not JSON, yield the raw data
+              console.log('JSON parse failed, yielding raw data:', data);
               yield data;
             }
+          } else if (data === '[DONE]') {
+            console.log('Stream done marker received');
+            break;
           }
         }
       }
     }
+    console.log('=== STREAM UPLOAD FILES END ===');
   } finally {
     reader.releaseLock();
   }

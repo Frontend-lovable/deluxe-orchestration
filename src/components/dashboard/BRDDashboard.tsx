@@ -77,12 +77,17 @@ export const BRDDashboard = ({
   // Check for pending upload response on mount and add to chat
   useEffect(() => {
     if (pendingUploadResponse) {
+      console.log('=== BRD DASHBOARD - PENDING UPLOAD RESPONSE UPDATE ===');
       const content = pendingUploadResponse.brd_auto_generated?.content_preview || pendingUploadResponse.message || 'File uploaded successfully';
+      console.log('Content length:', content.length);
+      console.log('Content preview (first 200 chars):', content.substring(0, 200));
       
       // Parse the content to extract dynamic sections
       const parsedSections = parseBRDSections(content);
+      console.log('Parsed sections count:', parsedSections.length);
       if (parsedSections.length > 0) {
         setBrdSections(parsedSections);
+        console.log('BRD sections updated');
       }
       
       const currentMessages = chatMessages.brd || [];
@@ -90,6 +95,7 @@ export const BRDDashboard = ({
       
       // Find existing streaming message
       const existingIndex = currentMessages.findIndex(msg => msg.id === streamingId);
+      console.log('Existing message index:', existingIndex);
       
       if (existingIndex >= 0) {
         // Update existing message with new content
@@ -102,9 +108,11 @@ export const BRDDashboard = ({
             minute: '2-digit'
           })
         };
+        console.log('Updating existing message with content length:', content.length);
         setChatMessages("brd", updatedMessages);
       } else {
         // Create new streaming message
+        console.log('Creating new streaming message');
         const botMessage = {
           id: streamingId,
           content: content,
@@ -116,6 +124,7 @@ export const BRDDashboard = ({
         };
         setChatMessages("brd", [...currentMessages, botMessage]);
       }
+      console.log('Chat messages updated, current count:', chatMessages.brd?.length || 0);
     }
   }, [pendingUploadResponse, chatMessages.brd, setChatMessages, setBrdSections]);
 
