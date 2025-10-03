@@ -25,6 +25,7 @@ interface ChatInterfaceProps {
   externalMessages?: ChatMessageType[];
   onMessagesChange?: (messages: ChatMessageType[]) => void;
   disabled?: boolean;
+  enableStreaming?: boolean;
 }
 export const ChatInterface = ({
   title,
@@ -34,7 +35,8 @@ export const ChatInterface = ({
   onReviewed,
   externalMessages,
   onMessagesChange,
-  disabled = false
+  disabled = false,
+  enableStreaming = true
 }: ChatInterfaceProps) => {
   const { setIsBRDApproved, brdSections } = useAppState();
   const [internalMessages, setInternalMessages] = useState<ChatMessageType[]>([...(initialMessage ? [{
@@ -131,11 +133,24 @@ export const ChatInterface = ({
     try {
       let accumulatedContent = "";
       
-      // Stream the response
-      for await (const chunk of streamChatMessage(currentMessage)) {
-        accumulatedContent += chunk;
-        
-        // Update the bot message with accumulated content
+      if (enableStreaming) {
+        console.log('🔄 Starting streaming chat for BRD Assistant');
+        // Stream the response
+        for await (const chunk of streamChatMessage(currentMessage)) {
+          accumulatedContent += chunk;
+          
+          // Update the bot message with accumulated content
+          updatedMessages = updatedMessages.map(msg => 
+            msg.id === botMessageId 
+              ? { ...msg, content: accumulatedContent, isLoading: false, isTyping: false }
+              : msg
+          );
+          setMessages(updatedMessages);
+        }
+        console.log('✅ Streaming complete for BRD Assistant');
+      } else {
+        // Non-streaming fallback (if needed)
+        accumulatedContent = "Response would appear here";
         updatedMessages = updatedMessages.map(msg => 
           msg.id === botMessageId 
             ? { ...msg, content: accumulatedContent, isLoading: false, isTyping: false }

@@ -266,6 +266,7 @@ export const BRDDashboard = ({
               externalMessages={chatMessages.brd}
               onMessagesChange={(messages) => setChatMessages("brd", messages)}
               disabled={uploadedFileBatches.length === 0}
+              enableStreaming={true}
             />
           </div>
         </div>
