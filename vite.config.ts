@@ -11,7 +11,8 @@ export default defineConfig(({ mode }) => ({
     allowedHosts: process.env.ALLOWED_HOSTS?.split(',') || [],
     proxy: {
       '/api': {
-        target: 'http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000',
+        // target: 'http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000',
+         target: 'http://localhost:8000',
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, '/api')
