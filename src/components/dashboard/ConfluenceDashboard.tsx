@@ -224,7 +224,18 @@ export const ConfluenceDashboard = () => {
 
                     <div className="space-y-6">
                       <div 
-                        className="text-sm leading-relaxed prose prose-sm max-w-none [&_*]:text-[#747474] [&_h1]:text-[#3B3B3B] [&_h1]:font-bold [&_h1]:text-base [&_h1]:mb-4 [&_h1]:mt-6 [&_h2]:text-[#3B3B3B] [&_h2]:font-bold [&_h2]:text-base [&_h2]:mb-3 [&_h2]:mt-5 [&_h3]:text-[#3B3B3B] [&_h3]:font-bold [&_h3]:mb-2 [&_h3]:mt-4 [&_h4]:text-[#3B3B3B] [&_h5]:text-[#3B3B3B] [&_h6]:text-[#3B3B3B] [&_strong]:text-[#3B3B3B] [&_strong]:font-semibold [&_p]:mb-3 [&_ul]:mb-3 [&_ol]:mb-3 [&_table]:mb-4"
+                        className="text-sm leading-relaxed prose prose-sm max-w-none 
+                        [&_*]:text-[#747474] 
+                        [&_h1]:text-[#3B3B3B] [&_h1]:font-bold [&_h1]:text-base [&_h1]:mb-4 [&_h1]:mt-6 
+                        [&_h2]:text-[#3B3B3B] [&_h2]:font-bold [&_h2]:text-base [&_h2]:mb-3 [&_h2]:mt-5 
+                        [&_h3]:text-[#3B3B3B] [&_h3]:font-bold [&_h3]:mb-2 [&_h3]:mt-4 
+                        [&_h4]:text-[#3B3B3B] [&_h5]:text-[#3B3B3B] [&_h6]:text-[#3B3B3B] 
+                        [&_strong]:text-[#3B3B3B] [&_strong]:font-semibold 
+                        [&_p]:mb-3 [&_ul]:mb-3 [&_ol]:mb-3 
+                        [&_table]:mb-6 [&_table]:w-full [&_table]:border-collapse [&_table]:border [&_table]:border-[#DEDCDC]
+                        [&_th]:border [&_th]:border-[#DEDCDC] [&_th]:bg-gray-50 [&_th]:px-4 [&_th]:py-2 [&_th]:text-left [&_th]:font-semibold [&_th]:text-[#3B3B3B]
+                        [&_td]:border [&_td]:border-[#DEDCDC] [&_td]:px-4 [&_td]:py-2 [&_td]:text-[#747474]
+                        [&_tr]:border-b [&_tr]:border-[#DEDCDC]"
                         dangerouslySetInnerHTML={{ __html: pageDetails.body.storage.value }}
                       />
                       
