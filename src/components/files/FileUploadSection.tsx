@@ -33,7 +33,9 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
     selectedProject,
     setIsBRDApproved,
     brdId,
-    setBrdId
+    setBrdId,
+    isBRDDownloading,
+    setIsBRDDownloading
   } = useAppState();
 
   const formatFileSize = (bytes: number) => {
@@ -170,6 +172,7 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
       return;
     }
 
+    setIsBRDDownloading(true);
     try {
       const blob = await downloadBRD(brdId);
       const url = URL.createObjectURL(blob);
@@ -191,6 +194,8 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
         description: "Failed to download BRD. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsBRDDownloading(false);
     }
   };
 
@@ -331,11 +336,20 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
           <Button 
             className="w-full mt-4" 
             variant="default" 
-            disabled={!isBRDApproved}
+            disabled={!isBRDApproved || isBRDDownloading}
             onClick={handleDownloadBRD}
           >
-            <Download className="w-4 h-4 mr-2 flex-shrink-0" />
-            <span>Download BRD</span>
+            {isBRDDownloading ? (
+              <>
+                <div className="w-4 h-4 animate-spin rounded-full border-2 border-current border-t-transparent mr-2 flex-shrink-0" />
+                <span>Downloading...</span>
+              </>
+            ) : (
+              <>
+                <Download className="w-4 h-4 mr-2 flex-shrink-0" />
+                <span>Download BRD</span>
+              </>
+            )}
           </Button>
         </div>
         </div>

@@ -46,6 +46,8 @@ interface AppStateContextType {
   setChatMessages: (view: keyof AppStateContextType["chatMessages"], messages: ChatMessageType[]) => void;
   isFileUploading: boolean;
   setIsFileUploading: (uploading: boolean) => void;
+  isBRDDownloading: boolean;
+  setIsBRDDownloading: (downloading: boolean) => void;
   pendingUploadResponse: any | null;
   setPendingUploadResponse: (response: any | null) => void;
   uploadedFileBatches: UploadedFileBatch[];
@@ -73,6 +75,7 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
     design: [],
   });
   const [isFileUploading, setIsFileUploading] = useState(false);
+  const [isBRDDownloading, setIsBRDDownloading] = useState(false);
   const [pendingUploadResponse, setPendingUploadResponse] = useState<any | null>(null);
   const [uploadedFileBatches, setUploadedFileBatches] = useState<UploadedFileBatch[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
@@ -102,6 +105,8 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
         setChatMessages,
         isFileUploading,
         setIsFileUploading,
+        isBRDDownloading,
+        setIsBRDDownloading,
         pendingUploadResponse,
         setPendingUploadResponse,
         uploadedFileBatches,
