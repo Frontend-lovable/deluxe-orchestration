@@ -126,61 +126,21 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
 
     setIsFileUploading(true);
     try {
-      console.log('=== FILE UPLOAD START ===');
-      const { streamUploadFiles } = await import("@/services/projectApi");
+      const response = await uploadFiles(filesToUpload);
       
-      // Add temporary batch immediately to enable chatbox (200 status received)
-      const tempBatch = {
+      // Store brdId from response
+      if (response.brd_auto_generated?.brd_id) {
+        setBrdId(response.brd_auto_generated.brd_id);
+      }
+      
+      // Add batch with content preview
+      const batch = {
         id: `batch-${Date.now()}`,
         files: uploadedFiles.map(f => ({ name: f.name, size: f.size })),
-        contentPreview: "Processing files...",
+        contentPreview: response.brd_auto_generated?.content_preview || response.message || "Files processed successfully",
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
-      addUploadedFileBatch(tempBatch);
-      console.log('Added temp batch to enable chatbox');
-      
-      let accumulatedContent = '';
-      let extractedBrdId = '';
-      let chunkCount = 0;
-      
-      // Start streaming into chatbox
-      console.log('Starting stream iteration...');
-      for await (const chunk of streamUploadFiles(filesToUpload)) {
-        chunkCount++;
-        console.log(`Chunk ${chunkCount} received:`, chunk.substring(0, 100));
-        accumulatedContent += chunk;
-        console.log(`Accumulated content length: ${accumulatedContent.length}`);
-        
-        // Try to extract brd_id from accumulated content
-        if (!extractedBrdId) {
-          const brdIdMatch = accumulatedContent.match(/"brd_id":\s*"([^"]+)"/);
-          if (brdIdMatch) {
-            extractedBrdId = brdIdMatch[1];
-            setBrdId(extractedBrdId);
-            console.log('Extracted brd_id:', extractedBrdId);
-          }
-        }
-        
-        // Update pending response with streaming content - this triggers chatbox update
-        const updatePayload = {
-          message: accumulatedContent,
-          filename: '',
-          size: 0,
-          type: '',
-          processed_for_querying: true,
-          s3_uploaded: true,
-          brd_auto_generated: {
-            success: true,
-            brd_id: extractedBrdId,
-            content_preview: accumulatedContent,
-            file_path: '',
-            frontend_url: ''
-          }
-        };
-        console.log('Updating pendingUploadResponse with content length:', accumulatedContent.length);
-        setPendingUploadResponse(updatePayload);
-      }
-      console.log(`Stream complete. Total chunks: ${chunkCount}, Total content length: ${accumulatedContent.length}`);
+      addUploadedFileBatch(batch);
       
       // Clear current files to allow new upload
       setUploadedFiles([]);
@@ -188,7 +148,8 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
       // Remove "Done" badges from BRD Progress
       setIsBRDApproved(false);
       
-      onUploadSuccess?.();
+      setPendingUploadResponse(response);
+      onUploadSuccess?.(response);
     } catch (error) {
       // Keep files in the list and maintain download/delete options on failure
       toast({

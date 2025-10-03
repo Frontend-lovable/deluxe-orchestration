@@ -77,58 +77,34 @@ export const BRDDashboard = ({
   // Check for pending upload response on mount and add to chat
   useEffect(() => {
     if (pendingUploadResponse) {
-      console.log('=== BRD DASHBOARD - PENDING UPLOAD RESPONSE UPDATE ===');
       const content = pendingUploadResponse.brd_auto_generated?.content_preview || pendingUploadResponse.message || 'File uploaded successfully';
-      console.log('Content length:', content.length);
-      console.log('Content preview (first 200 chars):', content.substring(0, 200));
       
       // Parse the content to extract dynamic sections
       const parsedSections = parseBRDSections(content);
-      console.log('Parsed sections count:', parsedSections.length);
       if (parsedSections.length > 0) {
         setBrdSections(parsedSections);
-        console.log('BRD sections updated');
       }
+      
+      const botMessage = {
+        id: `bot-${Date.now()}`,
+        content: content,
+        isBot: true,
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      };
       
       const currentMessages = chatMessages.brd || [];
-      const streamingId = 'streaming-message';
-      
-      // Find existing streaming message
-      const existingIndex = currentMessages.findIndex(msg => msg.id === streamingId);
-      console.log('Existing message index:', existingIndex);
-      
-      if (existingIndex >= 0) {
-        // Update existing message with new content (remove loading state during streaming)
-        const updatedMessages = [...currentMessages];
-        updatedMessages[existingIndex] = {
-          ...updatedMessages[existingIndex],
-          content: content,
-          isLoading: false,
-          timestamp: new Date().toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit'
-          })
-        };
-        console.log('Updating existing message with content length:', content.length);
-        setChatMessages("brd", updatedMessages);
-      } else {
-        // Create new streaming message (no loading indicator)
-        console.log('Creating new streaming message');
-        const botMessage = {
-          id: streamingId,
-          content: content,
-          isBot: true,
-          isLoading: false,
-          timestamp: new Date().toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit'
-          })
-        };
+      // Only add if not already in messages
+      const messageExists = currentMessages.some(msg => msg.content === botMessage.content);
+      if (!messageExists) {
         setChatMessages("brd", [...currentMessages, botMessage]);
       }
-      console.log('Chat messages updated, current count:', chatMessages.brd?.length || 0);
+      // Clear the pending response after adding to chat
+      setPendingUploadResponse(null);
     }
-  }, [pendingUploadResponse, chatMessages.brd, setChatMessages, setBrdSections]);
+  }, [pendingUploadResponse, chatMessages.brd, setChatMessages, setPendingUploadResponse, setBrdSections]);
 
   // Function to parse BRD sections from API response
   const parseBRDSections = (content: string) => {
