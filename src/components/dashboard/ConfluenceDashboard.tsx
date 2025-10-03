@@ -146,9 +146,9 @@ export const ConfluenceDashboard = () => {
 
           {/* Right Content Area */}
           <div className="xl:col-span-9 order-2 xl:order-2">
-            <div className="border border-[#CCCCCC] rounded-lg h-auto">
+            <div className="border border-[#CCCCCC] rounded-lg h-auto xl:h-[650px] flex flex-col">
               {/* Header */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 border-b border-[#CCCCCC] p-4 sm:p-[24px] gap-4">
+              <div className="flex-shrink-0 flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#CCCCCC] p-4 sm:p-[24px] gap-4">
                 <h1 className="text-base font-semibold truncate flex-1">{pageDetails?.title || 'Select a page'}</h1>
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                   <Button 
@@ -196,7 +196,7 @@ export const ConfluenceDashboard = () => {
               </div>
 
               {/* Content Details */}
-              <div className="rounded-lg p-4 sm:p-6 bg-white">
+              <div className="flex-1 overflow-y-auto rounded-lg p-4 sm:p-6 bg-white [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-[#E6E6E6] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full">
                 {isLoadingDetails ? (
                   <div className="text-center py-8 text-muted-foreground">
                     Loading page details...
@@ -222,9 +222,9 @@ export const ConfluenceDashboard = () => {
                       </Badge>
                     </div>
 
-                    <div className="space-y-4">
+                    <div className="space-y-6">
                       <div 
-                        className="text-sm leading-relaxed prose prose-sm max-w-none [&_*]:text-[#747474] [&_h1]:text-[#3B3B3B] [&_h2]:text-[#3B3B3B] [&_h3]:text-[#3B3B3B] [&_h4]:text-[#3B3B3B] [&_h5]:text-[#3B3B3B] [&_h6]:text-[#3B3B3B] [&_strong]:text-[#3B3B3B]"
+                        className="text-sm leading-relaxed prose prose-sm max-w-none [&_*]:text-[#747474] [&_h1]:text-[#3B3B3B] [&_h1]:font-bold [&_h1]:text-base [&_h1]:mb-4 [&_h1]:mt-6 [&_h2]:text-[#3B3B3B] [&_h2]:font-bold [&_h2]:text-base [&_h2]:mb-3 [&_h2]:mt-5 [&_h3]:text-[#3B3B3B] [&_h3]:font-bold [&_h3]:mb-2 [&_h3]:mt-4 [&_h4]:text-[#3B3B3B] [&_h5]:text-[#3B3B3B] [&_h6]:text-[#3B3B3B] [&_strong]:text-[#3B3B3B] [&_strong]:font-semibold [&_p]:mb-3 [&_ul]:mb-3 [&_ol]:mb-3 [&_table]:mb-4"
                         dangerouslySetInnerHTML={{ __html: pageDetails.body.storage.value }}
                       />
                       
