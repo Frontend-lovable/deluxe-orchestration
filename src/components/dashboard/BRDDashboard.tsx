@@ -198,6 +198,18 @@ export const BRDDashboard = ({
     };
     setChatMessages("brd", [...currentMessages, newMessage]);
   };
+
+  const handleResponseReceived = (response: string) => {
+    // Update the BRD section content with the AI response
+    if (selectedSection) {
+      const updatedSections = brdSections.map(section =>
+        section.title === selectedSection
+          ? { ...section, content: response }
+          : section
+      );
+      setBrdSections(updatedSections);
+    }
+  };
   return <div className="p-4 sm:p-6 lg:p-8 bg-white">
       <div className="mb-4 lg:mb-2">
         <div className="flex items-center gap-3">
@@ -237,6 +249,7 @@ export const BRDDashboard = ({
               onMessagesChange={(messages) => setChatMessages("brd", messages)}
               disabled={uploadedFileBatches.length === 0}
               sectionContext={brdSections.find(s => s.title === selectedSection)?.content}
+              onResponseReceived={handleResponseReceived}
             />
           </div>
         </div>

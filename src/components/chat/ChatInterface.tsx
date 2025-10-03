@@ -26,6 +26,7 @@ interface ChatInterfaceProps {
   onMessagesChange?: (messages: ChatMessageType[]) => void;
   disabled?: boolean;
   sectionContext?: string;
+  onResponseReceived?: (response: string) => void;
 }
 export const ChatInterface = ({
   title,
@@ -36,7 +37,8 @@ export const ChatInterface = ({
   externalMessages,
   onMessagesChange,
   disabled = false,
-  sectionContext
+  sectionContext,
+  onResponseReceived
 }: ChatInterfaceProps) => {
   const { setIsBRDApproved, brdSections } = useAppState();
   const [internalMessages, setInternalMessages] = useState<ChatMessageType[]>([...(initialMessage ? [{
@@ -147,6 +149,11 @@ export const ChatInterface = ({
       }
 
       setIsLoading(false);
+
+      // Call the callback with the complete response
+      if (onResponseReceived && accumulatedContent) {
+        onResponseReceived(accumulatedContent);
+      }
 
       // Check if the message is "reviewed" and trigger the callback
       if (currentMessage.trim().toLowerCase() === "reviewed" && onReviewed) {
