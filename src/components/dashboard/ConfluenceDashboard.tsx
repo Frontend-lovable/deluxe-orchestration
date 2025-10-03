@@ -202,6 +202,7 @@ export const ConfluenceDashboard = () => {
                     Loading page details...
                   </div>
                 ) : pageDetails ? (
+                  pageDetails.body?.storage?.value ? (
                   <>
                     <div className="flex items-center gap-3 mb-4">
                       <Avatar className="h-8 w-8 flex-shrink-0">
@@ -255,6 +256,18 @@ export const ConfluenceDashboard = () => {
                       )}
                     </div>
                   </>
+                  ) : (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <p className="mb-2">This page doesn't have content available.</p>
+                      <Button 
+                        variant="outline" 
+                        className="mt-4"
+                        onClick={() => pageDetails && window.open(`https://siriusai-team-test.atlassian.net/wiki${pageDetails._links.webui}`, '_blank')}
+                      >
+                        View in Confluence
+                      </Button>
+                    </div>
+                  )
                 ) : (
                   <div className="text-center py-8 text-muted-foreground">
                     Select a page to view details
