@@ -3,7 +3,7 @@ import { Download, Upload, FileText, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { uploadFiles, downloadBRD, streamUploadFiles } from "@/services/projectApi";
+import { uploadFiles, downloadBRD } from "@/services/projectApi";
 import { useAppState } from "@/contexts/AppStateContext";
 
 interface UploadedFile {
@@ -125,16 +125,22 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
     }
 
     setIsFileUploading(true);
-    
     try {
-      // Add temporary batch immediately to enable chatbox
-      const tempBatch = {
+      const response = await uploadFiles(filesToUpload);
+      
+      // Store brdId from response
+      if (response.brd_auto_generated?.brd_id) {
+        setBrdId(response.brd_auto_generated.brd_id);
+      }
+      
+      // Add batch with content preview
+      const batch = {
         id: `batch-${Date.now()}`,
         files: uploadedFiles.map(f => ({ name: f.name, size: f.size })),
-        contentPreview: "Processing...",
+        contentPreview: response.brd_auto_generated?.content_preview || response.message || "Files processed successfully",
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
-      addUploadedFileBatch(tempBatch);
+      addUploadedFileBatch(batch);
       
       // Clear current files to allow new upload
       setUploadedFiles([]);
@@ -142,49 +148,10 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
       // Remove "Done" badges from BRD Progress
       setIsBRDApproved(false);
       
-      let accumulatedContent = "";
-      let brdIdFromStream = "";
-      
-      // Stream the response
-      for await (const chunk of streamUploadFiles(filesToUpload)) {
-        accumulatedContent += chunk;
-        
-        // Try to extract brd_id from accumulated content if it contains JSON
-        if (accumulatedContent.includes('"brd_id"') && !brdIdFromStream) {
-          try {
-            const jsonMatch = accumulatedContent.match(/\{[^}]*"brd_id"[^}]*\}/);
-            if (jsonMatch) {
-              const parsed = JSON.parse(jsonMatch[0]);
-              if (parsed.brd_id) {
-                brdIdFromStream = parsed.brd_id;
-                setBrdId(brdIdFromStream);
-              }
-            }
-          } catch (e) {
-            // Ignore parsing errors, continue streaming
-          }
-        }
-        
-        // Update pending response with streamed content
-        setPendingUploadResponse({
-          message: "Streaming content",
-          filename: filesToUpload[0]?.name || "file",
-          size: filesToUpload[0]?.size || 0,
-          type: filesToUpload[0]?.type || "application/octet-stream",
-          processed_for_querying: true,
-          s3_uploaded: true,
-          brd_auto_generated: {
-            success: true,
-            brd_id: brdIdFromStream,
-            content_preview: accumulatedContent,
-            file_path: "",
-            frontend_url: ""
-          }
-        });
-      }
-      
-      onUploadSuccess?.();
+      setPendingUploadResponse(response);
+      onUploadSuccess?.(response);
     } catch (error) {
+      // Keep files in the list and maintain download/delete options on failure
       toast({
         title: "Upload failed",
         description: "Failed to upload files. Please try again.",
