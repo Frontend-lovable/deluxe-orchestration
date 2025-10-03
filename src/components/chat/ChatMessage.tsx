@@ -264,24 +264,24 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
 
   return (
     <div className={`flex ${message.isBot ? 'justify-start' : 'justify-end'} mb-4`}>
-      <div className={`flex ${message.isBot ? 'flex-row' : 'flex-row-reverse'} items-end gap-2 max-w-[80%]`}>
+      <div className={`flex ${message.isBot ? 'flex-row' : 'flex-row-reverse'} items-end gap-2 max-w-[85%]`}>
         {message.isBot && (
-          <Avatar className="w-6 h-6 bg-primary">
+          <Avatar className="w-6 h-6 bg-primary flex-shrink-0">
             <AvatarFallback className="bg-primary text-primary-foreground text-xs">
               AI
             </AvatarFallback>
           </Avatar>
         )}
         
-        <div className="space-y-1">
+        <div className="space-y-1 min-w-0 flex-1">
           <div className={`
-            px-4 py-3 rounded-2xl max-w-full
+            px-4 py-3 rounded-2xl w-full
             ${message.isBot 
               ? 'bg-muted text-foreground rounded-bl-md' 
               : 'bg-primary text-white rounded-br-md'
             }
           `}>
-            <div className={`text-sm break-words whitespace-pre-wrap ${message.isBot ? 'text-foreground' : 'text-white [&_*]:text-white'}`}>
+            <div className={`text-sm break-words overflow-wrap-anywhere ${message.isBot ? 'text-foreground' : 'text-white [&_*]:text-white'}`}>
               {message.isLoading ? (
                 <span className="inline-flex gap-1 align-middle items-center h-4">
                   <span className="inline-block w-2 h-2 bg-current rounded-full animate-thinking" style={{ animationDelay: '0s' }} />

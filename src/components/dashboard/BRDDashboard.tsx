@@ -98,11 +98,12 @@ export const BRDDashboard = ({
       console.log('Existing message index:', existingIndex);
       
       if (existingIndex >= 0) {
-        // Update existing message with new content
+        // Update existing message with new content (remove loading state during streaming)
         const updatedMessages = [...currentMessages];
         updatedMessages[existingIndex] = {
           ...updatedMessages[existingIndex],
           content: content,
+          isLoading: false,
           timestamp: new Date().toLocaleTimeString([], {
             hour: '2-digit',
             minute: '2-digit'
@@ -111,12 +112,13 @@ export const BRDDashboard = ({
         console.log('Updating existing message with content length:', content.length);
         setChatMessages("brd", updatedMessages);
       } else {
-        // Create new streaming message
+        // Create new streaming message (no loading indicator)
         console.log('Creating new streaming message');
         const botMessage = {
           id: streamingId,
           content: content,
           isBot: true,
+          isLoading: false,
           timestamp: new Date().toLocaleTimeString([], {
             hour: '2-digit',
             minute: '2-digit'
