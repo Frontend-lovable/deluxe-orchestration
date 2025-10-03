@@ -3,7 +3,7 @@ import { Download, Upload, FileText, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { uploadFiles } from "@/services/projectApi";
+import { uploadFiles, downloadBRD } from "@/services/projectApi";
 import { useAppState } from "@/contexts/AppStateContext";
 
 interface UploadedFile {
@@ -31,7 +31,9 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
     setUploadedFiles,
     isBRDApproved,
     selectedProject,
-    setIsBRDApproved
+    setIsBRDApproved,
+    brdId,
+    setBrdId
   } = useAppState();
 
   const formatFileSize = (bytes: number) => {
@@ -124,6 +126,11 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
     try {
       const response = await uploadFiles(filesToUpload);
       
+      // Store brdId from response
+      if (response.brd_auto_generated?.brd_id) {
+        setBrdId(response.brd_auto_generated.brd_id);
+      }
+      
       // Add batch with content preview
       const batch = {
         id: `batch-${Date.now()}`,
@@ -152,6 +159,41 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
       setIsFileUploading(false);
     }
   };
+
+  const handleDownloadBRD = async () => {
+    if (!brdId) {
+      toast({
+        title: "No BRD available",
+        description: "Please upload files and generate a BRD first.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const blob = await downloadBRD(brdId);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `BRD_${brdId}.docx`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      toast({
+        title: "BRD downloaded",
+        description: "Your BRD has been downloaded successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "Download failed",
+        description: "Failed to download BRD. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <Card className="h-auto xl:h-[600px] flex flex-col">
       <CardHeader className="pb-4">
@@ -286,7 +328,12 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
               Complete all BRD sections before submitting for approval
             </p>
           </div>
-          <Button className="w-full mt-4" variant="default" disabled={!isBRDApproved}>
+          <Button 
+            className="w-full mt-4" 
+            variant="default" 
+            disabled={!isBRDApproved}
+            onClick={handleDownloadBRD}
+          >
             <Download className="w-4 h-4 mr-2 flex-shrink-0" />
             <span>Download BRD</span>
           </Button>

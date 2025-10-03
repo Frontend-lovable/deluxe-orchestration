@@ -56,6 +56,8 @@ interface AppStateContextType {
   setBrdSections: (sections: BRDSection[]) => void;
   isBRDApproved: boolean;
   setIsBRDApproved: (approved: boolean) => void;
+  brdId: string | null;
+  setBrdId: (id: string | null) => void;
 }
 
 const AppStateContext = createContext<AppStateContextType | undefined>(undefined);
@@ -76,6 +78,7 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [brdSections, setBrdSections] = useState<BRDSection[]>([]);
   const [isBRDApproved, setIsBRDApproved] = useState(false);
+  const [brdId, setBrdId] = useState<string | null>(null);
 
   const setChatMessages = (view: keyof AppStateContextType["chatMessages"], messages: ChatMessageType[]) => {
     setChatMessagesState(prev => ({
@@ -109,6 +112,8 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
         setBrdSections,
         isBRDApproved,
         setIsBRDApproved,
+        brdId,
+        setBrdId,
       }}
     >
       {children}

@@ -95,6 +95,23 @@ export const ChatInterface = ({
     setInputValue("");
     setIsLoading(true);
 
+    // Check if message is "approved" and return custom response without API call
+    if (currentMessage.trim().toLowerCase() === "approved") {
+      const botMessage: ChatMessageType = {
+        id: `bot-${Date.now()}`,
+        content: "All sections have been approved. You can download the BRD and push it to Confluence.",
+        isBot: true,
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      };
+      setMessages([...currentMessages, userMessage, botMessage]);
+      setIsLoading(false);
+      setIsBRDApproved(true);
+      return;
+    }
+
     // Add bot message placeholder that will be updated with streaming content
     const botMessageId = `bot-${Date.now()}`;
     const botMessage: ChatMessageType = {

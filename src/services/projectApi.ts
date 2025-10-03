@@ -152,7 +152,7 @@ export const uploadFiles = async (files: File[]): Promise<FileUploadResponse> =>
       formData.append('file', file);
     });
     
-    formData.append('stream', 'false');
+    formData.append('stream', 'true');
 
     const response = await fetch(FILE_UPLOAD_URL, {
       method: "POST",
@@ -167,6 +167,25 @@ export const uploadFiles = async (files: File[]): Promise<FileUploadResponse> =>
     return data;
   } catch (error) {
     console.error("Error uploading files:", error);
+    throw error;
+  }
+};
+
+export const downloadBRD = async (brdId: string): Promise<Blob> => {
+  const API_BASE_URL = API_CONFIG.BASE_URL;
+  try {
+    const response = await fetch(`${API_BASE_URL}/files/brd/${brdId}/download`, {
+      method: "GET",
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const blob = await response.blob();
+    return blob;
+  } catch (error) {
+    console.error("Error downloading BRD:", error);
     throw error;
   }
 };
