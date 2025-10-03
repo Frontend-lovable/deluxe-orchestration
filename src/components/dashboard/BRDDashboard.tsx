@@ -74,7 +74,7 @@ export const BRDDashboard = ({
     }
   }, [brdSections, selectedSection]);
 
-  // Check for pending upload response on mount and add to chat
+  // Check for pending upload response and update chat with streaming content
   useEffect(() => {
     if (pendingUploadResponse) {
       const content = pendingUploadResponse.brd_auto_generated?.content_preview || pendingUploadResponse.message || 'File uploaded successfully';
@@ -85,26 +85,37 @@ export const BRDDashboard = ({
         setBrdSections(parsedSections);
       }
       
-      const botMessage = {
-        id: `bot-${Date.now()}`,
-        content: content,
-        isBot: true,
-        timestamp: new Date().toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit'
-        })
-      };
-      
+      const streamingId = 'streaming-bot-message';
       const currentMessages = chatMessages.brd || [];
-      // Only add if not already in messages
-      const messageExists = currentMessages.some(msg => msg.content === botMessage.content);
-      if (!messageExists) {
+      
+      // Find if streaming message already exists
+      const existingIndex = currentMessages.findIndex(msg => msg.id === streamingId);
+      
+      if (existingIndex >= 0) {
+        // Update existing streaming message
+        const updatedMessages = [...currentMessages];
+        updatedMessages[existingIndex] = {
+          ...updatedMessages[existingIndex],
+          content: content,
+          isLoading: false
+        };
+        setChatMessages("brd", updatedMessages);
+      } else {
+        // Create new streaming message
+        const botMessage = {
+          id: streamingId,
+          content: content,
+          isBot: true,
+          timestamp: new Date().toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit'
+          }),
+          isLoading: content === "Processing..."
+        };
         setChatMessages("brd", [...currentMessages, botMessage]);
       }
-      // Clear the pending response after adding to chat
-      setPendingUploadResponse(null);
     }
-  }, [pendingUploadResponse, chatMessages.brd, setChatMessages, setPendingUploadResponse, setBrdSections]);
+  }, [pendingUploadResponse, setChatMessages, setBrdSections]);
 
   // Function to parse BRD sections from API response
   const parseBRDSections = (content: string) => {
