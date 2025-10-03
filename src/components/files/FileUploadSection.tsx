@@ -125,6 +125,16 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
     }
 
     setIsFileUploading(true);
+    
+    // Add a temporary batch immediately to enable the chatbox
+    const tempBatch = {
+      id: `batch-${Date.now()}`,
+      files: uploadedFiles.map(f => ({ name: f.name, size: f.size })),
+      contentPreview: "Processing files...",
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+    addUploadedFileBatch(tempBatch);
+    
     try {
       let accumulatedContent = '';
       let lastResponse: any = null;
