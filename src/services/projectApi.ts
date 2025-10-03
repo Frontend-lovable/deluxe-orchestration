@@ -243,21 +243,12 @@ export async function* streamUploadFiles(files: File[]): AsyncGenerator<string, 
           if (data && data !== '[DONE]') {
             try {
               const parsed = JSON.parse(data);
-              console.log('Parsed JSON structure:', Object.keys(parsed));
+              console.log('Parsed JSON structure:', parsed);
               
-              // Skip metadata-only objects (type, id, paragraph, etc.)
-              const metadataFields = ['type', 'id', 'paragraph', 'index', 'timestamp', 'status'];
-              const hasOnlyMetadata = Object.keys(parsed).every(key => metadataFields.includes(key));
-              
-              if (hasOnlyMetadata) {
-                console.log('Skipping metadata-only object');
-                continue;
-              }
-              
-              // Try to extract actual content from various possible field names
-              const content = parsed.content || 
+              // Extract only the text field, ignore type, chunk_count, etc.
+              const content = parsed.text || 
+                            parsed.content || 
                             parsed.message || 
-                            parsed.text || 
                             parsed.response || 
                             parsed.chunk ||
                             parsed.output ||
@@ -266,19 +257,22 @@ export async function* streamUploadFiles(files: File[]): AsyncGenerator<string, 
                             '';
               
               if (content && typeof content === 'string') {
-                console.log('Yielding extracted content:', content.substring(0, 100));
-                yield content;
+                // Clean up any escaped quotes
+                const cleanContent = content.replace(/^"|"$/g, '').replace(/\\"/g, '"');
+                console.log('Yielding cleaned content:', cleanContent.substring(0, 100));
+                yield cleanContent;
               } else if (typeof parsed === 'string') {
                 // If parsed is just a string, yield it
-                console.log('Yielding string content:', parsed.substring(0, 100));
-                yield parsed;
+                const cleanContent = parsed.replace(/^"|"$/g, '').replace(/\\"/g, '"');
+                console.log('Yielding string content:', cleanContent.substring(0, 100));
+                yield cleanContent;
               } else {
                 console.log('No text content found in:', parsed);
               }
             } catch (e) {
               console.log('JSON parse failed, treating as plain text:', data.substring(0, 100));
-              // If it's not valid JSON and doesn't look like metadata, yield it
-              if (data && !data.startsWith('{') && !data.includes('"type"')) {
+              // If it's not valid JSON, yield it as plain text
+              if (data && !data.includes('"type"') && !data.includes('"chunk_count"')) {
                 yield data;
               }
             }
