@@ -127,9 +127,20 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
     setIsFileUploading(true);
     try {
       const { streamUploadFiles } = await import("@/services/projectApi");
+      
+      // Add temporary batch immediately to enable chatbox (200 status received)
+      const tempBatch = {
+        id: `batch-${Date.now()}`,
+        files: uploadedFiles.map(f => ({ name: f.name, size: f.size })),
+        contentPreview: "Processing files...",
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+      addUploadedFileBatch(tempBatch);
+      
       let accumulatedContent = '';
       let extractedBrdId = '';
       
+      // Start streaming into chatbox
       for await (const chunk of streamUploadFiles(filesToUpload)) {
         accumulatedContent += chunk;
         
@@ -142,7 +153,7 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
           }
         }
         
-        // Update pending response with streaming content
+        // Update pending response with streaming content - this triggers chatbox update
         setPendingUploadResponse({
           message: accumulatedContent,
           filename: '',
@@ -159,15 +170,6 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
           }
         });
       }
-      
-      // Add batch after streaming completes
-      const batch = {
-        id: `batch-${Date.now()}`,
-        files: uploadedFiles.map(f => ({ name: f.name, size: f.size })),
-        contentPreview: accumulatedContent || "Files processed successfully",
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
-      addUploadedFileBatch(batch);
       
       // Clear current files to allow new upload
       setUploadedFiles([]);
