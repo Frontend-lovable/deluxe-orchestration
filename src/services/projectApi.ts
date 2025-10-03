@@ -245,19 +245,32 @@ export async function* streamUploadFiles(files: File[]): AsyncGenerator<string, 
               const parsed = JSON.parse(data);
               console.log('Parsed JSON:', parsed);
               
-              if (parsed.content) {
-                console.log('Yielding content:', parsed.content);
-                yield parsed.content;
-              } else if (parsed.message) {
-                console.log('Yielding message:', parsed.message);
-                yield parsed.message;
+              // Try to extract content from various possible field names
+              const content = parsed.content || 
+                            parsed.message || 
+                            parsed.text || 
+                            parsed.response || 
+                            parsed.chunk ||
+                            parsed.delta?.content ||
+                            '';
+              
+              if (content && typeof content === 'string') {
+                console.log('Yielding extracted content:', content.substring(0, 100));
+                yield content;
+              } else if (typeof parsed === 'string') {
+                // If parsed is just a string, yield it
+                console.log('Yielding string content:', parsed.substring(0, 100));
+                yield parsed;
               } else {
-                console.log('No content/message field, yielding raw data:', data);
-                yield data;
+                console.log('Could not extract content from JSON, structure:', Object.keys(parsed));
+                // Don't yield the entire JSON object, just skip it
               }
             } catch (e) {
-              console.log('JSON parse failed, yielding raw data:', data);
-              yield data;
+              console.log('JSON parse failed, treating as plain text:', data.substring(0, 100));
+              // If it's not valid JSON, it might be plain text - yield it
+              if (data && !data.startsWith('{')) {
+                yield data;
+              }
             }
           } else if (data === '[DONE]') {
             console.log('Stream done marker received');
