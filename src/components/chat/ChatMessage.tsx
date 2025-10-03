@@ -177,13 +177,7 @@ const formatInlineContent = (text: string) => {
         );
       }
     } else if (token) {
-      // Split token by spaces and add each word separately to preserve spacing
-      const words = token.split(/(\s+)/);
-      words.forEach((word, wordIndex) => {
-        if (word) {
-          parts.push(word);
-        }
-      });
+      parts.push(token);
     }
   });
 
