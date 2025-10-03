@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ChatMessage } from "./ChatMessage";
 import { streamChatMessage } from "@/services/chatbotApi";
 import { toast } from "sonner";
+import { useAppState } from "@/contexts/AppStateContext";
 interface ChatMessageType {
   id: string;
   content: string;
@@ -35,6 +36,7 @@ export const ChatInterface = ({
   onMessagesChange,
   disabled = false
 }: ChatInterfaceProps) => {
+  const { setIsBRDApproved, brdSections } = useAppState();
   const [internalMessages, setInternalMessages] = useState<ChatMessageType[]>([...(initialMessage ? [{
     id: "1",
     content: initialMessage,
@@ -130,6 +132,11 @@ export const ChatInterface = ({
       // Check if the message is "reviewed" and trigger the callback
       if (currentMessage.trim().toLowerCase() === "reviewed" && onReviewed) {
         onReviewed();
+      }
+
+      // Check if the message is "approved" and enable BRD actions
+      if (currentMessage.trim().toLowerCase() === "approved") {
+        setIsBRDApproved(true);
       }
     } catch (error) {
       console.error('Chat error:', error);

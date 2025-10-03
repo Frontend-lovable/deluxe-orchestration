@@ -54,6 +54,8 @@ interface AppStateContextType {
   setUploadedFiles: (files: UploadedFile[] | ((prev: UploadedFile[]) => UploadedFile[])) => void;
   brdSections: BRDSection[];
   setBrdSections: (sections: BRDSection[]) => void;
+  isBRDApproved: boolean;
+  setIsBRDApproved: (approved: boolean) => void;
 }
 
 const AppStateContext = createContext<AppStateContextType | undefined>(undefined);
@@ -73,6 +75,7 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
   const [uploadedFileBatches, setUploadedFileBatches] = useState<UploadedFileBatch[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [brdSections, setBrdSections] = useState<BRDSection[]>([]);
+  const [isBRDApproved, setIsBRDApproved] = useState(false);
 
   const setChatMessages = (view: keyof AppStateContextType["chatMessages"], messages: ChatMessageType[]) => {
     setChatMessagesState(prev => ({
@@ -104,6 +107,8 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
         setUploadedFiles,
         brdSections,
         setBrdSections,
+        isBRDApproved,
+        setIsBRDApproved,
       }}
     >
       {children}

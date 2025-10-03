@@ -1,5 +1,6 @@
 import { CheckCircle, Circle, Users, Target, List, Database, Shield, FileText, Settings } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useAppState } from "@/contexts/AppStateContext";
 const brdSections = [{
   icon: CheckCircle,
   title: "Executive Summary",
@@ -88,6 +89,7 @@ const documentOverviewSections = [
 ];
 
 export const BRDProgress = ({ selectedSection, onSectionChange, completedSections, hasProjectAndTemplate = false, disabled = false, onSectionClick, showDocumentOverview = false, dynamicSections }: BRDProgressProps) => {
+  const { isBRDApproved } = useAppState();
   const completedCount = completedSections.length;
   
   // Use dynamic sections if available, otherwise fall back to static sections for progress tracking
@@ -170,6 +172,19 @@ export const BRDProgress = ({ selectedSection, onSectionChange, completedSection
                         {section.description}
                       </p>
                     </div>
+                    {isBRDApproved && (
+                      <div className="flex-shrink-0">
+                        <div 
+                          className="px-2 py-1 rounded-md text-xs font-medium"
+                          style={{ 
+                            color: '#008236', 
+                            backgroundColor: '#DBFCE7' 
+                          }}
+                        >
+                          Done
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </button>
               );

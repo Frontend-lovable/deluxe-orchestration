@@ -28,7 +28,8 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
     uploadedFileBatches,
     addUploadedFileBatch,
     uploadedFiles,
-    setUploadedFiles
+    setUploadedFiles,
+    isBRDApproved
   } = useAppState();
 
   const formatFileSize = (bytes: number) => {
@@ -254,7 +255,7 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
         <div className="mt-4">
           <h4 className="font-medium mb-3">Actions</h4>
           <div className="space-y-2">
-            <Button variant="outline" className="w-full justify-center items-center h-12 bg-white border border-[#8C8C8C] hover:bg-gray-50 px-3" disabled={uploadedFileBatches.length === 0}>
+            <Button variant="outline" className="w-full justify-center items-center h-12 bg-white border border-[#8C8C8C] hover:bg-gray-50 px-3" disabled={!isBRDApproved}>
               <Upload className="w-4 h-4 mr-2 flex-shrink-0" />
               <span className="truncate">Upload to Confluence</span>
             </Button>
@@ -262,7 +263,7 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
               Complete all BRD sections before submitting for approval
             </p>
           </div>
-          <Button className="w-full mt-4" variant="default" disabled={uploadedFileBatches.length === 0}>
+          <Button className="w-full mt-4" variant="default" disabled={!isBRDApproved}>
             <Download className="w-4 h-4 mr-2 flex-shrink-0" />
             <span>Download BRD</span>
           </Button>
