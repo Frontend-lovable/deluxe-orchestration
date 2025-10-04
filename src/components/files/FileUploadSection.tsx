@@ -225,19 +225,44 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
         .map((section) => {
           let formattedDescription = section.description;
           
-          // Check if description contains list items
-          if (formattedDescription.includes('\n- ') || formattedDescription.includes('\n• ')) {
-            const parts = formattedDescription.split('\n');
-            const listItems = parts
-              .filter(part => part.trim().startsWith('-') || part.trim().startsWith('•'))
+          // Convert markdown bold to HTML strong tags
+          formattedDescription = formattedDescription.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+          
+          // Check if description contains table-like key-value pairs
+          const lines = formattedDescription.split('\n').filter(line => line.trim());
+          const hasKeyValuePairs = lines.some(line => line.includes(':') && line.includes('<strong>'));
+          
+          if (hasKeyValuePairs) {
+            // Format as table
+            const tableRows = lines
+              .map(line => {
+                if (line.includes(':')) {
+                  const [key, ...valueParts] = line.split(':');
+                  const value = valueParts.join(':').trim();
+                  return `<tr><td>${key.trim()}</td><td>${value}</td></tr>`;
+                }
+                return null;
+              })
+              .filter(row => row !== null)
+              .join('');
+            
+            formattedDescription = `<table><tbody>${tableRows}</tbody></table>`;
+          } else if (formattedDescription.includes('\n- ') || formattedDescription.includes('\n• ')) {
+            // Format as bullet list
+            const listItems = lines
+              .filter(line => line.trim().startsWith('-') || line.trim().startsWith('•'))
               .map(item => `<li>${item.replace(/^[-•]\s*/, '').trim()}</li>`)
               .join('');
             formattedDescription = `<ul>${listItems}</ul>`;
           } else {
-            formattedDescription = `<p>${formattedDescription}</p>`;
+            // Format as paragraphs
+            formattedDescription = lines.map(line => `<p>${line}</p>`).join('');
           }
 
-          return `<h3>${section.title}</h3>${formattedDescription}${section.content ? `<p>${section.content}</p>` : ''}`;
+          const formattedContent = section.content ? 
+            section.content.split('\n').filter(line => line.trim()).map(line => `<p>${line}</p>`).join('') : '';
+
+          return `<h3>${section.title}</h3>${formattedDescription}${formattedContent}`;
         })
         .join('\n');
 
