@@ -20,8 +20,9 @@ export interface Project {
 interface CreateProjectResponse extends Project {}
 
 export const createProject = async (projectData: CreateProjectRequest): Promise<CreateProjectResponse> => {
+  const API_BASE_URL = API_CONFIG.BASE_URL;
   try {
-    const response = await fetch(`${API_CONFIG.BASE_URL}/projects/`, {
+    const response = await fetch(`${API_BASE_URL}/projects/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -42,8 +43,9 @@ export const createProject = async (projectData: CreateProjectRequest): Promise<
 };
 
 export const fetchProjects = async (): Promise<Project[]> => {
+  const API_BASE_URL = API_CONFIG.BASE_URL;
   try {
-    const response = await fetch(`${API_CONFIG.BASE_URL}/projects/`, {
+    const response = await fetch(`${API_BASE_URL}/projects/`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -63,8 +65,9 @@ export const fetchProjects = async (): Promise<Project[]> => {
 };
 
 export const getProjectById = async (projectId: string): Promise<Project> => {
+  const API_BASE_URL = API_CONFIG.BASE_URL;
   try {
-    const response = await fetch(`${API_CONFIG.BASE_URL}/projects/${projectId}`, {
+    const response = await fetch(`${API_BASE_URL}/projects/${projectId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -102,8 +105,9 @@ export interface BRDTemplatesResponse {
 }
 
 export const getBRDTemplates = async (): Promise<BRDTemplate[]> => {
+  const API_BASE_URL = API_CONFIG.BASE_URL;
   try {
-    const response = await fetch(`${API_CONFIG.BASE_URL}/templates/`, {
+    const response = await fetch(`${API_BASE_URL}/templates/`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -139,6 +143,7 @@ export interface FileUploadResponse {
 }
 
 export const uploadFiles = async (files: File[]): Promise<FileUploadResponse> => {
+  const FILE_UPLOAD_URL = "/files/upload";
   try {
     const formData = new FormData();
     
@@ -149,7 +154,7 @@ export const uploadFiles = async (files: File[]): Promise<FileUploadResponse> =>
     
     formData.append('stream', 'false');
 
-    const response = await fetch(`${API_CONFIG.BASE_URL}/api/v1/files/upload/`, {
+    const response = await fetch(FILE_UPLOAD_URL, {
       method: "POST",
       body: formData,
     });
@@ -167,8 +172,9 @@ export const uploadFiles = async (files: File[]): Promise<FileUploadResponse> =>
 };
 
 export const downloadBRD = async (text: string, filename: string): Promise<Blob> => {
+  const API_BASE_URL = API_CONFIG.BASE_URL;
   try {
-    const response = await fetch(`${API_CONFIG.BASE_URL}/files/brd/download`, {
+    const response = await fetch(`${API_BASE_URL}/files/brd/download`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
