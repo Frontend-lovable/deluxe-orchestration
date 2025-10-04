@@ -1,11 +1,15 @@
 // API Configuration
-// Uses proxy endpoints configured in vite.config.ts
+// In development: Uses proxy endpoints configured in vite.config.ts
+// In production: Uses direct API endpoint
+const isProduction = import.meta.env.PROD;
+const PRODUCTION_API_BASE = "http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000/api/v1";
+
 export const API_CONFIG = {
-  // Base URL for all API endpoints (proxied through /api)
-  BASE_URL: "/api/v1",
+  // Base URL for all API endpoints
+  BASE_URL: isProduction ? PRODUCTION_API_BASE : "/api/v1",
   
-  // Chat API URL (proxied through /api)
-  CHATBOT_API_URL: "/api/v1/chat",
+  // Chat API URL
+  CHATBOT_API_URL: isProduction ? `${PRODUCTION_API_BASE}/chat` : "/api/v1/chat",
   
   // Request timeout in milliseconds
   TIMEOUT: 30000
