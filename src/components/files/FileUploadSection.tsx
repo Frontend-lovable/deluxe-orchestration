@@ -166,24 +166,26 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
   };
 
   const handleDownloadBRD = async () => {
-    if (uploadedFileBatches.length === 0) {
+    if (brdSections.length === 0) {
       toast({
         title: "No BRD available",
-        description: "Please upload files and generate a BRD first.",
+        description: "Please complete the BRD sections first.",
         variant: "destructive",
       });
       return;
     }
 
-    // Get the most recent batch's content preview
-    const latestBatch = uploadedFileBatches[uploadedFileBatches.length - 1];
-    const contentPreview = latestBatch.contentPreview;
+    // Format BRD sections as text content for download
+    const brdContent = brdSections
+      .map(section => `${section.title}\n\n${section.description}\n\n${section.content || ''}`)
+      .join('\n\n---\n\n');
+    
     const projectName = selectedProject?.project_name || "project";
     const filename = `${projectName}_brd`;
 
     setIsBRDDownloading(true);
     try {
-      const blob = await downloadBRD(contentPreview, filename);
+      const blob = await downloadBRD(brdContent, filename);
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -221,48 +223,79 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
     setIsUploadingToConfluence(true);
     try {
       // Format BRD sections as HTML
+      const formatContent = (text: string) => {
+        if (!text) return '';
+        
+        // Convert markdown bold to HTML strong tags
+        let formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        
+        // Convert ### subheadings to h4 tags
+        formatted = formatted.replace(/###\s+(.+)/g, '<h4><strong>$1</strong></h4>');
+        
+        const lines = formatted.split('\n').filter(line => line.trim());
+        
+        // Check for markdown tables (| header | header |)
+        const hasMarkdownTable = lines.some(line => line.trim().startsWith('|') && line.trim().endsWith('|'));
+        
+        if (hasMarkdownTable) {
+          const tableLines = lines.filter(line => line.trim().startsWith('|'));
+          const headerLine = tableLines[0];
+          const separatorIndex = tableLines.findIndex(line => line.includes('---'));
+          const dataLines = separatorIndex > 0 ? tableLines.slice(separatorIndex + 1) : tableLines.slice(1);
+          
+          // Parse header
+          const headers = headerLine.split('|').map(h => h.trim()).filter(h => h);
+          const headerRow = `<tr>${headers.map(h => `<th><strong>${h}</strong></th>`).join('')}</tr>`;
+          
+          // Parse data rows
+          const dataRows = dataLines.map(line => {
+            const cells = line.split('|').map(c => c.trim()).filter(c => c);
+            return `<tr>${cells.map(c => `<td>${c}</td>`).join('')}</tr>`;
+          }).join('');
+          
+          return `<table border="1" cellpadding="5"><thead>${headerRow}</thead><tbody>${dataRows}</tbody></table>`;
+        }
+        
+        // Check if description contains key-value pairs
+        const hasKeyValuePairs = lines.some(line => line.includes(':') && line.includes('<strong>'));
+        
+        if (hasKeyValuePairs) {
+          // Format as table
+          const tableRows = lines
+            .map(line => {
+              if (line.includes(':')) {
+                const [key, ...valueParts] = line.split(':');
+                const value = valueParts.join(':').trim();
+                return `<tr><td><strong>${key.trim()}</strong></td><td>${value}</td></tr>`;
+              }
+              return null;
+            })
+            .filter(row => row !== null)
+            .join('');
+          
+          return `<table border="1" cellpadding="5"><tbody>${tableRows}</tbody></table>`;
+        } else if (formatted.includes('\n- ') || formatted.includes('\n• ')) {
+          // Format as bullet list
+          const listItems = lines
+            .filter(line => line.trim().startsWith('-') || line.trim().startsWith('•'))
+            .map(item => `<li>${item.replace(/^[-•]\s*/, '').trim()}</li>`)
+            .join('');
+          return `<ul>${listItems}</ul>`;
+        } else {
+          // Format as paragraphs
+          return lines.map(line => {
+            // Skip h4 tags as they're already formatted
+            if (line.startsWith('<h4>')) return line;
+            return `<p>${line}</p>`;
+          }).join('');
+        }
+      };
+
       const htmlContent = brdSections
         .map((section) => {
-          let formattedDescription = section.description;
-          
-          // Convert markdown bold to HTML strong tags
-          formattedDescription = formattedDescription.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-          
-          // Check if description contains table-like key-value pairs
-          const lines = formattedDescription.split('\n').filter(line => line.trim());
-          const hasKeyValuePairs = lines.some(line => line.includes(':') && line.includes('<strong>'));
-          
-          if (hasKeyValuePairs) {
-            // Format as table
-            const tableRows = lines
-              .map(line => {
-                if (line.includes(':')) {
-                  const [key, ...valueParts] = line.split(':');
-                  const value = valueParts.join(':').trim();
-                  return `<tr><td>${key.trim()}</td><td>${value}</td></tr>`;
-                }
-                return null;
-              })
-              .filter(row => row !== null)
-              .join('');
-            
-            formattedDescription = `<table><tbody>${tableRows}</tbody></table>`;
-          } else if (formattedDescription.includes('\n- ') || formattedDescription.includes('\n• ')) {
-            // Format as bullet list
-            const listItems = lines
-              .filter(line => line.trim().startsWith('-') || line.trim().startsWith('•'))
-              .map(item => `<li>${item.replace(/^[-•]\s*/, '').trim()}</li>`)
-              .join('');
-            formattedDescription = `<ul>${listItems}</ul>`;
-          } else {
-            // Format as paragraphs
-            formattedDescription = lines.map(line => `<p>${line}</p>`).join('');
-          }
-
-          const formattedContent = section.content ? 
-            section.content.split('\n').filter(line => line.trim()).map(line => `<p>${line}</p>`).join('') : '';
-
-          return `<h3>${section.title}</h3>${formattedDescription}${formattedContent}`;
+          const formattedDescription = formatContent(section.description);
+          const formattedContent = formatContent(section.content || '');
+          return `<h3><strong>${section.title}</strong></h3>${formattedDescription}${formattedContent}`;
         })
         .join('\n');
 
