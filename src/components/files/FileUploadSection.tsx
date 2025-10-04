@@ -40,7 +40,8 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
     setBrdId,
     isBRDDownloading,
     setIsBRDDownloading,
-    brdSections
+    brdSections,
+    setActiveConfluencePageId
   } = useAppState();
 
   const formatFileSize = (bytes: number) => {
@@ -314,7 +315,12 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
         }
       };
 
-      await createConfluencePage(pageData);
+      const response = await createConfluencePage(pageData);
+      
+      // Set the newly created page as active
+      if (response?.id) {
+        setActiveConfluencePageId(response.id);
+      }
       
       toast({
         title: "BRD uploaded to Confluence",

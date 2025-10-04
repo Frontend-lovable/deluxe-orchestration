@@ -60,6 +60,8 @@ interface AppStateContextType {
   setIsBRDApproved: (approved: boolean) => void;
   brdId: string | null;
   setBrdId: (id: string | null) => void;
+  activeConfluencePageId: string | null;
+  setActiveConfluencePageId: (pageId: string | null) => void;
 }
 
 const AppStateContext = createContext<AppStateContextType | undefined>(undefined);
@@ -82,6 +84,7 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
   const [brdSections, setBrdSections] = useState<BRDSection[]>([]);
   const [isBRDApproved, setIsBRDApproved] = useState(false);
   const [brdId, setBrdId] = useState<string | null>(null);
+  const [activeConfluencePageId, setActiveConfluencePageId] = useState<string | null>(null);
 
   const setChatMessages = (view: keyof AppStateContextType["chatMessages"], messages: ChatMessageType[]) => {
     setChatMessagesState(prev => ({
@@ -119,6 +122,8 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
         setIsBRDApproved,
         brdId,
         setBrdId,
+        activeConfluencePageId,
+        setActiveConfluencePageId,
       }}
     >
       {children}

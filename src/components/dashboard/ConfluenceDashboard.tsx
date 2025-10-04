@@ -7,8 +7,10 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useState, useEffect } from "react";
 import { fetchConfluencePages, fetchConfluencePageDetails, ConfluencePage, ConfluencePageDetails } from "@/services/confluenceApi";
 import { useToast } from "@/hooks/use-toast";
+import { useAppState } from "@/contexts/AppStateContext";
 
 export const ConfluenceDashboard = () => {
+  const { activeConfluencePageId, setActiveConfluencePageId } = useAppState();
   const [selectedPageId, setSelectedPageId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [pages, setPages] = useState<ConfluencePage[]>([]);
@@ -20,6 +22,17 @@ export const ConfluenceDashboard = () => {
   useEffect(() => {
     loadPages();
   }, []);
+
+  // Set active page when activeConfluencePageId is set
+  useEffect(() => {
+    if (activeConfluencePageId && pages.length > 0) {
+      const newlyCreatedPage = pages.find(page => page.id === activeConfluencePageId);
+      if (newlyCreatedPage) {
+        setSelectedPageId(newlyCreatedPage.id);
+        setActiveConfluencePageId(null); // Clear after setting
+      }
+    }
+  }, [activeConfluencePageId, pages, setActiveConfluencePageId]);
 
   useEffect(() => {
     if (selectedPageId) {
