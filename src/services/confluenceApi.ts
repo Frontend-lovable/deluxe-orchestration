@@ -103,7 +103,7 @@ export interface CreateConfluencePageRequest {
 export const createConfluencePage = async (pageData: CreateConfluencePageRequest): Promise<any> => {
   try {
     const response = await fetch(
-      'https://siriusai-team-test.atlassian.net/wiki/rest/api/content/',
+      '/confluence-api/wiki/rest/api/content/',
       {
         method: 'POST',
         headers: {
