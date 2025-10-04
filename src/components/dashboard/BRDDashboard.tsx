@@ -182,14 +182,10 @@ export const BRDDashboard = ({
     // Update selected section when clicking a tab
     setSelectedSection(title);
     
-    // Find the full section content from brdSections
-    const section = brdSections.find(s => s.title === title);
-    const fullContent = section?.content || description;
-    
     const currentMessages = chatMessages.brd || [];
     const newMessage = {
       id: `section-${Date.now()}`,
-      content: `**${title}**\n\n${fullContent}`,
+      content: `**${title}**\n\n${description}`,
       isBot: true,
       timestamp: new Date().toLocaleTimeString([], {
         hour: '2-digit',
@@ -204,7 +200,7 @@ export const BRDDashboard = ({
           <Button variant="ghost" size="sm" onClick={onBack} className="p-2 hover:bg-accent">
             <ArrowLeft className="w-4 h-4" />
           </Button>
-          <h1 className="text-xl font-bold sm:text-base">{contextProject?.project_name || "No Project Selected"}</h1>
+          <h1 className="text-xl font-bold sm:text-base">Payment Gateway</h1>
         </div>
       </div>
       
