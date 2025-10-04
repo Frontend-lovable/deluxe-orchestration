@@ -72,10 +72,31 @@ export const ConfluenceDashboard = () => {
       "Under Review": "bg-yellow-100 text-yellow-700", 
       "Published": "bg-purple-100 text-purple-700",
       "In Progress": "bg-blue-100 text-blue-700",
-      "Draft": "bg-gray-100 text-gray-700"
+      "Draft": "bg-gray-100 text-gray-700",
+      "Current": "text-white border-0"
     };
     
     return statusConfig[status] || "bg-gray-100 text-gray-700";
+  };
+
+  const formatConfluenceContent = (htmlContent: string) => {
+    if (!htmlContent) return htmlContent;
+    
+    // Convert markdown bold ** to <strong>
+    let formatted = htmlContent.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    
+    // Convert ### subheadings to <h4> with bold
+    formatted = formatted.replace(/###\s+(.+)/g, '<h4><strong>$1</strong></h4>');
+    
+    // Make sure all headings are bold
+    formatted = formatted.replace(/<h1>((?:(?!<strong>).)*)<\/h1>/g, '<h1><strong>$1</strong></h1>');
+    formatted = formatted.replace(/<h2>((?:(?!<strong>).)*)<\/h2>/g, '<h2><strong>$1</strong></h2>');
+    formatted = formatted.replace(/<h3>((?:(?!<strong>).)*)<\/h3>/g, '<h3><strong>$1</strong></h3>');
+    formatted = formatted.replace(/<h4>((?:(?!<strong>).)*)<\/h4>/g, '<h4><strong>$1</strong></h4>');
+    formatted = formatted.replace(/<h5>((?:(?!<strong>).)*)<\/h5>/g, '<h5><strong>$1</strong></h5>');
+    formatted = formatted.replace(/<h6>((?:(?!<strong>).)*)<\/h6>/g, '<h6><strong>$1</strong></h6>');
+    
+    return formatted;
   };
 
   return (
@@ -126,9 +147,16 @@ export const ConfluenceDashboard = () => {
                           
                           <div className="flex items-center justify-between">
                             <span className="text-xs truncate" style={{color: '#747474'}}>{page.status}</span>
-                            <Badge className={`${getStatusBadge(page.status)} text-xs px-2 py-1 flex-shrink-0 border`} style={{fontWeight: 'normal', borderColor: '#DEDCDC'}}>
-                              {page.status}
-                            </Badge>
+                      <Badge 
+                        className={`${getStatusBadge(page.status)} text-xs px-2 py-1 flex-shrink-0 border`} 
+                        style={{
+                          fontWeight: 'normal', 
+                          borderColor: page.status === 'Current' ? '#d11220' : '#DEDCDC',
+                          backgroundColor: page.status === 'Current' ? '#d11220' : undefined
+                        }}
+                      >
+                        {page.status}
+                      </Badge>
                           </div>
                         </div>
                       ))}
@@ -218,7 +246,13 @@ export const ConfluenceDashboard = () => {
                         <Calendar className="w-4 h-4 flex-shrink-0" />
                         <span>{new Date(pageDetails.version.when).toLocaleString()}</span>
                       </div>
-                      <Badge className={`${getStatusBadge(pageDetails.status)} self-start`}>
+                      <Badge 
+                        className={`${getStatusBadge(pageDetails.status)} self-start`}
+                        style={{
+                          backgroundColor: pageDetails.status === 'Current' ? '#d11220' : undefined,
+                          borderColor: pageDetails.status === 'Current' ? '#d11220' : undefined
+                        }}
+                      >
                         {pageDetails.status}
                       </Badge>
                     </div>
@@ -230,16 +264,23 @@ export const ConfluenceDashboard = () => {
                         [&_h1]:text-[#3B3B3B] [&_h1]:font-bold [&_h1]:text-lg [&_h1]:mb-4 [&_h1]:mt-6 
                         [&_h2]:text-[#3B3B3B] [&_h2]:font-bold [&_h2]:text-lg [&_h2]:mb-4 [&_h2]:mt-5 
                         [&_h3]:text-[#3B3B3B] [&_h3]:font-bold [&_h3]:text-base [&_h3]:mb-3 [&_h3]:mt-4 
-                        [&_h4]:text-[#3B3B3B] [&_h5]:text-[#3B3B3B] [&_h6]:text-[#3B3B3B] 
+                        [&_h4]:text-[#3B3B3B] [&_h4]:font-bold [&_h5]:text-[#3B3B3B] [&_h5]:font-bold [&_h6]:text-[#3B3B3B] [&_h6]:font-bold 
                         [&_strong]:text-[#3B3B3B] [&_strong]:font-semibold 
                         [&_p]:mb-3 [&_ul]:mb-3 [&_ol]:mb-3 
                         [&_table]:mb-6 [&_table]:w-full [&_table]:border-collapse [&_table]:border [&_table]:border-[#DEDCDC]
-                        [&_th]:border [&_th]:border-[#DEDCDC] [&_th]:bg-gray-50 [&_th]:px-4 [&_th]:py-2 [&_th]:text-left [&_th]:font-semibold [&_th]:text-[#3B3B3B]
+                        [&_th]:border [&_th]:border-[#DEDCDC] [&_th]:bg-gray-50 [&_th]:px-4 [&_th]:py-2 [&_th]:text-left [&_th]:font-bold [&_th]:text-[#3B3B3B]
                         [&_td]:border [&_td]:border-[#DEDCDC] [&_td]:px-4 [&_td]:py-2 [&_td]:text-[#747474] [&_td]:min-h-[40px]
                         [&_td:empty]:after:content-['—'] [&_td:empty]:after:text-[#CCCCCC]
                         [&_tr]:border-b [&_tr]:border-[#DEDCDC]
                         [&_ac-structured-macro]:hidden [&_ac-adf-extension]:hidden"
-                        dangerouslySetInnerHTML={{ __html: pageDetails.body.storage.value.replace(/true%7B%22[^<]*/g, '').replace(/<ac:structured-macro[^>]*>[\s\S]*?<\/ac:structured-macro>/g, '').replace(/<ac:adf-extension[^>]*>[\s\S]*?<\/ac:adf-extension>/g, '') }}
+                        dangerouslySetInnerHTML={{ 
+                          __html: formatConfluenceContent(
+                            pageDetails.body.storage.value
+                              .replace(/true%7B%22[^<]*/g, '')
+                              .replace(/<ac:structured-macro[^>]*>[\s\S]*?<\/ac:structured-macro>/g, '')
+                              .replace(/<ac:adf-extension[^>]*>[\s\S]*?<\/ac:adf-extension>/g, '')
+                          ) 
+                        }}
                       />
                       
                       {pageDetails.ancestors && pageDetails.ancestors.length > 0 && (

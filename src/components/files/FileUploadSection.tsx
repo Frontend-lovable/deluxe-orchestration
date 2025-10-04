@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { uploadFiles, downloadBRD } from "@/services/projectApi";
 import { createConfluencePage } from "@/services/confluenceApi";
 import { useAppState } from "@/contexts/AppStateContext";
+import { useNavigate } from "react-router-dom";
 
 interface UploadedFile {
   id: string;
@@ -22,6 +23,7 @@ interface FileUploadSectionProps {
 export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [isUploadingToConfluence, setIsUploadingToConfluence] = useState(false);
   const { 
     isFileUploading, 
@@ -318,6 +320,9 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
         title: "BRD uploaded to Confluence",
         description: "Your BRD has been successfully uploaded to Confluence.",
       });
+
+      // Navigate to Confluence page after successful upload
+      navigate('/confluence');
     } catch (error) {
       toast({
         title: "Upload failed",
