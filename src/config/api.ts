@@ -1,5 +1,5 @@
 const BASE_URL_ENDPOINT = "http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000"
-// const BASE_URL_ENDPOINT = "http:localhost:8000"
+// const BASE_URL_ENDPOINT = "http://localhost:8000"
 
 // API Configuration
 // Uses proxy endpoints configured in vite.config.ts
