@@ -143,7 +143,7 @@ export interface FileUploadResponse {
 }
 
 export const uploadFiles = async (files: File[]): Promise<FileUploadResponse> => {
-  const API_BASE_URL = API_CONFIG.BASE_URL;
+  const FILE_UPLOAD_URL = "/api/v1/files/upload";
   try {
     const formData = new FormData();
     
@@ -154,7 +154,7 @@ export const uploadFiles = async (files: File[]): Promise<FileUploadResponse> =>
     
     formData.append('stream', 'false');
 
-    const response = await fetch(`${API_BASE_URL}/files/upload/`, {
+    const response = await fetch(FILE_UPLOAD_URL, {
       method: "POST",
       body: formData,
     });
