@@ -1,11 +1,14 @@
+const BASE_URL_ENDPOINT = "http://deluxe-internet-300914418.us-east-1.elb.amazonaws.com:8000"
+// const BASE_URL_ENDPOINT = "http:localhost:8000"
+
 // API Configuration
 // Uses proxy endpoints configured in vite.config.ts
 export const API_CONFIG = {
   // Base URL for all API endpoints (proxied through /api)
-  BASE_URL: "/api/v1",
+  BASE_URL: `${BASE_URL_ENDPOINT}/api/v1`,
   
   // Chat API URL (proxied through /api)
-  CHATBOT_API_URL: "/api/v1/chat",
+  CHATBOT_API_URL: `${BASE_URL_ENDPOINT}/api/v1/chat`,
   
   // Request timeout in milliseconds
   TIMEOUT: 30000
