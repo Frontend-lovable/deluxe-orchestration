@@ -182,10 +182,14 @@ export const BRDDashboard = ({
     // Update selected section when clicking a tab
     setSelectedSection(title);
     
+    // Find the full section content from brdSections
+    const section = brdSections.find(s => s.title === title);
+    const fullContent = section?.content || description;
+    
     const currentMessages = chatMessages.brd || [];
     const newMessage = {
       id: `section-${Date.now()}`,
-      content: `**${title}**\n\n${description}`,
+      content: `**${title}**\n\n${fullContent}`,
       isBot: true,
       timestamp: new Date().toLocaleTimeString([], {
         hour: '2-digit',
@@ -194,13 +198,25 @@ export const BRDDashboard = ({
     };
     setChatMessages("brd", [...currentMessages, newMessage]);
   };
+
+  const handleResponseReceived = (response: string) => {
+    // Update the BRD section content with the AI response
+    if (selectedSection) {
+      const updatedSections = brdSections.map(section =>
+        section.title === selectedSection
+          ? { ...section, content: response }
+          : section
+      );
+      setBrdSections(updatedSections);
+    }
+  };
   return <div className="p-4 sm:p-6 lg:p-8 bg-white">
       <div className="mb-4 lg:mb-2">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="sm" onClick={onBack} className="p-2 hover:bg-accent">
             <ArrowLeft className="w-4 h-4" />
           </Button>
-          <h1 className="text-xl font-bold sm:text-base">Payment Gateway</h1>
+          <h1 className="text-xl font-bold sm:text-base">{contextProject?.project_name || "No Project Selected"}</h1>
         </div>
       </div>
       
@@ -232,6 +248,8 @@ export const BRDDashboard = ({
               externalMessages={chatMessages.brd}
               onMessagesChange={(messages) => setChatMessages("brd", messages)}
               disabled={uploadedFileBatches.length === 0}
+              sectionContext={brdSections.find(s => s.title === selectedSection)?.content}
+              onResponseReceived={handleResponseReceived}
             />
           </div>
         </div>

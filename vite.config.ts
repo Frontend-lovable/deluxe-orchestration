@@ -15,6 +15,12 @@ export default defineConfig(({ mode }) => ({
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, '/api')
+      },
+      '/confluence-api': {
+        target: 'https://siriusai-team-test.atlassian.net',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/confluence-api/, '')
       }
     }
   },

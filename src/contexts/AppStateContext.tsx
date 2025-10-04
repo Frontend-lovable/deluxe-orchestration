@@ -46,6 +46,8 @@ interface AppStateContextType {
   setChatMessages: (view: keyof AppStateContextType["chatMessages"], messages: ChatMessageType[]) => void;
   isFileUploading: boolean;
   setIsFileUploading: (uploading: boolean) => void;
+  isBRDDownloading: boolean;
+  setIsBRDDownloading: (downloading: boolean) => void;
   pendingUploadResponse: any | null;
   setPendingUploadResponse: (response: any | null) => void;
   uploadedFileBatches: UploadedFileBatch[];
@@ -56,6 +58,8 @@ interface AppStateContextType {
   setBrdSections: (sections: BRDSection[]) => void;
   isBRDApproved: boolean;
   setIsBRDApproved: (approved: boolean) => void;
+  brdId: string | null;
+  setBrdId: (id: string | null) => void;
 }
 
 const AppStateContext = createContext<AppStateContextType | undefined>(undefined);
@@ -71,11 +75,13 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
     design: [],
   });
   const [isFileUploading, setIsFileUploading] = useState(false);
+  const [isBRDDownloading, setIsBRDDownloading] = useState(false);
   const [pendingUploadResponse, setPendingUploadResponse] = useState<any | null>(null);
   const [uploadedFileBatches, setUploadedFileBatches] = useState<UploadedFileBatch[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [brdSections, setBrdSections] = useState<BRDSection[]>([]);
   const [isBRDApproved, setIsBRDApproved] = useState(false);
+  const [brdId, setBrdId] = useState<string | null>(null);
 
   const setChatMessages = (view: keyof AppStateContextType["chatMessages"], messages: ChatMessageType[]) => {
     setChatMessagesState(prev => ({
@@ -99,6 +105,8 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
         setChatMessages,
         isFileUploading,
         setIsFileUploading,
+        isBRDDownloading,
+        setIsBRDDownloading,
         pendingUploadResponse,
         setPendingUploadResponse,
         uploadedFileBatches,
@@ -109,6 +117,8 @@ export const AppStateProvider = ({ children }: { children: ReactNode }) => {
         setBrdSections,
         isBRDApproved,
         setIsBRDApproved,
+        brdId,
+        setBrdId,
       }}
     >
       {children}

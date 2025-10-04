@@ -25,6 +25,8 @@ interface ChatInterfaceProps {
   externalMessages?: ChatMessageType[];
   onMessagesChange?: (messages: ChatMessageType[]) => void;
   disabled?: boolean;
+  sectionContext?: string;
+  onResponseReceived?: (response: string) => void;
 }
 export const ChatInterface = ({
   title,
@@ -34,7 +36,9 @@ export const ChatInterface = ({
   onReviewed,
   externalMessages,
   onMessagesChange,
-  disabled = false
+  disabled = false,
+  sectionContext,
+  onResponseReceived
 }: ChatInterfaceProps) => {
   const { setIsBRDApproved, brdSections } = useAppState();
   const [internalMessages, setInternalMessages] = useState<ChatMessageType[]>([...(initialMessage ? [{
@@ -95,6 +99,23 @@ export const ChatInterface = ({
     setInputValue("");
     setIsLoading(true);
 
+    // Check if message is "approved" and return custom response without API call
+    if (currentMessage.trim().toLowerCase() === "approved") {
+      const botMessage: ChatMessageType = {
+        id: `bot-${Date.now()}`,
+        content: "All sections have been approved. You can download the BRD and push it to Confluence.",
+        isBot: true,
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      };
+      setMessages([...currentMessages, userMessage, botMessage]);
+      setIsLoading(false);
+      setIsBRDApproved(true);
+      return;
+    }
+
     // Add bot message placeholder that will be updated with streaming content
     const botMessageId = `bot-${Date.now()}`;
     const botMessage: ChatMessageType = {
@@ -115,7 +136,7 @@ export const ChatInterface = ({
       let accumulatedContent = "";
       
       // Stream the response
-      for await (const chunk of streamChatMessage(currentMessage)) {
+      for await (const chunk of streamChatMessage(currentMessage, sectionContext)) {
         accumulatedContent += chunk;
         
         // Update the bot message with accumulated content
@@ -128,6 +149,11 @@ export const ChatInterface = ({
       }
 
       setIsLoading(false);
+
+      // Call the callback with the complete response
+      if (onResponseReceived && accumulatedContent) {
+        onResponseReceived(accumulatedContent);
+      }
 
       // Check if the message is "reviewed" and trigger the callback
       if (currentMessage.trim().toLowerCase() === "reviewed" && onReviewed) {
