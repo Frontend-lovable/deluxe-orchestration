@@ -25,8 +25,6 @@ interface ChatInterfaceProps {
   externalMessages?: ChatMessageType[];
   onMessagesChange?: (messages: ChatMessageType[]) => void;
   disabled?: boolean;
-  sectionContext?: string;
-  onResponseReceived?: (response: string) => void;
 }
 export const ChatInterface = ({
   title,
@@ -36,9 +34,7 @@ export const ChatInterface = ({
   onReviewed,
   externalMessages,
   onMessagesChange,
-  disabled = false,
-  sectionContext,
-  onResponseReceived
+  disabled = false
 }: ChatInterfaceProps) => {
   const { setIsBRDApproved, brdSections } = useAppState();
   const [internalMessages, setInternalMessages] = useState<ChatMessageType[]>([...(initialMessage ? [{
@@ -136,7 +132,7 @@ export const ChatInterface = ({
       let accumulatedContent = "";
       
       // Stream the response
-      for await (const chunk of streamChatMessage(currentMessage, sectionContext)) {
+      for await (const chunk of streamChatMessage(currentMessage)) {
         accumulatedContent += chunk;
         
         // Update the bot message with accumulated content
@@ -149,11 +145,6 @@ export const ChatInterface = ({
       }
 
       setIsLoading(false);
-
-      // Call the callback with the complete response
-      if (onResponseReceived && accumulatedContent) {
-        onResponseReceived(accumulatedContent);
-      }
 
       // Check if the message is "reviewed" and trigger the callback
       if (currentMessage.trim().toLowerCase() === "reviewed" && onReviewed) {

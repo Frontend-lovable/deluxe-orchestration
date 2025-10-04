@@ -77,34 +77,58 @@ export const BRDDashboard = ({
   // Check for pending upload response on mount and add to chat
   useEffect(() => {
     if (pendingUploadResponse) {
+      console.log('=== BRD DASHBOARD - PENDING UPLOAD RESPONSE UPDATE ===');
       const content = pendingUploadResponse.brd_auto_generated?.content_preview || pendingUploadResponse.message || 'File uploaded successfully';
+      console.log('Content length:', content.length);
+      console.log('Content preview (first 200 chars):', content.substring(0, 200));
       
       // Parse the content to extract dynamic sections
       const parsedSections = parseBRDSections(content);
+      console.log('Parsed sections count:', parsedSections.length);
       if (parsedSections.length > 0) {
         setBrdSections(parsedSections);
+        console.log('BRD sections updated');
       }
-      
-      const botMessage = {
-        id: `bot-${Date.now()}`,
-        content: content,
-        isBot: true,
-        timestamp: new Date().toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit'
-        })
-      };
       
       const currentMessages = chatMessages.brd || [];
-      // Only add if not already in messages
-      const messageExists = currentMessages.some(msg => msg.content === botMessage.content);
-      if (!messageExists) {
+      const streamingId = 'streaming-message';
+      
+      // Find existing streaming message
+      const existingIndex = currentMessages.findIndex(msg => msg.id === streamingId);
+      console.log('Existing message index:', existingIndex);
+      
+      if (existingIndex >= 0) {
+        // Update existing message with new content (remove loading state during streaming)
+        const updatedMessages = [...currentMessages];
+        updatedMessages[existingIndex] = {
+          ...updatedMessages[existingIndex],
+          content: content,
+          isLoading: false,
+          timestamp: new Date().toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit'
+          })
+        };
+        console.log('Updating existing message with content length:', content.length);
+        setChatMessages("brd", updatedMessages);
+      } else {
+        // Create new streaming message (no loading indicator)
+        console.log('Creating new streaming message');
+        const botMessage = {
+          id: streamingId,
+          content: content,
+          isBot: true,
+          isLoading: false,
+          timestamp: new Date().toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit'
+          })
+        };
         setChatMessages("brd", [...currentMessages, botMessage]);
       }
-      // Clear the pending response after adding to chat
-      setPendingUploadResponse(null);
+      console.log('Chat messages updated, current count:', chatMessages.brd?.length || 0);
     }
-  }, [pendingUploadResponse, chatMessages.brd, setChatMessages, setPendingUploadResponse, setBrdSections]);
+  }, [pendingUploadResponse, chatMessages.brd, setChatMessages, setBrdSections]);
 
   // Function to parse BRD sections from API response
   const parseBRDSections = (content: string) => {
@@ -198,18 +222,6 @@ export const BRDDashboard = ({
     };
     setChatMessages("brd", [...currentMessages, newMessage]);
   };
-
-  const handleResponseReceived = (response: string) => {
-    // Update the BRD section content with the AI response
-    if (selectedSection) {
-      const updatedSections = brdSections.map(section =>
-        section.title === selectedSection
-          ? { ...section, content: response }
-          : section
-      );
-      setBrdSections(updatedSections);
-    }
-  };
   return <div className="p-4 sm:p-6 lg:p-8 bg-white">
       <div className="mb-4 lg:mb-2">
         <div className="flex items-center gap-3">
@@ -248,8 +260,6 @@ export const BRDDashboard = ({
               externalMessages={chatMessages.brd}
               onMessagesChange={(messages) => setChatMessages("brd", messages)}
               disabled={uploadedFileBatches.length === 0}
-              sectionContext={brdSections.find(s => s.title === selectedSection)?.content}
-              onResponseReceived={handleResponseReceived}
             />
           </div>
         </div>

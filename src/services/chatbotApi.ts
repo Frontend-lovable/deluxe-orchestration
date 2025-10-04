@@ -34,20 +34,13 @@ export class SessionManager {
 }
 
 // API function for streaming chat messages
-export async function* streamChatMessage(message: string, sectionContext?: string): AsyncGenerator<string, void, unknown> {
+export async function* streamChatMessage(message: string): AsyncGenerator<string, void, unknown> {
   const API_BASE_URL = API_CONFIG.CHATBOT_API_URL;
   console.log('Sending streaming request to:', API_BASE_URL);
   
   try {
-    // Build enhanced message with context if provided
-    let enhancedMessage = message;
-    if (sectionContext) {
-      const userprompt = message;
-      enhancedMessage = `BRD Section Content:\n${sectionContext}\n\nUser Query:\n${message}\n\n(Refer to the above subcontent of the Business Requirement Document and user query, then modify the subcontent as per the user's requirement "${userprompt}").`;
-    }
-    
     const requestBody = {
-      message: enhancedMessage,
+      message,
       session_id: SessionManager.getSessionId(),
       include_context: true,
       max_tokens: 2000,
