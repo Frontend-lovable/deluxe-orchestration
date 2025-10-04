@@ -45,7 +45,8 @@ export const ConfluenceDashboard = () => {
       setIsLoadingPages(true);
       const fetchedPages = await fetchConfluencePages();
       setPages(fetchedPages);
-      if (fetchedPages.length > 0 && !selectedPageId) {
+      // Only auto-select first page if there's no activeConfluencePageId waiting to be set
+      if (fetchedPages.length > 0 && !selectedPageId && !activeConfluencePageId) {
         setSelectedPageId(fetchedPages[0].id);
       }
     } catch (error) {
