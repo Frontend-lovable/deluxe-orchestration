@@ -1,9 +1,10 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Download, Upload, FileText, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { uploadFiles, downloadBRD } from "@/services/projectApi";
+import { createConfluencePage } from "@/services/confluenceApi";
 import { useAppState } from "@/contexts/AppStateContext";
 
 interface UploadedFile {
@@ -21,6 +22,7 @@ interface FileUploadSectionProps {
 export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const [isUploadingToConfluence, setIsUploadingToConfluence] = useState(false);
   const { 
     isFileUploading, 
     setIsFileUploading, 
@@ -35,7 +37,8 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
     brdId,
     setBrdId,
     isBRDDownloading,
-    setIsBRDDownloading
+    setIsBRDDownloading,
+    brdSections
   } = useAppState();
 
   const formatFileSize = (bytes: number) => {
@@ -205,6 +208,69 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
     }
   };
 
+  const handleUploadToConfluence = async () => {
+    if (!selectedProject || brdSections.length === 0) {
+      toast({
+        title: "No BRD data available",
+        description: "Please complete the BRD sections first.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsUploadingToConfluence(true);
+    try {
+      // Format BRD sections as HTML
+      const htmlContent = brdSections
+        .map((section) => {
+          let formattedDescription = section.description;
+          
+          // Check if description contains list items
+          if (formattedDescription.includes('\n- ') || formattedDescription.includes('\n• ')) {
+            const parts = formattedDescription.split('\n');
+            const listItems = parts
+              .filter(part => part.trim().startsWith('-') || part.trim().startsWith('•'))
+              .map(item => `<li>${item.replace(/^[-•]\s*/, '').trim()}</li>`)
+              .join('');
+            formattedDescription = `<ul>${listItems}</ul>`;
+          } else {
+            formattedDescription = `<p>${formattedDescription}</p>`;
+          }
+
+          return `<h3>${section.title}</h3>${formattedDescription}${section.content ? `<p>${section.content}</p>` : ''}`;
+        })
+        .join('\n');
+
+      const pageData = {
+        type: "page",
+        title: `${selectedProject.project_name} - BRD`,
+        ancestors: [{ id: 54493524 }],
+        space: { key: "SO" },
+        body: {
+          storage: {
+            value: htmlContent,
+            representation: "storage"
+          }
+        }
+      };
+
+      await createConfluencePage(pageData);
+      
+      toast({
+        title: "BRD uploaded to Confluence",
+        description: "Your BRD has been successfully uploaded to Confluence.",
+      });
+    } catch (error) {
+      toast({
+        title: "Upload failed",
+        description: "Failed to upload BRD to Confluence. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploadingToConfluence(false);
+    }
+  };
+
   return (
     <Card className="h-auto xl:h-[600px] flex flex-col">
       <CardHeader className="pb-4">
@@ -331,9 +397,23 @@ export const FileUploadSection = ({ onUploadSuccess }: FileUploadSectionProps) =
         <div className="mt-4">
           <h4 className="font-medium mb-3">Actions</h4>
           <div className="space-y-2">
-            <Button variant="outline" className="w-full justify-center items-center h-12 bg-white border border-[#8C8C8C] hover:bg-gray-50 px-3" disabled={!isBRDApproved}>
-              <Upload className="w-4 h-4 mr-2 flex-shrink-0" />
-              <span className="truncate">Upload to Confluence</span>
+            <Button 
+              variant="outline" 
+              className="w-full justify-center items-center h-12 bg-white border border-[#8C8C8C] hover:bg-gray-50 px-3" 
+              disabled={!isBRDApproved || isUploadingToConfluence}
+              onClick={handleUploadToConfluence}
+            >
+              {isUploadingToConfluence ? (
+                <>
+                  <div className="w-4 h-4 animate-spin rounded-full border-2 border-current border-t-transparent mr-2 flex-shrink-0" />
+                  <span className="truncate">Uploading...</span>
+                </>
+              ) : (
+                <>
+                  <Upload className="w-4 h-4 mr-2 flex-shrink-0" />
+                  <span className="truncate">Upload to Confluence</span>
+                </>
+              )}
             </Button>
             <p className="text-xs text-muted-foreground px-2" style={{color: '#727272'}}>
               Complete all BRD sections before submitting for approval

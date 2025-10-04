@@ -86,3 +86,42 @@ export const fetchConfluencePageDetails = async (pageId: string): Promise<Conflu
     throw error;
   }
 };
+
+export interface CreateConfluencePageRequest {
+  type: string;
+  title: string;
+  ancestors: Array<{ id: number }>;
+  space: { key: string };
+  body: {
+    storage: {
+      value: string;
+      representation: string;
+    };
+  };
+}
+
+export const createConfluencePage = async (pageData: CreateConfluencePageRequest): Promise<any> => {
+  try {
+    const response = await fetch(
+      'https://siriusai-team-test.atlassian.net/wiki/rest/api/content/',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': CONFLUENCE_AUTH,
+        },
+        body: JSON.stringify(pageData),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to create page: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error creating Confluence page:', error);
+    throw error;
+  }
+};
